@@ -264,6 +264,15 @@
         .header-links { display: none; }
         .digit-box { width: 42px; height: 50px; font-size: 20px; }
     }
+
+    .footer-logo {
+        height: 22px; /* Keeps it perfectly sized for the footer */
+        width: auto;
+        vertical-align: middle; /* Aligns the image with the text */
+        margin: 0 4px; /* Adds a tiny space around the logo */
+        position: relative;
+        top: -1px; /* Micro-adjustment to make it sit exactly on the text line */
+    }
 </style>
 </head>
 <body>
@@ -273,8 +282,7 @@
 
     <header class="header">
         <a href="/" class="header-logo">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-            Sendly
+            <img src="logo.png" alt="Sendly Logo" style="height: 40px; width: auto;">
         </a>
         <div class="header-links">
             <a href="/how-it-works">How it works</a>
@@ -373,7 +381,7 @@
     </div>
 
     <footer class="footer">
-        © 2026 Sendly. Secure File Transfer. <a href="/terms-privacy">Terms</a> & <a href="/terms-privacy">Privacy</a>.
+        © 2026 <img src="logo.png" alt="Sendly" class="footer-logo"> Secure File Transfer. <a href="/terms-privacy">Terms</a> & <a href="/terms-privacy">Privacy</a>.
     </footer>
 
     <div id="toast" class="toast">
