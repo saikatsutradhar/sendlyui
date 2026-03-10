@@ -147,8 +147,8 @@
 
 /* --- FOOTER --- */
     .footer { 
-        position: fixed; /* This glues it to the screen */
-        bottom: 0;       /* Glues it to the very bottom */
+        position: fixed; 
+        bottom: 0;       
         left: 0;
         width: 100%; 
         padding: 15px; 
@@ -158,26 +158,26 @@
         background: rgba(0, 0, 0, 0.3); 
         backdrop-filter: blur(12px); 
         -webkit-backdrop-filter: blur(12px);
-        z-index: 100; /* Keeps it above everything else */
+        z-index: 100; 
         border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .footer a { color: white; text-decoration: none; font-weight: 600; }
     .footer a:hover { text-decoration: underline; }
 
+    .footer-logo {
+        height: 22px; 
+        width: auto;
+        vertical-align: middle; 
+        margin: 0 4px; 
+        position: relative;
+        top: -1px; 
+    }
+
     @media (max-width: 850px) {
         .glass-panel { padding: 40px 30px; }
         .page-title { font-size: 32px; }
         .header-links { display: none; }
-    }
-
-    .footer-logo {
-        height: 22px; /* Keeps it perfectly sized for the footer */
-        width: auto;
-        vertical-align: middle; /* Aligns the image with the text */
-        margin: 0 4px; /* Adds a tiny space around the logo */
-        position: relative;
-        top: -1px; /* Micro-adjustment to make it sit exactly on the text line */
     }
 </style>
 </head>
@@ -187,13 +187,11 @@
     </video>
 
     <header class="header">
-        <a href="index.html" class="header-logo">
+        <a href="/" class="header-logo">
             <img src="logo.png" alt="Sendly Logo" style="height: 40px; width: auto;">
         </a>
         <div class="header-links">
-            <a href="how-it-works.html">How it works</a>
-            <!-- <a href="#">Pricing</a>
-            <a href="#">Login</a> -->
+            <a href="/how-it-works">How it works</a>
         </div>
     </header>
 
@@ -219,8 +217,8 @@
                     <li><strong>Time-Out Deletion:</strong> If a file is uploaded but not downloaded within 10 minutes, our automated systems scrub it entirely from our servers.</li>
                 </ul>
 
-                <h3>3. End-to-End Encryption</h3>
-                <p>All files transferred through Sendly are encrypted in transit. We do not look at, scan, or analyze the contents of the files you upload.</p>
+                <h3>3. Zero-Knowledge Encryption</h3>
+                <p>Sendly offers optional Client-Side AES Encryption. When you choose to set a password, your file is mathematically locked inside your web browser before it is ever uploaded. We have zero knowledge of your file contents, do not store your passwords, and cannot decrypt your files even if requested.</p>
 
 
                 <h2>Terms of Service</h2>
@@ -238,7 +236,7 @@
                 <p>Sendly is provided on an "as-is" and "as-available" basis. While we strive for 99.9% uptime, we do not guarantee that the service will be uninterrupted or error-free. We are not liable for any lost data or files that fail to transfer. We recommend always keeping a backup of important files.</p>
 
                 <h3>3. Rate Limiting and File Size</h3>
-                <p>Free users are permitted to upload files up to a maximum size of 2GB per transfer. To ensure fair use and server stability, we reserve the right to throttle bandwidth or block IP addresses that abuse the service through automated scripting or excessive uploads.</p>
+                <p>To ensure fair use and server stability, users are permitted to upload files up to a maximum size of <strong>500MB</strong> per standard transfer. For Client-Side Encrypted transfers, the limit is <strong>50MB</strong> to prevent browser memory exhaustion on mobile devices. We reserve the right to throttle bandwidth or block IP addresses that abuse the service through automated scripting or excessive uploads.</p>
 
             </div>
         </div>
