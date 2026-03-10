@@ -85,7 +85,7 @@
 
     @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* --- UPDATED TAB NAVIGATION TO MATCH SCREENSHOT --- */
+    /* --- TAB NAVIGATION --- */
     .tabs { 
         display: flex; 
         background: rgba(203, 213, 225, 0.5); 
@@ -174,6 +174,88 @@
     .toast.error .toast-icon { color: var(--secondary); }
     .toast.success .toast-icon { color: #10B981; }
 
+    /* --- HISTORY MODAL STYLES --- */
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 1000;
+        display: none; /* Hidden by default */
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.show {
+        display: flex;
+        opacity: 1;
+    }
+
+    .modal-content {
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 24px;
+        width: 90%;
+        max-width: 500px;
+        padding: 30px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+        transform: translateY(20px);
+        transition: transform 0.3s ease;
+        max-height: 80vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .modal-overlay.show .modal-content { transform: translateY(0); }
+
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .modal-header h2 { margin: 0; font-size: 22px; color: var(--text-main); }
+    .close-btn { background: none; border: none; font-size: 20px; color: var(--text-muted); cursor: pointer; padding: 0; width: auto; box-shadow: none; }
+    .close-btn:hover { color: var(--secondary); background: none; box-shadow: none; }
+
+    .history-list {
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 20px;
+        padding-right: 5px;
+    }
+
+    .history-item {
+        background: white;
+        border: 1px solid #E2E8F0;
+        border-radius: 12px;
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .history-info { display: flex; flex-direction: column; gap: 4px; }
+    .history-title { font-weight: 600; font-size: 14px; color: var(--text-main); }
+    .history-meta { font-size: 12px; color: var(--text-muted); }
+    
+    .history-badge {
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    .badge-sent { background: rgba(79, 70, 229, 0.1); color: var(--primary); }
+    .badge-received { background: rgba(16, 185, 129, 0.1); color: #10B981; }
+
+    .clear-history-btn {
+        background: none; border: 1px solid #E2E8F0; color: var(--text-muted); padding: 12px; border-radius: 12px; font-size: 14px; width: 100%; box-shadow: none;
+    }
+    .clear-history-btn:hover { background: #F8FAFC; color: var(--secondary); box-shadow: none; }
+    
+    .empty-state { text-align: center; color: var(--text-muted); padding: 30px 0; font-size: 14px; }
+
     @media (max-width: 850px) {
         .landing-grid { grid-template-columns: 1fr; text-align: center; gap: 40px; }
         .hero-title { font-size: 42px; }
@@ -261,7 +343,8 @@
                         <span class="spinner" id="dlSpinner"></span>
                         <span id="dlText">Download Files</span>
                     </button>
-                    <a href="#" class="history-link">View past downloads</a>
+                    
+                    <a href="javascript:void(0)" class="history-link" onclick="showHistory()">View past downloads</a>
                 </div>
 
                 <div id="waitingScreen" style="display:none">
@@ -274,6 +357,18 @@
                 </div>
 
             </div>
+        </div>
+    </div>
+
+    <div id="historyModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Transfer History</h2>
+                <button class="close-btn" onclick="closeHistory()">✕</button>
+            </div>
+            <div class="history-list" id="historyList">
+                </div>
+            <button class="clear-history-btn" onclick="clearHistory()">Clear History</button>
         </div>
     </div>
 
@@ -395,6 +490,10 @@ function processDownload() {
         }
 
         window.location.href = "https://sendlyapi.onrender.com/download/" + code;
+        
+        // NEW: SAVE RECEIVED ITEM TO HISTORY
+        saveToHistory('Received', code);
+        
         showToast("Download starting!", "success");
         resetDownloadButton(btn, spinner, btnText);
         setTimeout(() => { digitBoxes.forEach(box => box.value = ''); digitBoxes[0].focus(); }, 1000);
@@ -437,7 +536,6 @@ function showFiles() {
     }
 }
 
-// --- NEW XHR UPLOAD WITH PROGRESS TRACKING ---
 function sendFiles() {
     if (selectedFiles.length === 0) { 
         showToast("Please select files first to send.", "error"); 
@@ -447,25 +545,21 @@ function sendFiles() {
     let formData = new FormData();
     for(let f of selectedFiles){ formData.append("files", f) }
 
-    // UI Elements for Progress
     const sendBtn = document.getElementById("sendBtn");
     const progressContainer = document.getElementById("uploadProgress");
     const progressFill = document.getElementById("progressFill");
     const progressPercent = document.getElementById("progressPercent");
     const progressStatusText = document.getElementById("progressStatusText");
 
-    // Show Progress Bar, Hide Button
     sendBtn.style.display = "none";
     progressContainer.style.display = "block";
     progressFill.style.width = "0%";
     progressPercent.innerText = "0%";
     progressStatusText.innerText = "Uploading...";
 
-    // Setup XMLHttpRequest instead of fetch
     let xhr = new XMLHttpRequest();
     xhr.open("POST", "https://sendlyapi.onrender.com/upload", true);
 
-    // Track Upload Progress
     xhr.upload.onprogress = function(event) {
         if (event.lengthComputable) {
             let percentComplete = Math.round((event.loaded / event.total) * 100);
@@ -478,16 +572,18 @@ function sendFiles() {
         }
     };
 
-    // Handle Success
     xhr.onload = function() {
         if (xhr.status === 200) {
             let data = JSON.parse(xhr.responseText);
             currentKey = data.key; 
+            
+            // NEW: SAVE SENT ITEM TO HISTORY
+            saveToHistory('Sent', currentKey);
+            
             showWaiting(data.key, data.qr); 
             checkDownloadStatus();
             showToast("Files ready to send!", "success");
             
-            // Reset Progress UI for next time
             setTimeout(() => {
                 sendBtn.style.display = "block";
                 progressContainer.style.display = "none";
@@ -499,14 +595,12 @@ function sendFiles() {
         }
     };
 
-    // Handle Error
     xhr.onerror = function() {
         showToast("Network error. Make sure the backend is running.", "error");
         sendBtn.style.display = "block";
         progressContainer.style.display = "none";
     };
 
-    // Send the files
     xhr.send(formData);
 }
 
@@ -563,6 +657,57 @@ function checkDownloadStatus() {
             }
         } catch(e) {}
     }, 2000)
+}
+
+// --- NEW HISTORY LOGIC ---
+function saveToHistory(action, keyName) {
+    let history = JSON.parse(localStorage.getItem('sendly_history')) || [];
+    let date = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    
+    history.unshift({ action: action, key: keyName, date: date }); // Add to beginning
+    if(history.length > 20) history.pop(); // Keep only last 20 records
+    
+    localStorage.setItem('sendly_history', JSON.stringify(history));
+}
+
+function showHistory() {
+    const modal = document.getElementById('historyModal');
+    const list = document.getElementById('historyList');
+    let history = JSON.parse(localStorage.getItem('sendly_history')) || [];
+    
+    list.innerHTML = '';
+    
+    if (history.length === 0) {
+        list.innerHTML = '<div class="empty-state">No past transfers found on this device.</div>';
+    } else {
+        history.forEach(item => {
+            let badgeClass = item.action === 'Sent' ? 'badge-sent' : 'badge-received';
+            list.innerHTML += `
+                <div class="history-item">
+                    <div class="history-info">
+                        <span class="history-title">Transfer Key: ${item.key}</span>
+                        <span class="history-meta">${item.date}</span>
+                    </div>
+                    <div class="history-badge ${badgeClass}">${item.action}</div>
+                </div>
+            `;
+        });
+    }
+    
+    modal.style.display = 'flex';
+    setTimeout(() => modal.classList.add('show'), 10);
+}
+
+function closeHistory() {
+    const modal = document.getElementById('historyModal');
+    modal.classList.remove('show');
+    setTimeout(() => modal.style.display = 'none', 300);
+}
+
+function clearHistory() {
+    localStorage.removeItem('sendly_history');
+    showHistory(); // Refresh the modal
+    showToast("History cleared", "success");
 }
 </script>
 
