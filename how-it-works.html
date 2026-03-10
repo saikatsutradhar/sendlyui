@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How it works - Sendly</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --primary: #4F46E5;
+        --primary-hover: #4338CA;
+        --secondary: #F43F5E;
+        --secondary-hover: #E11D48;
+        --text-main: #1F2937;
+        --text-muted: #6B7280;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        color: var(--text-main);
+    }
+    
+    .bg-video {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+        z-index: -1;
+        filter: brightness(0.4);
+    }
+
+    /* --- HEADER --- */
+    .header {
+        width: 100%;
+        padding: 20px 5%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 100;
+        position: fixed;
+        top: 0;
+    }
+
+    .header-logo { font-size: 24px; font-weight: 800; color: white; text-decoration: none; display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px; }
+    .header-links a { color: rgba(255, 255, 255, 0.85); text-decoration: none; font-size: 15px; font-weight: 500; margin-left: 30px; transition: color 0.3s; }
+    .header-links a:hover, .header-links a.active { color: white; }
+
+    /* --- PAGE LAYOUT --- */
+    .page-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; padding: 120px 5% 80px; }
+
+    .glass-panel {
+        background: rgba(255, 255, 255, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 24px;
+        padding: 60px 50px;
+        max-width: 950px;
+        width: 100%;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* --- GRADIENT TITLE --- */
+    .page-title {
+        text-align: center;
+        font-size: 42px;
+        font-weight: 800;
+        margin: 0 0 15px 0;
+        letter-spacing: -1px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .page-subtitle {
+        text-align: center;
+        font-size: 16px;
+        color: var(--text-muted);
+        max-width: 600px;
+        margin: 0 auto 50px auto;
+        line-height: 1.6;
+    }
+
+    /* --- PREMIUM STEPS GRID --- */
+    .steps-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+        margin-bottom: 50px;
+    }
+
+    .step-card {
+        text-align: center;
+        padding: 35px 20px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+    }
+
+    .step-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(79, 70, 229, 0.15);
+    }
+
+    .step-icon {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        width: 75px;
+        height: 75px;
+        border-radius: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 25px auto;
+        color: white;
+        box-shadow: 0 10px 20px rgba(244, 63, 94, 0.3);
+        transform: rotate(-5deg);
+        transition: transform 0.3s ease;
+    }
+
+    .step-card:hover .step-icon {
+        transform: rotate(0deg) scale(1.05);
+    }
+
+    .step-icon svg { width: 34px; height: 34px; }
+
+    .step-title { font-size: 20px; font-weight: 700; margin: 0 0 12px 0; color: var(--text-main); }
+    .step-desc { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin: 0; }
+
+    /* --- CTA BUTTON --- */
+    .cta-container { text-align: center; margin-top: 10px; }
+
+    .btn-start {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--primary);
+        color: white;
+        padding: 16px 45px;
+        border-radius: 14px;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
+        transition: all 0.3s ease;
+    }
+
+    .btn-start:hover {
+        background: var(--primary-hover);
+        box-shadow: 0 15px 35px rgba(79, 70, 229, 0.5);
+        transform: translateY(-2px);
+    }
+
+/* --- FOOTER --- */
+    .footer { 
+        position: fixed; /* This glues it to the screen */
+        bottom: 0;       /* Glues it to the very bottom */
+        left: 0;
+        width: 100%; 
+        padding: 15px; 
+        text-align: center; 
+        color: rgba(255, 255, 255, 0.7); 
+        font-size: 13px; 
+        background: rgba(0, 0, 0, 0.3); 
+        backdrop-filter: blur(12px); 
+        -webkit-backdrop-filter: blur(12px);
+        z-index: 100; /* Keeps it above everything else */
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .footer a { color: white; text-decoration: none; font-weight: 600; }
+    .footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 850px) {
+        .steps-grid { grid-template-columns: 1fr; gap: 20px; }
+        .glass-panel { padding: 40px 20px; }
+        .page-title { font-size: 32px; }
+        .header-links { display: none; }
+    }
+</style>
+</head>
+<body>
+    <video class="bg-video" autoplay loop muted playsinline>
+        <source src="background.mp4" type="video/mp4">
+    </video>
+
+    <header class="header">
+        <a href="index.html" class="header-logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            Sendly
+        </a>
+        <div class="header-links">
+            <a href="how-it-works.html" class="active">How it works</a>
+            <!-- <a href="#">Pricing</a>
+            <a href="#">Login</a> -->
+        </div>
+    </header>
+
+    <div class="page-wrapper">
+        <div class="glass-panel">
+            <h1 class="page-title">Peer-to-Peer, Simplified.</h1>
+            <p class="page-subtitle">Sendly connects your devices directly. No accounts, no lingering server storage, just fast and secure file transfers.</p>
+
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    </div>
+                    <h3 class="step-title">1. Upload Files</h3>
+                    <p class="step-desc">Drag and drop any file type up to 2GB directly into the Sendly dashboard.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    </div>
+                    <h3 class="step-title">2. Get Your Key</h3>
+                    <p class="step-desc">We instantly generate a secure, single-use 6-digit key and QR code for your transfer.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    </div>
+                    <h3 class="step-title">3. Download</h3>
+                    <p class="step-desc">Enter the key on the receiving device, and the file transfers directly. It's that easy.</p>
+                </div>
+            </div>
+
+            <div class="cta-container">
+                <a href="index.html" class="btn-start">
+                    Start Sending Now
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        © 2026 Sendly. Secure File Transfer. <a href="terms-privacy.html">Terms</a> & <a href="terms-privacy.html">Privacy</a>.
+    </footer>
+</body>
+</html>

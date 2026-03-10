@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terms & Privacy - Sendly</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --primary: #4F46E5;
+        --primary-hover: #4338CA;
+        --secondary: #F43F5E;
+        --secondary-hover: #E11D48;
+        --text-main: #1F2937;
+        --text-muted: #4B5563;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        color: var(--text-main);
+    }
+    
+    .bg-video {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+        z-index: -1;
+        filter: brightness(0.4);
+    }
+
+    /* --- HEADER --- */
+    .header {
+        width: 100%;
+        padding: 20px 5%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 100;
+        position: fixed;
+        top: 0;
+    }
+
+    .header-logo { font-size: 24px; font-weight: 800; color: white; text-decoration: none; display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px; }
+    .header-links a { color: rgba(255, 255, 255, 0.85); text-decoration: none; font-size: 15px; font-weight: 500; margin-left: 30px; transition: color 0.3s; }
+    .header-links a:hover { color: white; }
+
+    /* --- PAGE LAYOUT --- */
+    .page-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; padding: 120px 5% 80px; }
+
+    .glass-panel {
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 24px;
+        padding: 60px;
+        max-width: 800px;
+        width: 100%;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* --- TYPOGRAPHY UPGRADES --- */
+    .page-title {
+        font-size: 42px;
+        font-weight: 800;
+        margin: 0 0 15px 0;
+        letter-spacing: -1px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .badge-container { margin-bottom: 40px; }
+    
+    .last-updated {
+        font-size: 12px;
+        color: var(--primary);
+        font-weight: 600;
+        background: rgba(79, 70, 229, 0.1);
+        padding: 6px 14px;
+        border-radius: 20px;
+        display: inline-block;
+        border: 1px solid rgba(79, 70, 229, 0.2);
+    }
+
+    .legal-content h2 {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-main);
+        margin: 50px 0 20px 0;
+        padding-left: 14px;
+        border-left: 4px solid var(--primary);
+        line-height: 1.2;
+    }
+
+    .legal-content h3 {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-main);
+        margin: 30px 0 10px 0;
+    }
+
+    .legal-content p {
+        font-size: 15px;
+        line-height: 1.8;
+        color: var(--text-muted);
+        margin-bottom: 15px;
+    }
+
+    .legal-content ul {
+        margin: 0 0 20px 0;
+        padding-left: 20px;
+    }
+
+    .legal-content li {
+        font-size: 15px;
+        line-height: 1.8;
+        color: var(--text-muted);
+        margin-bottom: 10px;
+    }
+    
+    /* Make the bullet points pop with color */
+    .legal-content li::marker {
+        color: var(--primary);
+        font-size: 1.2em;
+    }
+
+    .legal-content strong { color: var(--text-main); }
+
+/* --- FOOTER --- */
+    .footer { 
+        position: fixed; /* This glues it to the screen */
+        bottom: 0;       /* Glues it to the very bottom */
+        left: 0;
+        width: 100%; 
+        padding: 15px; 
+        text-align: center; 
+        color: rgba(255, 255, 255, 0.7); 
+        font-size: 13px; 
+        background: rgba(0, 0, 0, 0.3); 
+        backdrop-filter: blur(12px); 
+        -webkit-backdrop-filter: blur(12px);
+        z-index: 100; /* Keeps it above everything else */
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .footer a { color: white; text-decoration: none; font-weight: 600; }
+    .footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 850px) {
+        .glass-panel { padding: 40px 30px; }
+        .page-title { font-size: 32px; }
+        .header-links { display: none; }
+    }
+</style>
+</head>
+<body>
+    <video class="bg-video" autoplay loop muted playsinline>
+        <source src="background.mp4" type="video/mp4">
+    </video>
+
+    <header class="header">
+        <a href="index.html" class="header-logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            Sendly
+        </a>
+        <div class="header-links">
+            <a href="how-it-works.html">How it works</a>
+            <!-- <a href="#">Pricing</a>
+            <a href="#">Login</a> -->
+        </div>
+    </header>
+
+    <div class="page-wrapper">
+        <div class="glass-panel">
+            <h1 class="page-title">Terms & Privacy</h1>
+            <div class="badge-container">
+                <span class="last-updated">Last Updated: March 2026</span>
+            </div>
+
+            <div class="legal-content">
+                <p>At Sendly, we believe your data is your own. We designed this service to transfer files as quickly and securely as possible, without hoarding your personal information or keeping your files longer than necessary.</p>
+
+                <h2>Privacy Policy</h2>
+                
+                <h3>1. Zero-Account Architecture</h3>
+                <p>We do not require you to create an account, log in, or provide an email address to use Sendly. Because we do not collect personal profiles, we have nothing to sell to advertisers or third-party data brokers.</p>
+
+                <h3>2. Ephemeral File Storage</h3>
+                <p>Sendly acts solely as a temporary bridge between two devices. Here is how we handle your files:</p>
+                <ul>
+                    <li><strong>Instant Deletion:</strong> The moment a file is successfully downloaded by the receiver, it is permanently and irreversibly deleted from our servers.</li>
+                    <li><strong>Time-Out Deletion:</strong> If a file is uploaded but not downloaded within 10 minutes, our automated systems scrub it entirely from our servers.</li>
+                </ul>
+
+                <h3>3. End-to-End Encryption</h3>
+                <p>All files transferred through Sendly are encrypted in transit. We do not look at, scan, or analyze the contents of the files you upload.</p>
+
+
+                <h2>Terms of Service</h2>
+
+                <h3>1. Acceptable Use</h3>
+                <p>Sendly is designed for personal and professional file sharing. By using Sendly, you agree that you will not use our service to transfer:</p>
+                <ul>
+                    <li>Illegal, pirated, or copyrighted material you do not own the rights to.</li>
+                    <li>Malware, viruses, or destructive code.</li>
+                    <li>Child exploitation material or illegal pornography.</li>
+                </ul>
+                <p>While we do not actively monitor file contents due to encryption, any reports of abuse will result in the immediate blocking of the offending IP addresses.</p>
+
+                <h3>2. Service Availability</h3>
+                <p>Sendly is provided on an "as-is" and "as-available" basis. While we strive for 99.9% uptime, we do not guarantee that the service will be uninterrupted or error-free. We are not liable for any lost data or files that fail to transfer. We recommend always keeping a backup of important files.</p>
+
+                <h3>3. Rate Limiting and File Size</h3>
+                <p>Free users are permitted to upload files up to a maximum size of 2GB per transfer. To ensure fair use and server stability, we reserve the right to throttle bandwidth or block IP addresses that abuse the service through automated scripting or excessive uploads.</p>
+
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        © 2026 Sendly. Secure File Transfer. <a href="terms-privacy.html">Terms</a> & <a href="terms-privacy.html">Privacy</a>.
+    </footer>
+
+</body>
+</html>
