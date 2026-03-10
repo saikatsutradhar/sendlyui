@@ -519,29 +519,49 @@ function resetDownloadButton(btn, spinner, btnText) {
 }
 
 
-let selectedFiles = []
-let currentKey = null
+let selectedFiles = []; // Now it's a flexible array
+let currentKey = null;
 
-const dropArea = document.getElementById("drop-area")
-const fileInput = document.getElementById("fileInput")
-const fileList = document.getElementById("fileList")
+const dropArea = document.getElementById("drop-area");
+const fileInput = document.getElementById("fileInput");
+const fileList = document.getElementById("fileList");
 
-dropArea.addEventListener("dragover", (e) => { e.preventDefault(); dropArea.classList.add("dragover"); })
-dropArea.addEventListener("dragleave", () => { dropArea.classList.remove("dragover"); })
+dropArea.addEventListener("dragover", (e) => { e.preventDefault(); dropArea.classList.add("dragover"); });
+dropArea.addEventListener("dragleave", () => { dropArea.classList.remove("dragover"); });
 dropArea.addEventListener("drop", (e) => {
     e.preventDefault(); dropArea.classList.remove("dragover");
-    selectedFiles = e.dataTransfer.files; showFiles();
-})
-fileInput.addEventListener("change", (e) => { selectedFiles = e.target.files; showFiles(); })
+    // Convert the read-only file list into a flexible array
+    selectedFiles = Array.from(e.dataTransfer.files); 
+    showFiles();
+});
+fileInput.addEventListener("change", (e) => { 
+    selectedFiles = Array.from(e.target.files); 
+    showFiles(); 
+});
 
 function showFiles() {
-    fileList.innerHTML = ""
-    for (let file of selectedFiles) {
-        let div = document.createElement("div")
-        div.className = "file"
-        div.innerHTML = `<span style="font-weight:500; overflow:hidden; text-overflow:ellipsis; max-width:75%; white-space:nowrap;">${file.name}</span> <span style="color:#6B7280; font-size:12px;">${(file.size / 1024).toFixed(1)} KB</span>`
-        fileList.appendChild(div)
-    }
+    fileList.innerHTML = "";
+    selectedFiles.forEach((file, index) => {
+        let div = document.createElement("div");
+        div.className = "file";
+        // Aligned items to center so the X button sits nicely next to the file info
+        div.style.alignItems = "center"; 
+        div.innerHTML = `
+            <div style="display:flex; flex-direction:column; overflow:hidden; max-width:85%;">
+                <span style="font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${file.name}</span>
+                <span style="color:#6B7280; font-size:12px;">${(file.size / (1024 * 1024)).toFixed(2)} MB</span>
+            </div>
+            <div onclick="removeFile(${index})" style="color: var(--secondary); cursor: pointer; padding: 4px 8px; font-weight: bold; font-size: 16px; border-radius: 6px; transition: background 0.2s;">✕</div>
+        `;
+        fileList.appendChild(div);
+    });
+}
+
+// --- NEW FUNCTION TO DELETE A FILE ---
+function removeFile(index) {
+    selectedFiles.splice(index, 1); // Removes that specific file from the array
+    showFiles(); // Re-draws the list without the deleted file
+    document.getElementById("fileInput").value = ""; // Clears the hidden input just in case
 }
 
 function sendFiles() {
@@ -549,6 +569,21 @@ function sendFiles() {
         showToast("Please select files first to send.", "error"); 
         return; 
     }
+
+    // --- NEW: 500MB LIMIT CHECK ---
+    let totalSize = 0;
+    for(let f of selectedFiles) {
+        totalSize += f.size;
+    }
+    
+    // 500MB in bytes (500 * 1024 * 1024)
+    const MAX_SIZE = 524288000; 
+    
+    if (totalSize > MAX_SIZE) {
+        showToast("Total size exceeds the 500MB limit.", "error");
+        return; // Stops the upload immediately!
+    }
+    // ------------------------------
 
     let formData = new FormData();
     for(let f of selectedFiles){ formData.append("files", f) }
@@ -585,7 +620,6 @@ function sendFiles() {
             let data = JSON.parse(xhr.responseText);
             currentKey = data.key; 
             
-            // NEW: SAVE SENT ITEM TO HISTORY
             saveToHistory('Sent', currentKey);
             
             showWaiting(data.key, data.qr); 
@@ -611,7 +645,6 @@ function sendFiles() {
 
     xhr.send(formData);
 }
-
 function showWaiting(key, qr) {
     document.getElementById("mainTabs").style.display = "none";
     document.getElementById("tab-send").classList.remove("active");
