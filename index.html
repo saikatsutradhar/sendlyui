@@ -6,8 +6,10 @@
 <title>Sendly</title>
 
 <link rel="icon" type="image/png" href="favicon.png">
-
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
 <style>
     :root {
         --primary: #4F46E5;
@@ -115,14 +117,23 @@
     h3 { text-align: center; font-size: 18px; margin: 0 0 15px 0; font-weight: 600; }
 
     /* Upload Area */
-    #drop-area { border: 2px dashed #CBD5E1; padding: 25px 20px; text-align: center; border-radius: 16px; margin-bottom: 15px; background: rgba(248, 250, 252, 0.6); cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    #drop-area { border: 2px dashed #CBD5E1; padding: 10px 20px; text-align: center; border-radius: 16px; margin-bottom: 15px; background: rgba(248, 250, 252, 0.6); cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; gap: 8px; }
     #drop-area:hover, #drop-area.dragover { border-color: var(--primary); background: rgba(238, 242, 255, 0.8); }
     #drop-area svg { width: 36px; height: 36px; fill: var(--primary); opacity: 0.8; }
     #drop-area span { color: var(--primary); font-weight: 500; }
     .drop-hint { margin: 0; font-size: 12px; color: var(--text-muted); }
     #fileInput { display: none; }
     .file-list { max-height: 120px; overflow-y: auto; margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px; }
-    .file { display: flex; justify-content: space-between; padding: 10px 14px; background: white; border-radius: 10px; font-size: 13px; border: 1px solid #E2E8F0; }
+    .file { display: flex; justify-content: space-between; padding: 10px 14px; background: white; border-radius: 10px; font-size: 13px; border: 1px solid #E2E8F0; align-items: center;}
+
+    /* Custom Password Inputs */
+    .crypto-input { width: 100%; padding: 12px 15px; border-radius: 10px; border: 1px solid #CBD5E1; font-family: inherit; font-size: 14px; margin-bottom: 15px; outline: none; transition: border-color 0.2s;}
+    .crypto-input:focus { border-color: var(--primary); }
+    .crypto-input.center { text-align: center; margin-bottom: 20px;}
+
+    /* NEW: Encryption Toggle Button */
+    .encrypt-toggle { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; color: var(--primary); cursor: pointer; margin-bottom: 15px; font-weight: 600; transition: opacity 0.2s; }
+    .encrypt-toggle:hover { opacity: 0.8; }
 
     /* Progress Bar */
     .progress-container { display: none; margin-bottom: 15px; }
@@ -139,7 +150,7 @@
     .secure-badge { display: flex; justify-content: center; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); margin-top: 15px; font-weight: 500; }
 
     /* Receive Inputs */
-    .code-input-container { display: flex; gap: 8px; justify-content: center; margin-bottom: 20px; }
+    .code-input-container { display: flex; gap: 8px; justify-content: center; margin-bottom: 15px; }
     .digit-box { width: 48px; height: 56px; font-size: 24px; font-weight: 700; text-align: center; border-radius: 12px; border: 2px solid #CBD5E1; background: white; color: var(--text-main); outline: none; transition: all 0.2s; font-family: monospace; }
     .digit-box:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15); transform: translateY(-2px); }
     .digit-box.error { border-color: var(--secondary); animation: shake 0.4s; }
@@ -162,98 +173,36 @@
     .qr { text-align: center; margin-top: 20px; }
     .qr img { width: 140px; height: 140px; border-radius: 12px; padding: 10px; background: white; border: 1px solid #E2E8F0; }
 
-    /* Footer */
+    /* Footer & Modals... */
     .footer { position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px; text-align: center; color: rgba(255, 255, 255, 0.7); font-size: 13px; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 100; border-top: 1px solid rgba(255, 255, 255, 0.1); }
     .footer a { color: white; text-decoration: none; font-weight: 600; }
     .footer a:hover { text-decoration: underline; }
+    .footer-logo { height: 22px; width: auto; vertical-align: middle; margin: 0 4px; position: relative; top: -1px; }
 
-    /* Toast Notification */
     .toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background: rgba(31, 41, 55, 0.95); color: white; padding: 12px 24px; border-radius: 12px; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px); transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 1000; font-size: 14px; font-weight: 500; border: 1px solid rgba(255, 255, 255, 0.1); }
     .toast.show { bottom: 80px; }
     .toast-icon svg { width: 20px; height: 20px; }
     .toast.error .toast-icon { color: var(--secondary); }
     .toast.success .toast-icon { color: #10B981; }
 
-    /* --- HISTORY MODAL STYLES --- */
-    .modal-overlay {
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0, 0, 0, 0.4);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        z-index: 1000;
-        display: none; /* Hidden by default */
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-
-    .modal-overlay.show {
-        display: flex;
-        opacity: 1;
-    }
-
-    .modal-content {
-        background: rgba(255, 255, 255, 0.95);
-        border: 1px solid rgba(255, 255, 255, 0.5);
-        border-radius: 24px;
-        width: 90%;
-        max-width: 500px;
-        padding: 30px;
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
-        transform: translateY(20px);
-        transition: transform 0.3s ease;
-        max-height: 80vh;
-        display: flex;
-        flex-direction: column;
-    }
-
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 1000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
+    .modal-overlay.show { display: flex; opacity: 1; }
+    .modal-content { background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 24px; width: 90%; max-width: 500px; padding: 30px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2); transform: translateY(20px); transition: transform 0.3s ease; max-height: 80vh; display: flex; flex-direction: column; }
     .modal-overlay.show .modal-content { transform: translateY(0); }
-
     .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .modal-header h2 { margin: 0; font-size: 22px; color: var(--text-main); }
     .close-btn { background: none; border: none; font-size: 20px; color: var(--text-muted); cursor: pointer; padding: 0; width: auto; box-shadow: none; }
     .close-btn:hover { color: var(--secondary); background: none; box-shadow: none; }
-
-    .history-list {
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        margin-bottom: 20px;
-        padding-right: 5px;
-    }
-
-    .history-item {
-        background: white;
-        border: 1px solid #E2E8F0;
-        border-radius: 12px;
-        padding: 15px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
+    .history-list { overflow-y: auto; display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; padding-right: 5px; }
+    .history-item { background: white; border: 1px solid #E2E8F0; border-radius: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
     .history-info { display: flex; flex-direction: column; gap: 4px; }
     .history-title { font-weight: 600; font-size: 14px; color: var(--text-main); }
     .history-meta { font-size: 12px; color: var(--text-muted); }
-    
-    .history-badge {
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-    }
+    .history-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
     .badge-sent { background: rgba(79, 70, 229, 0.1); color: var(--primary); }
     .badge-received { background: rgba(16, 185, 129, 0.1); color: #10B981; }
-
-    .clear-history-btn {
-        background: none; border: 1px solid #E2E8F0; color: var(--text-muted); padding: 12px; border-radius: 12px; font-size: 14px; width: 100%; box-shadow: none;
-    }
+    .clear-history-btn { background: none; border: 1px solid #E2E8F0; color: var(--text-muted); padding: 12px; border-radius: 12px; font-size: 14px; width: 100%; box-shadow: none; }
     .clear-history-btn:hover { background: #F8FAFC; color: var(--secondary); box-shadow: none; }
-    
     .empty-state { text-align: center; color: var(--text-muted); padding: 30px 0; font-size: 14px; }
 
     @media (max-width: 850px) {
@@ -264,15 +213,6 @@
         .header-links { display: none; }
         .digit-box { width: 42px; height: 50px; font-size: 20px; }
     }
-
-    .footer-logo {
-        height: 22px; /* Keeps it perfectly sized for the footer */
-        width: auto;
-        vertical-align: middle; /* Aligns the image with the text */
-        margin: 0 4px; /* Adds a tiny space around the logo */
-        position: relative;
-        top: -1px; /* Micro-adjustment to make it sit exactly on the text line */
-    }
 </style>
 </head>
 <body>
@@ -282,7 +222,7 @@
 
     <header class="header">
         <a href="/" class="header-logo">
-            <img src="logo.png" alt="Sendly Logo" style="height: 40px; width: auto;">
+            <img src="logo.png" alt="Sendly Logo" style="height: 30px; width: auto;">
         </a>
         <div class="header-links">
             <a href="/how-it-works">How it works</a>
@@ -297,7 +237,7 @@
                 <p class="hero-subtitle">Sendly is the fastest way to send large files directly between devices. No accounts required, completely secure.</p>
                 <ul class="features-list">
                     <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Up to 500MB per transfer for free</li>
-                    <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> End-to-End Encrypted</li>
+                    <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Optional Client-Side Encryption</li>
                     <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Lightning fast peer-to-peer</li>
                 </ul>
             </div>
@@ -318,6 +258,12 @@
                     <input type="file" id="fileInput" multiple>
                     <div class="file-list" id="fileList"></div>
                     
+                    <div class="encrypt-toggle" onclick="togglePassword('encryptPass')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        <span>Add Password Protection (Optional)</span>
+                    </div>
+                    <input type="password" id="encryptPass" class="crypto-input" placeholder="Set a password to lock this file" style="display: none;">
+
                     <div id="uploadProgress" class="progress-container">
                         <div class="progress-text-row">
                             <span style="color: var(--text-muted);" id="progressStatusText">Uploading...</span>
@@ -347,6 +293,12 @@
                         <input type="text" maxlength="1" class="digit-box" pattern="[0-9]*" inputmode="numeric">
                     </div>
 
+                    <div class="encrypt-toggle" onclick="togglePassword('decryptPass')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        <span>Enter Decryption Password (if locked)</span>
+                    </div>
+                    <input type="password" id="decryptPass" class="crypto-input center" placeholder="Decryption Password" style="display: none;">
+
                     <button id="downloadBtn" onclick="processDownload()">
                         <span class="spinner" id="dlSpinner"></span>
                         <span id="dlText">Download Files</span>
@@ -374,8 +326,7 @@
                 <h2>Transfer History</h2>
                 <button class="close-btn" onclick="closeHistory()">✕</button>
             </div>
-            <div class="history-list" id="historyList">
-                </div>
+            <div class="history-list" id="historyList"></div>
             <button class="clear-history-btn" onclick="clearHistory()">Clear History</button>
         </div>
     </div>
@@ -394,9 +345,7 @@ function showToast(message, type = 'error') {
     const toast = document.getElementById('toast');
     const msgEl = document.getElementById('toastMessage');
     const iconEl = document.getElementById('toastIcon');
-
     msgEl.innerText = message;
-    
     if (type === 'error') {
         toast.className = 'toast error show';
         iconEl.innerHTML = '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
@@ -404,7 +353,6 @@ function showToast(message, type = 'error') {
         toast.className = 'toast success show';
         iconEl.innerHTML = '<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>';
     }
-
     setTimeout(() => { toast.classList.remove('show'); }, 3000);
 }
 
@@ -412,7 +360,6 @@ function switchTab(tabName) {
     document.getElementById('tab-send').classList.remove('active');
     document.getElementById('tab-receive').classList.remove('active');
     document.getElementById('waitingScreen').style.display = 'none';
-    
     let buttons = document.querySelectorAll('.tab-btn');
     buttons.forEach(btn => btn.classList.remove('active'));
     
@@ -428,6 +375,18 @@ function switchTab(tabName) {
     }
 }
 
+// --- NEW FUNCTION: TOGGLES PASSWORD FIELDS ---
+function togglePassword(inputId) {
+    const passField = document.getElementById(inputId);
+    if (passField.style.display === 'none') {
+        passField.style.display = 'block';
+        passField.focus();
+    } else {
+        passField.style.display = 'none';
+        passField.value = ''; // Clears input so it doesn't accidentally encrypt
+    }
+}
+
 const digitBoxes = document.querySelectorAll('.digit-box');
 digitBoxes.forEach((box, index) => {
     box.addEventListener('input', (e) => {
@@ -435,11 +394,9 @@ digitBoxes.forEach((box, index) => {
         if (box.value !== '' && index < digitBoxes.length - 1) { digitBoxes[index + 1].focus(); }
         checkAutoSubmit();
     });
-
     box.addEventListener('keydown', (e) => {
         if (e.key === 'Backspace' && box.value === '' && index > 0) { digitBoxes[index - 1].focus(); }
     });
-
     box.addEventListener('paste', (e) => {
         e.preventDefault();
         const pastedData = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '').slice(0, 6);
@@ -463,18 +420,17 @@ function checkAutoSubmit() {
     if (getFullCode().length === 6) processDownload();
 }
 
-function processDownload() {
+// --- UPDATED: DECRYPTION LOGIC ---
+async function processDownload() {
     const code = getFullCode();
     const btn = document.getElementById('downloadBtn');
     const spinner = document.getElementById('dlSpinner');
     const btnText = document.getElementById('dlText');
+    const decryptPass = document.getElementById('decryptPass').value;
 
     if (code.length !== 6) {
         digitBoxes.forEach(box => {
-            if(box.value === '') {
-                box.classList.add('error');
-                setTimeout(() => box.classList.remove('error'), 400);
-            }
+            if(box.value === '') { box.classList.add('error'); setTimeout(() => box.classList.remove('error'), 400); }
         });
         showToast("Please enter the complete 6-digit key.", "error");
         return;
@@ -484,32 +440,85 @@ function processDownload() {
     spinner.style.display = 'block';
     btnText.innerText = 'Connecting...';
 
-    fetch("https://sendlyapi.onrender.com/download/" + code, { method: "HEAD" })
-    .then(res => {
+    try {
+        // 1. ASK THE SERVER ABOUT THE FILE FIRST
+        let statusRes = await fetch("https://sendlyapi.onrender.com/status/" + code);
+        let statusData = await statusRes.json();
+
+        // 2. THE FIX: If the file is encrypted (.enc) but they didn't type a password, BLOCK IT!
+        if (statusData.filename && statusData.filename.endsWith('.enc') && !decryptPass) {
+            showToast("This file is locked! Please enter the decryption password.", "error");
+            
+            // Automatically pop open the password box for them
+            document.getElementById('decryptPass').style.display = 'block';
+            document.getElementById('decryptPass').focus();
+            
+            resetDownloadButton(btn, spinner, btnText);
+            return; 
+        }
+
+        // 3. Verify key exists
+        let res = await fetch("https://sendlyapi.onrender.com/download/" + code, { method: "HEAD" });
+        
         if (!res.ok) {
             showToast("Invalid or expired key. Please try again.", "error");
             digitBoxes.forEach(box => box.classList.add('error'));
-            setTimeout(() => {
-                digitBoxes.forEach(box => { box.classList.remove('error'); box.value = ''; });
-                digitBoxes[0].focus();
-            }, 500);
+            setTimeout(() => { digitBoxes.forEach(box => { box.classList.remove('error'); box.value = ''; }); digitBoxes[0].focus(); }, 500);
             resetDownloadButton(btn, spinner, btnText);
             return;
         }
 
-        window.location.href = "https://sendlyapi.onrender.com/download/" + code;
-        
-        // NEW: SAVE RECEIVED ITEM TO HISTORY
-        saveToHistory('Received', code);
-        
-        showToast("Download starting!", "success");
-        resetDownloadButton(btn, spinner, btnText);
-        setTimeout(() => { digitBoxes.forEach(box => box.value = ''); digitBoxes[0].focus(); }, 1000);
-    })
-    .catch(err => {
+        if (decryptPass) {
+            btnText.innerText = 'Decrypting file...';
+            let fileResponse = await fetch("https://sendlyapi.onrender.com/download/" + code);
+            let blob = await fileResponse.blob();
+            
+            let reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    let decryptedString = CryptoJS.AES.decrypt(e.target.result, decryptPass).toString(CryptoJS.enc.Utf8);
+                    if(!decryptedString) throw new Error("Incorrect Password");
+                    
+                    // Convert back to a safe file format to prevent browser crashes
+                    let decBlob = await (await fetch(decryptedString)).blob();
+                    let objectUrl = URL.createObjectURL(decBlob);
+                    
+                    let a = document.createElement("a");
+                    a.href = objectUrl;
+                    
+                    // Clean up the file name so it looks nice for the user
+                    let cleanName = statusData.filename ? statusData.filename.replace('.enc', '') : "secure_decrypted_file";
+                    if (cleanName.includes('_')) cleanName = cleanName.substring(cleanName.indexOf('_') + 1);
+                    
+                    a.download = cleanName;
+                    a.click();
+                    
+                    URL.revokeObjectURL(objectUrl); // Clean up memory
+
+                    saveToHistory('Received', code);
+                    showToast("File Decrypted & Downloaded!", "success");
+                    finalizeUI();
+                } catch (err) {
+                    showToast("Incorrect decryption password!", "error");
+                    resetDownloadButton(btn, spinner, btnText);
+                }
+            };
+            reader.readAsText(blob);
+        } else {
+            window.location.href = "https://sendlyapi.onrender.com/download/" + code;
+            saveToHistory('Received', code);
+            showToast("Download starting!", "success");
+            finalizeUI();
+        }
+    } catch(err) {
         showToast("Cannot connect to server.", "error");
         resetDownloadButton(btn, spinner, btnText);
-    });
+    }
+
+    function finalizeUI() {
+        resetDownloadButton(btn, spinner, btnText);
+        setTimeout(() => { digitBoxes.forEach(box => box.value = ''); digitBoxes[0].focus(); }, 1000);
+    }
 }
 
 function resetDownloadButton(btn, spinner, btnText) {
@@ -519,7 +528,7 @@ function resetDownloadButton(btn, spinner, btnText) {
 }
 
 
-let selectedFiles = []; // Now it's a flexible array
+let selectedFiles = [];
 let currentKey = null;
 
 const dropArea = document.getElementById("drop-area");
@@ -530,7 +539,6 @@ dropArea.addEventListener("dragover", (e) => { e.preventDefault(); dropArea.clas
 dropArea.addEventListener("dragleave", () => { dropArea.classList.remove("dragover"); });
 dropArea.addEventListener("drop", (e) => {
     e.preventDefault(); dropArea.classList.remove("dragover");
-    // Convert the read-only file list into a flexible array
     selectedFiles = Array.from(e.dataTransfer.files); 
     showFiles();
 });
@@ -544,7 +552,6 @@ function showFiles() {
     selectedFiles.forEach((file, index) => {
         let div = document.createElement("div");
         div.className = "file";
-        // Aligned items to center so the X button sits nicely next to the file info
         div.style.alignItems = "center"; 
         div.innerHTML = `
             <div style="display:flex; flex-direction:column; overflow:hidden; max-width:85%;">
@@ -557,36 +564,37 @@ function showFiles() {
     });
 }
 
-// --- NEW FUNCTION TO DELETE A FILE ---
 function removeFile(index) {
-    selectedFiles.splice(index, 1); // Removes that specific file from the array
-    showFiles(); // Re-draws the list without the deleted file
-    document.getElementById("fileInput").value = ""; // Clears the hidden input just in case
+    selectedFiles.splice(index, 1);
+    showFiles(); 
+    document.getElementById("fileInput").value = ""; 
 }
 
+// --- UPDATED: ENCRYPTION LOGIC ---
 function sendFiles() {
     if (selectedFiles.length === 0) { 
         showToast("Please select files first to send.", "error"); 
         return; 
     }
 
-    // --- NEW: 500MB LIMIT CHECK ---
     let totalSize = 0;
-    for(let f of selectedFiles) {
-        totalSize += f.size;
-    }
+    for(let f of selectedFiles) totalSize += f.size;
     
-    // 500MB in bytes (500 * 1024 * 1024)
-    const MAX_SIZE = 524288000; 
-    
-    if (totalSize > MAX_SIZE) {
-        showToast("Total size exceeds the 500MB limit.", "error");
-        return; // Stops the upload immediately!
-    }
-    // ------------------------------
+    let encryptPass = document.getElementById("encryptPass").value;
 
-    let formData = new FormData();
-    for(let f of selectedFiles){ formData.append("files", f) }
+    // Standard limit is 500MB. If encrypting, limit to 50MB to prevent browser crashes.
+    if (encryptPass && totalSize > 52428800) {
+        showToast("Encrypted files must be under 50MB.", "error");
+        return;
+    } else if (!encryptPass && totalSize > 524288000) {
+        showToast("Total size exceeds the 500MB limit.", "error");
+        return; 
+    }
+
+    if(encryptPass && selectedFiles.length > 1) {
+        showToast("You can only encrypt one file at a time.", "error");
+        return;
+    }
 
     const sendBtn = document.getElementById("sendBtn");
     const progressContainer = document.getElementById("uploadProgress");
@@ -594,57 +602,82 @@ function sendFiles() {
     const progressPercent = document.getElementById("progressPercent");
     const progressStatusText = document.getElementById("progressStatusText");
 
-    sendBtn.style.display = "none";
-    progressContainer.style.display = "block";
-    progressFill.style.width = "0%";
-    progressPercent.innerText = "0%";
-    progressStatusText.innerText = "Uploading...";
+    function executeXHR(formData) {
+        sendBtn.style.display = "none";
+        progressContainer.style.display = "block";
+        progressFill.style.width = "0%";
+        progressPercent.innerText = "0%";
+        progressStatusText.innerText = "Uploading...";
 
-    let xhr = new XMLHttpRequest();
-    xhr.open("POST", "https://sendlyapi.onrender.com/upload", true);
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "https://sendlyapi.onrender.com/upload", true);
 
-    xhr.upload.onprogress = function(event) {
-        if (event.lengthComputable) {
-            let percentComplete = Math.round((event.loaded / event.total) * 100);
-            progressFill.style.width = percentComplete + "%";
-            progressPercent.innerText = percentComplete + "%";
-
-            if (percentComplete === 100) {
-                progressStatusText.innerText = "Processing on server...";
+        xhr.upload.onprogress = function(event) {
+            if (event.lengthComputable) {
+                let percentComplete = Math.round((event.loaded / event.total) * 100);
+                progressFill.style.width = percentComplete + "%";
+                progressPercent.innerText = percentComplete + "%";
+                if (percentComplete === 100) progressStatusText.innerText = "Processing on server...";
             }
-        }
-    };
+        };
 
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            let data = JSON.parse(xhr.responseText);
-            currentKey = data.key; 
-            
-            saveToHistory('Sent', currentKey);
-            
-            showWaiting(data.key, data.qr); 
-            checkDownloadStatus();
-            showToast("Files ready to send!", "success");
-            
-            setTimeout(() => {
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                let data = JSON.parse(xhr.responseText);
+                currentKey = data.key; 
+                saveToHistory('Sent', currentKey);
+                showWaiting(data.key, data.qr); 
+                checkDownloadStatus();
+                showToast("Files ready to send!", "success");
+                
+                setTimeout(() => {
+                    sendBtn.style.display = "block";
+                    progressContainer.style.display = "none";
+                }, 500);
+            } else {
+                showToast("Server error. Please try again.", "error");
                 sendBtn.style.display = "block";
                 progressContainer.style.display = "none";
-            }, 500);
-        } else {
-            showToast("Server error. Please try again.", "error");
+            }
+        };
+
+        xhr.onerror = function() {
+            showToast("Network error. Make sure the backend is running.", "error");
             sendBtn.style.display = "block";
             progressContainer.style.display = "none";
-        }
-    };
+        };
 
-    xhr.onerror = function() {
-        showToast("Network error. Make sure the backend is running.", "error");
-        sendBtn.style.display = "block";
-        progressContainer.style.display = "none";
-    };
+        xhr.send(formData);
+    }
 
-    xhr.send(formData);
+    // E2EE Flow
+    if (encryptPass) {
+        progressContainer.style.display = "block";
+        sendBtn.style.display = "none";
+        progressStatusText.innerText = "Encrypting file in browser...";
+        
+        let file = selectedFiles[0];
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            // Encrypt the file data into a string
+            let encryptedString = CryptoJS.AES.encrypt(e.target.result, encryptPass).toString();
+            // Convert string to blob for uploading
+            let blob = new Blob([encryptedString], { type: "text/plain" });
+            
+            let formData = new FormData();
+            formData.append("files", blob, file.name + ".enc");
+            executeXHR(formData);
+        };
+        reader.readAsDataURL(file); // Reads file into memory
+    } 
+    // Standard Flow
+    else {
+        let formData = new FormData();
+        for(let f of selectedFiles) formData.append("files", f);
+        executeXHR(formData);
+    }
 }
+
 function showWaiting(key, qr) {
     document.getElementById("mainTabs").style.display = "none";
     document.getElementById("tab-send").classList.remove("active");
@@ -687,11 +720,11 @@ function checkDownloadStatus() {
                 document.getElementById("waitingScreen").innerHTML = `
                     <div style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 20px 0;">
                         <div style="background: #22C55E; width: 70px; height: 70px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin-bottom: 25px; box-shadow: 0 15px 30px rgba(34, 197, 94, 0.4);">
-                            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <svg width=\"36\" height=\"36\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"white\" stroke-width=\"4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"></polyline></svg>
                         </div>
-                        <h2 style="margin: 0 0 10px 0; font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #10B981, #059669); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Transfer Complete</h2>
-                        <p style="color:#6B7280; font-size:15px; margin: 0 0 30px 0;">The receiver downloaded the file successfully.</p>
-                        <button onclick="location.reload()" style="background: white; color: #1F2937; font-size: 16px; font-weight: 700; border: none; padding: 16px 40px; border-radius: 14px; cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,0.06); font-family: inherit; transition: all 0.2s;">Send More Files</button>
+                        <h2 style=\"margin: 0 0 10px 0; font-size: 28px; font-weight: 800; background: linear-gradient(135deg, #10B981, #059669); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;\">Transfer Complete</h2>
+                        <p style=\"color:#6B7280; font-size:15px; margin: 0 0 30px 0;\">The receiver downloaded the file successfully.</p>
+                        <button onclick=\"location.reload()\" style=\"background: white; color: #1F2937; font-size: 16px; font-weight: 700; border: none; padding: 16px 40px; border-radius: 14px; cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,0.06); font-family: inherit; transition: all 0.2s;\">Send More Files</button>
                     </div>
                 `
                 clearInterval(statusInterval)
@@ -700,13 +733,13 @@ function checkDownloadStatus() {
     }, 2000)
 }
 
-// --- NEW HISTORY LOGIC ---
+// --- HISTORY LOGIC ---
 function saveToHistory(action, keyName) {
     let history = JSON.parse(localStorage.getItem('sendly_history')) || [];
     let date = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
     
-    history.unshift({ action: action, key: keyName, date: date }); // Add to beginning
-    if(history.length > 20) history.pop(); // Keep only last 20 records
+    history.unshift({ action: action, key: keyName, date: date });
+    if(history.length > 20) history.pop(); 
     
     localStorage.setItem('sendly_history', JSON.stringify(history));
 }
@@ -747,7 +780,7 @@ function closeHistory() {
 
 function clearHistory() {
     localStorage.removeItem('sendly_history');
-    showHistory(); // Refresh the modal
+    showHistory(); 
     showToast("History cleared", "success");
 }
 </script>
