@@ -88,7 +88,7 @@
     /* --- UPDATED TAB NAVIGATION TO MATCH SCREENSHOT --- */
     .tabs { 
         display: flex; 
-        background: rgba(203, 213, 225, 0.5); /* Soft grayish background */
+        background: rgba(203, 213, 225, 0.5); 
         border-radius: 14px; 
         padding: 6px; 
         margin-bottom: 25px; 
@@ -107,7 +107,7 @@
     .tab-btn.active { 
         background: white; 
         color: var(--primary); 
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08); /* Soft shadow on the active pill */
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08); 
     }
 
     .tab-content { display: none; animation: fadeIn 0.3s ease-out; }
@@ -123,6 +123,12 @@
     #fileInput { display: none; }
     .file-list { max-height: 120px; overflow-y: auto; margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px; }
     .file { display: flex; justify-content: space-between; padding: 10px 14px; background: white; border-radius: 10px; font-size: 13px; border: 1px solid #E2E8F0; }
+
+    /* Progress Bar */
+    .progress-container { display: none; margin-bottom: 15px; }
+    .progress-text-row { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+    .progress-track { width: 100%; height: 10px; background: rgba(203, 213, 225, 0.6); border-radius: 10px; overflow: hidden; }
+    .progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--secondary), var(--primary)); border-radius: 10px; transition: width 0.2s ease; }
 
     /* Buttons */
     button { font-family: inherit; font-weight: 600; transition: all 0.3s ease; cursor: pointer; border: none; display: flex; justify-content: center; align-items: center; gap: 8px; }
@@ -163,7 +169,7 @@
 
     /* Toast Notification */
     .toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background: rgba(31, 41, 55, 0.95); color: white; padding: 12px 24px; border-radius: 12px; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px); transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 1000; font-size: 14px; font-weight: 500; border: 1px solid rgba(255, 255, 255, 0.1); }
-    .toast.show { bottom: 80px; /* Shifted up slightly to clear the fixed footer */ }
+    .toast.show { bottom: 80px; }
     .toast-icon svg { width: 20px; height: 20px; }
     .toast.error .toast-icon { color: var(--secondary); }
     .toast.success .toast-icon { color: #10B981; }
@@ -184,14 +190,12 @@
     </video>
 
     <header class="header">
-        <a href="#" class="header-logo">
+        <a href="/" class="header-logo">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
             Sendly
         </a>
         <div class="header-links">
-            <a href="how-it-works.html">How it works</a>
-            <!-- <a href="#">Pricing</a>
-            <a href="#">Login</a> -->
+            <a href="/how-it-works">How it works</a>
         </div>
     </header>
 
@@ -219,11 +223,22 @@
                     <label id="drop-area" for="fileInput">
                         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
                         <p style="margin: 0; font-size: 14px;">Drag & Drop Files or <span>Browse</span></p>
-                        <p class="drop-hint">Max file size: 2GB</p>
+                        <p class="drop-hint">Max file size: 500MB</p>
                     </label>
                     <input type="file" id="fileInput" multiple>
                     <div class="file-list" id="fileList"></div>
-                    <button class="primary-btn" onclick="sendFiles()">Send Files</button>
+                    
+                    <div id="uploadProgress" class="progress-container">
+                        <div class="progress-text-row">
+                            <span style="color: var(--text-muted);" id="progressStatusText">Uploading...</span>
+                            <span style="color: var(--primary);" id="progressPercent">0%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div id="progressFill" class="progress-fill"></div>
+                        </div>
+                    </div>
+
+                    <button id="sendBtn" class="primary-btn" onclick="sendFiles()">Send Files</button>
                     
                     <div class="secure-badge">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
@@ -263,7 +278,7 @@
     </div>
 
     <footer class="footer">
-        © 2026 Sendly. Secure File Transfer. <a href="terms-privacy.html">Terms</a> & <a href="terms-privacy.html">Privacy</a>.
+        © 2026 Sendly. Secure File Transfer. <a href="/terms-privacy">Terms</a> & <a href="/terms-privacy">Privacy</a>.
     </footer>
 
     <div id="toast" class="toast">
@@ -422,26 +437,77 @@ function showFiles() {
     }
 }
 
+// --- NEW XHR UPLOAD WITH PROGRESS TRACKING ---
 function sendFiles() {
     if (selectedFiles.length === 0) { 
         showToast("Please select files first to send.", "error"); 
         return; 
     }
 
-    let formData = new FormData()
+    let formData = new FormData();
     for(let f of selectedFiles){ formData.append("files", f) }
 
-    fetch("https://sendlyapi.onrender.com/upload", { method: "POST", body: formData })
-    .then(res => res.json())
-    .then(data => {
-        currentKey = data.key; 
-        showWaiting(data.key, data.qr); 
-        checkDownloadStatus();
-        showToast("Files ready to send!", "success");
-    }).catch(err => { 
-        console.error("Error:", err); 
-        showToast("Server error. Make sure the backend is running.", "error");
-    })
+    // UI Elements for Progress
+    const sendBtn = document.getElementById("sendBtn");
+    const progressContainer = document.getElementById("uploadProgress");
+    const progressFill = document.getElementById("progressFill");
+    const progressPercent = document.getElementById("progressPercent");
+    const progressStatusText = document.getElementById("progressStatusText");
+
+    // Show Progress Bar, Hide Button
+    sendBtn.style.display = "none";
+    progressContainer.style.display = "block";
+    progressFill.style.width = "0%";
+    progressPercent.innerText = "0%";
+    progressStatusText.innerText = "Uploading...";
+
+    // Setup XMLHttpRequest instead of fetch
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", "https://sendlyapi.onrender.com/upload", true);
+
+    // Track Upload Progress
+    xhr.upload.onprogress = function(event) {
+        if (event.lengthComputable) {
+            let percentComplete = Math.round((event.loaded / event.total) * 100);
+            progressFill.style.width = percentComplete + "%";
+            progressPercent.innerText = percentComplete + "%";
+
+            if (percentComplete === 100) {
+                progressStatusText.innerText = "Processing on server...";
+            }
+        }
+    };
+
+    // Handle Success
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            let data = JSON.parse(xhr.responseText);
+            currentKey = data.key; 
+            showWaiting(data.key, data.qr); 
+            checkDownloadStatus();
+            showToast("Files ready to send!", "success");
+            
+            // Reset Progress UI for next time
+            setTimeout(() => {
+                sendBtn.style.display = "block";
+                progressContainer.style.display = "none";
+            }, 500);
+        } else {
+            showToast("Server error. Please try again.", "error");
+            sendBtn.style.display = "block";
+            progressContainer.style.display = "none";
+        }
+    };
+
+    // Handle Error
+    xhr.onerror = function() {
+        showToast("Network error. Make sure the backend is running.", "error");
+        sendBtn.style.display = "block";
+        progressContainer.style.display = "none";
+    };
+
+    // Send the files
+    xhr.send(formData);
 }
 
 function showWaiting(key, qr) {
@@ -476,7 +542,6 @@ function copyKey() {
     setTimeout(() => { btn.innerHTML = originalText }, 2000)
 }
 
-// --- UPDATED SUCCESS SCREEN TO MATCH SCREENSHOT ---
 function checkDownloadStatus() {
     let statusInterval = setInterval(async function() {
         if (!currentKey) return
