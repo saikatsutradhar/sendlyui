@@ -22,9 +22,11 @@
 
     * { box-sizing: border-box; }
 
+    /* Unified Background Fix */
+    html, body { background-color: #0b1120; margin: 0; padding: 0; }
+
     body {
         font-family: 'Poppins', sans-serif;
-        margin: 0;
         display: flex;
         flex-direction: column;
         min-height: 100vh;
@@ -36,12 +38,16 @@
         position: fixed;
         top: 0;
         left: 0;
-        width: 100vw;
-        height: 100vh;
+        width: 100%;
+        height: 100%;
         object-fit: cover;
-        z-index: -1;
+        z-index: 0;
         filter: brightness(0.4);
+        pointer-events: none;
     }
+
+    /* Prevent accidental blue highlighting on logos */
+    .header-logo, .footer-logo { user-select: none; -webkit-user-select: none; }
 
     /* --- HEADER --- */
     .header {
@@ -55,14 +61,16 @@
         -webkit-backdrop-filter: blur(12px);
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         z-index: 100;
+        position: relative; /* Keeps header on top */
     }
 
     .header-logo { font-size: 24px; font-weight: 800; color: white; text-decoration: none; display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px; }
     .header-links a { color: rgba(255, 255, 255, 0.85); text-decoration: none; font-size: 15px; font-weight: 500; margin-left: 30px; transition: color 0.3s; }
-    .header-links a:hover { color: white; }
+    .header-links a:hover, .header-links a.active { color: white; }
 
     /* --- LANDING PAGE LAYOUT --- */
-    .main-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 5% 100px; }
+    /* z-index: 1 places content perfectly between the video and the header/footer */
+    .main-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 5% 100px; position: relative; z-index: 1; }
     .landing-grid { display: grid; grid-template-columns: 1fr 420px; gap: 60px; width: 100%; max-width: 1100px; align-items: center; }
 
     .hero-content { color: white; }
@@ -226,6 +234,8 @@
         </a>
         <div class="header-links">
             <a href="/how-it-works">How it works</a>
+            <a href="/screen">Screen Share</a>
+            <!-- <a href="/blog">Blog</a> -->
         </div>
     </header>
 
@@ -699,7 +709,6 @@ function startTimer() {
     }, 1000)
 }
 
-// --- UPDATED: COPY THE NEW LINK ---
 function copyLink() {
     let link = document.getElementById("shareLink").value;
     navigator.clipboard.writeText(link);
@@ -782,20 +791,18 @@ function clearHistory() {
     showToast("History cleared", "success");
 }
 
-// --- NEW: AUTO-READ SESSION ID FROM URL ---
 document.addEventListener("DOMContentLoaded", () => {
     const urlParams = new URLSearchParams(window.location.search);
     const keyParam = urlParams.get('key');
     
-    // If the URL has a 6-digit key, auto-fill it!
     if (keyParam && keyParam.length === 6 && /^\d+$/.test(keyParam)) {
-        switchTab('receive'); // Switch to the receive tab
+        switchTab('receive'); 
         for(let i = 0; i < 6; i++) {
             if(digitBoxes[i]) {
-                digitBoxes[i].value = keyParam[i]; // Type in the numbers
+                digitBoxes[i].value = keyParam[i]; 
             }
         }
-        checkAutoSubmit(); // Trigger the download
+        checkAutoSubmit(); 
     }
 });
 </script>

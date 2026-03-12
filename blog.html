@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blog - Sendly</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --primary: #4F46E5;
+        --secondary: #F43F5E;
+        --text-main: #1F2937;
+        --text-muted: #6B7280;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        color: var(--text-main);
+    }
+    
+    /* --- RESTORED VIDEO BACKGROUND --- */
+    .bg-video {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+        z-index: -1;
+        filter: brightness(0.4);
+    }
+
+    /* --- HEADER --- */
+    .header { 
+        width: 100%; 
+        padding: 5px 5%; 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        background: rgba(255, 255, 255, 0.05); 
+        backdrop-filter: blur(12px); 
+        -webkit-backdrop-filter: blur(12px); 
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+        z-index: 100; 
+        position: fixed; 
+        top: 0; 
+    }
+    
+    .header-logo { font-size: 24px; font-weight: 800; color: white; text-decoration: none; display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px;}
+    .header-links a { color: rgba(255, 255, 255, 0.85); text-decoration: none; font-size: 15px; font-weight: 500; margin-left: 30px; transition: color 0.3s; }
+    .header-links a:hover, .header-links a.active { color: white; }
+
+    /* --- PAGE LAYOUT --- */
+    .page-wrapper { flex: 1; padding: 80px 5% 100px; max-width: 1400px; margin: 0 auto; width: 100%; }
+
+    /* --- GRADIENT TITLE --- */
+    .page-title {
+        font-size: 48px; 
+        font-weight: 800; 
+        text-align: center;
+        letter-spacing: -1px;
+        background: linear-gradient(to right, #a855f7, var(--secondary), var(--primary), #a855f7);
+        background-size: 200% auto; 
+        color: #fff; 
+        background-clip: text; 
+        -webkit-background-clip: text; 
+        -webkit-text-fill-color: transparent; 
+        animation: gradientShine 3s linear infinite;
+        margin: 0; 
+    }
+    
+    @keyframes gradientShine { to { background-position: 200% center; } }
+    
+    .page-subtitle { 
+        text-align: center; 
+        font-size: 16px; 
+        color: rgba(255,255,255,0.7); 
+        margin: 5px auto 50px auto; 
+        max-width: 600px;
+        line-height: 1.6;
+    }
+
+    /* --- DRIBBBLE STYLE GALLERY GRID --- */
+    .blog-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center; /* Perfectly centers 1, 2, or 3 cards without stretching them */
+        gap: 40px 30px;
+    }
+
+    /* Transparent card container, focuses purely on the image and text */
+    .blog-card {
+        width: 340px; /* Fixed width exactly like Dribbble gallery shots */
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.2s ease;
+        cursor: pointer;
+    }
+
+    /* Hover Effect - Subtle Image Zoom */
+    .blog-card:hover .blog-image { 
+        transform: scale(1.05); 
+    }
+    
+    .blog-card:hover .blog-title {
+        color: #e879f9;
+    }
+
+    .blog-image-wrapper {
+        width: 100%;
+        height: 255px; /* 4:3 Ratio */
+        border-radius: 12px;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        margin-bottom: 12px;
+    }
+
+    .blog-image { 
+        width: 100%; 
+        height: 100%; 
+        object-fit: cover; 
+        transition: transform 0.4s ease;
+        background: #111827; 
+    }
+    
+    .blog-content-wrapper { 
+        display: flex; 
+        flex-direction: column; 
+        padding: 0 4px;
+    }
+    
+    .blog-title { 
+        font-size: 15px; 
+        font-weight: 600; 
+        margin: 0 0 12px 0; 
+        color: #ffffff; 
+        line-height: 1.4;
+        transition: color 0.2s ease;
+        /* Limits title to 2 lines neatly */
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* Dribbble-style Author & Stats row */
+    .blog-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+    }
+
+    .blog-author {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .author-avatar {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .author-avatar img {
+        width: 16px;
+        height: auto;
+    }
+
+    .author-name {
+        font-size: 13px;
+        font-weight: 500;
+        color: rgba(255,255,255,0.85);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    /* Pro Badge */
+    .badge {
+        background: rgba(168, 85, 247, 0.2);
+        color: #e879f9;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 5px;
+        border-radius: 4px;
+        letter-spacing: 0.5px;
+    }
+
+    .blog-stats {
+        font-size: 12px;
+        color: rgba(255,255,255,0.5);
+        font-weight: 500;
+    }
+
+    .loader { text-align: center; color: white; font-weight: 600; font-size: 18px; margin-top: 50px; }
+
+    /* --- FOOTER --- */
+    .footer { 
+        position: fixed; 
+        bottom: 0; 
+        left: 0; 
+        width: 100%; 
+        padding: 5px; 
+        text-align: center; 
+        color: rgba(255, 255, 255, 0.7); 
+        font-size: 13px; 
+        background: rgba(0, 0, 0, 0.3); 
+        backdrop-filter: blur(12px); 
+        -webkit-backdrop-filter: blur(12px); 
+        z-index: 100; 
+        border-top: 1px solid rgba(255, 255, 255, 0.1); 
+    }
+    .footer a { color: white; text-decoration: none; font-weight: 600; }
+    .footer a:hover { text-decoration: underline; }
+    .footer-logo { height: 22px; width: auto; vertical-align: middle; margin: 0 4px; position: relative; top: -1px; }
+
+    /* Responsive */
+    @media (max-width: 850px) {
+        .page-title { font-size: 36px; }
+        .header-links { display: none; }
+    }
+    @media (max-width: 400px) {
+        .blog-card { width: 100%; } /* Fills screen on tiny phones */
+    }
+</style>
+</head>
+<body>
+    <video class="bg-video" autoplay loop muted playsinline>
+        <source src="background.mp4" type="video/mp4">
+    </video>
+
+    <header class="header">
+        <a href="/" class="header-logo">
+            <img src="logo.png" alt="Sendly Logo" style="height: 40px; width: auto;">
+        </a>
+        <div class="header-links">
+            <a href="/how-it-works">How it works</a>
+            <a href="/blog" class="active">Blog</a>
+        </div>
+    </header>
+
+    <div class="page-wrapper">
+        <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 5px; gap: 15px;">
+            <img src="logo.png" alt="Sendly Icon" style="height: 55px; width: auto; position: relative; top: -3px;">
+            <h1 class="page-title">Blog</h1>
+        </div>
+        
+        <p class="page-subtitle">The latest news in cybersecurity, data privacy, and safe file sharing, curated daily by AI.</p>
+
+        <div id="loader" class="loader">Fetching latest articles...</div>
+        
+        <!-- Gallery Grid -->
+        <div class="blog-grid" id="blogGrid">
+            <!-- Blogs will be injected here by Javascript -->
+        </div>
+    </div>
+
+    <footer class="footer">
+        © 2026 <img src="logo.png" alt="Sendly" class="footer-logo"> Secure File Transfer. <a href="/terms-privacy">Terms</a> & <a href="/terms-privacy">Privacy</a>.
+    </footer>
+
+    <script>
+        fetch("https://sendlyapi.onrender.com/api/blogs")
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("loader").style.display = 'none';
+                const grid = document.getElementById("blogGrid");
+                
+                if(data.length === 0) {
+                    grid.innerHTML = "<p style='color:rgba(255,255,255,0.7); text-align:center; width:100%;'>The AI is currently writing our first post. Check back soon!</p>";
+                    return;
+                }
+
+                data.forEach(blog => {
+                    // Stripped out the HTML content preview to match Dribbble's clean, image-first aesthetic
+                    grid.innerHTML += `
+                        <a href="${blog.source_url}" target="_blank" class="blog-card">
+                            <div class="blog-image-wrapper">
+                                <img src="${blog.image_url}" alt="Article Image" class="blog-image" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80'">
+                            </div>
+                            <div class="blog-content-wrapper">
+                                <h2 class="blog-title">${blog.title}</h2>
+                                <div class="blog-meta">
+                                    <div class="blog-author">
+                                        <div class="author-avatar"><img src="logo.png" alt="Sendly"></div>
+                                        <span class="author-name">Sendly AI <span class="badge">PRO+</span></span>
+                                    </div>
+                                    <div class="blog-stats">
+                                        <span class="date">${blog.date}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    `;
+                });
+            })
+            .catch(err => {
+                document.getElementById("loader").innerText = "Failed to load blog posts. Server might be spinning up.";
+            });
+    </script>
+</body>
+</html>

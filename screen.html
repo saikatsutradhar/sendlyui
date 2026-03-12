@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Screen Share - Sendly</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Import Socket.io for Real-Time Connection -->
+<script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+<style>
+    :root {
+        --primary: #4F46E5;
+        --secondary: #F43F5E;
+        --text-main: #1F2937;
+        --text-muted: #6B7280;
+    }
+
+    * { box-sizing: border-box; }
+
+    /* Set a deep dark background fallback so the bright white screen never shows */
+    html, body {
+        background-color: #0b1120; 
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        color: var(--text-main);
+    }
+    
+    /* Perfected Fullscreen Video Background */
+    .bg-video {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+        filter: brightness(0.4);
+        pointer-events: none; /* Prevents video from catching clicks or interfering with scrolls */
+    }
+
+    /* --- HEADER --- */
+    .header { 
+        width: 100%; 
+        padding: 5px 5%; 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        background: rgba(255, 255, 255, 0.05); 
+        backdrop-filter: blur(12px); 
+        -webkit-backdrop-filter: blur(12px); 
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+        z-index: 100; 
+        position: fixed; 
+        top: 0; 
+    }
+    
+    .header-logo { font-size: 24px; font-weight: 800; color: white; text-decoration: none; display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px;}
+    .header-links a { color: rgba(255, 255, 255, 0.85); text-decoration: none; font-size: 15px; font-weight: 500; margin-left: 30px; transition: color 0.3s; }
+    .header-links a:hover, .header-links a.active { color: white; }
+
+    /* --- PAGE LAYOUT --- */
+    .page-wrapper { flex: 1; padding: 100px 5% 100px; max-width: 1200px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 1; }
+
+    .page-title {
+        font-size: 48px; 
+        font-weight: 800; 
+        text-align: center;
+        letter-spacing: -1px;
+        background: linear-gradient(to right, #a855f7, var(--secondary), var(--primary), #a855f7);
+        background-size: 200% auto; 
+        color: #fff; 
+        background-clip: text; 
+        -webkit-background-clip: text; 
+        -webkit-text-fill-color: transparent; 
+        animation: gradientShine 3s linear infinite;
+        margin: 0; 
+    }
+    
+    @keyframes gradientShine { to { background-position: 200% center; } }
+    
+    .page-subtitle { 
+        text-align: center; 
+        font-size: 16px; 
+        color: rgba(255,255,255,0.7); 
+        margin: 5px auto 40px auto; 
+        max-width: 600px;
+        line-height: 1.6;
+    }
+
+    /* --- CONTROLS PANEL --- */
+    .controls-container {
+        display: flex;
+        gap: 30px;
+        width: 100%;
+        max-width: 900px;
+        margin-bottom: 40px;
+    }
+
+    .glass-card {
+        flex: 1;
+        background: rgba(17, 24, 39, 0.75);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        text-align: center;
+    }
+
+    .glass-card h2 {
+        color: white;
+        margin: 0 0 15px 0;
+        font-size: 22px;
+    }
+
+    .glass-card p {
+        color: rgba(255,255,255,0.7);
+        font-size: 14px;
+        margin-bottom: 25px;
+    }
+
+    .btn {
+        background: linear-gradient(135deg, var(--primary), #a855f7);
+        color: white;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        transition: transform 0.2s, box-shadow 0.2s;
+        font-family: inherit;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(168, 85, 247, 0.3);
+    }
+
+    .input-field {
+        width: 100%;
+        padding: 14px 20px;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.2);
+        background: rgba(0,0,0,0.2);
+        color: white;
+        font-size: 16px;
+        font-family: inherit;
+        text-align: center;
+        letter-spacing: 2px;
+        margin-bottom: 15px;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+    .input-field:focus { border-color: #a855f7; }
+
+    .key-display {
+        font-size: 32px;
+        font-weight: 800;
+        color: #e879f9;
+        letter-spacing: 4px;
+        margin: 20px 0;
+        padding: 15px;
+        background: rgba(168, 85, 247, 0.1);
+        border: 1px dashed rgba(168, 85, 247, 0.4);
+        border-radius: 12px;
+        display: none;
+    }
+
+    /* --- VIDEO PLAYER --- */
+    .video-container {
+        width: 100%;
+        max-width: 1100px;
+        border-radius: 16px;
+        overflow: hidden;
+        background: #000;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+        display: none; /* Hidden until stream starts */
+        border: 1px solid rgba(255,255,255,0.1);
+        position: relative;
+    }
+
+    video {
+        width: 100%;
+        height: auto;
+        max-height: 70vh;
+        display: block;
+        object-fit: contain;
+    }
+
+    .status-badge {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(244, 63, 94, 0.9);
+        color: white;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        backdrop-filter: blur(5px);
+    }
+    .status-badge::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        background: #fff;
+        border-radius: 50%;
+        animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+        0% { transform: scale(0.95); opacity: 1; }
+        100% { transform: scale(1.5); opacity: 0; }
+    }
+
+    /* --- FOOTER --- */
+    .footer { 
+        position: fixed; 
+        bottom: 0; 
+        left: 0; 
+        width: 100%; 
+        padding: 5px; 
+        text-align: center; 
+        color: rgba(255, 255, 255, 0.7); 
+        font-size: 13px; 
+        background: rgba(0, 0, 0, 0.3); 
+        backdrop-filter: blur(12px); 
+        -webkit-backdrop-filter: blur(12px); 
+        z-index: 100; 
+        border-top: 1px solid rgba(255, 255, 255, 0.1); 
+    }
+    .footer a { color: white; text-decoration: none; font-weight: 600; }
+    .footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 768px) {
+        .controls-container { flex-direction: column; }
+        .page-title { font-size: 36px; }
+    }
+</style>
+</head>
+<body>
+    <!-- <video class="bg-video" autoplay loop muted playsinline>
+        <source src="background.mp4" type="video/mp4">
+    </video> -->
+
+    <header class="header">
+        <a href="/" class="header-logo">
+            <img src="logo.png" alt="Sendly Logo" style="height: 40px; width: auto;">
+        </a>
+        <div class="header-links">
+            <a href="/how-it-works">How it works</a>
+            <a href="/screen" class="active">Screen Share</a>
+            <!-- <a href="/blog">Blog</a> -->
+        </div>
+    </header>
+
+    <div class="page-wrapper">
+        <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 5px; gap: 15px;">
+            <img src="logo.png" alt="Sendly Icon" style="height: 55px; width: auto; position: relative; top: -3px;">
+            <h1 class="page-title">Live Mirror</h1>
+        </div>
+        <p class="page-subtitle">Instantly beam your screen to another device using secure, peer-to-peer WebRTC signaling. No downloads required.</p>
+
+        <!-- Controls -->
+        <div class="controls-container" id="controlsPanel">
+            <!-- SENDER CARD -->
+            <div class="glass-card">
+                <h2>Share Your Screen</h2>
+                <p>Broadcast your screen or a specific app window in real-time.</p>
+                <button class="btn" onclick="startSharing()" id="shareBtn">Start Broadcast</button>
+                <div class="key-display" id="generatedKey"></div>
+                <p id="waitingText" style="display:none; color: #a855f7; font-weight: 600; margin-top: 15px;">Waiting for viewer to connect...</p>
+            </div>
+
+            <!-- RECEIVER CARD -->
+            <div class="glass-card">
+                <h2>View a Screen</h2>
+                <p>Enter the 6-digit access code provided by the sender.</p>
+                <input type="text" id="joinCode" class="input-field" placeholder="Enter 6-Digit Code" maxlength="6">
+                <button class="btn" onclick="joinStream()" style="background: linear-gradient(135deg, var(--secondary), #f43f5e);">Connect to Stream</button>
+            </div>
+        </div>
+
+        <!-- Video Player (Hidden by default) -->
+        <div class="video-container" id="videoContainer">
+            <div class="status-badge" id="statusBadge">LIVE</div>
+            <video id="streamVideo" autoplay playsinline controls></video>
+        </div>
+    </div>
+
+    <footer class="footer">
+        © 2026 <img src="logo.png" alt="Sendly" style="height: 22px; vertical-align: middle;"> Secure File Transfer. <a href="/terms-privacy">Terms</a> & <a href="/terms-privacy">Privacy</a>.
+    </footer>
+
+    <!-- WebRTC & Socket.io Logic -->
+    <script>
+        // Connect to your live Render backend
+        const socket = io("https://sendlyapi.onrender.com");
+        
+        let peerConnection;
+        let localStream;
+        let roomKey;
+        
+        // Use Google's free STUN servers to find the fastest peer-to-peer connection route
+        const rtcConfig = {
+            iceServers: [
+                { urls: "stun:stun.l.google.com:19302" },
+                { urls: "stun:stun1.l.google.com:19302" }
+            ]
+        };
+
+        const videoElement = document.getElementById('streamVideo');
+        const videoContainer = document.getElementById('videoContainer');
+        const controlsPanel = document.getElementById('controlsPanel');
+
+        // --------------------------------------------------
+        // SENDER: Start broadcasting
+        // --------------------------------------------------
+        async function startSharing() {
+            try {
+                // 1. Ask browser for Screen Capture permission
+                localStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+                
+                // Show preview to the sender
+                videoElement.srcObject = localStream;
+                videoContainer.style.display = 'block';
+                videoElement.muted = true; // Prevent echo for sender
+
+                // 2. Generate a random 6-digit code
+                roomKey = Math.floor(100000 + Math.random() * 900000).toString();
+                
+                document.getElementById('shareBtn').style.display = 'none';
+                const keyDisplay = document.getElementById('generatedKey');
+                keyDisplay.style.display = 'block';
+                keyDisplay.innerText = roomKey;
+                document.getElementById('waitingText').style.display = 'block';
+
+                // 3. Connect to the WebSocket room
+                socket.emit("join_screen", { key: roomKey });
+
+                // 4. When the viewer joins the room, initialize the WebRTC P2P connection
+                socket.on("user_joined", async () => {
+                    document.getElementById('waitingText').innerText = "Viewer connected! Streaming...";
+                    document.getElementById('waitingText').style.color = "#10b981"; // Green
+                    controlsPanel.style.display = 'none'; // Hide controls to focus on video
+                    
+                    createPeerConnection();
+
+                    // Add our video track to the connection
+                    localStream.getTracks().forEach(track => {
+                        peerConnection.addTrack(track, localStream);
+                    });
+
+                    // Create the WebRTC Offer and send it through Render server
+                    const offer = await peerConnection.createOffer();
+                    await peerConnection.setLocalDescription(offer);
+                    socket.emit("offer", { key: roomKey, offer: offer });
+                });
+
+                // Handle screen sharing being stopped via browser's native UI
+                localStream.getVideoTracks()[0].onended = () => {
+                    location.reload(); 
+                };
+
+            } catch (err) {
+                console.error("Error accessing display media.", err);
+                alert("Could not access screen. Ensure permissions are granted.");
+            }
+        }
+
+        // --------------------------------------------------
+        // RECEIVER: Join a stream
+        // --------------------------------------------------
+        function joinStream() {
+            const inputKey = document.getElementById('joinCode').value.trim();
+            if (inputKey.length !== 6) {
+                alert("Please enter a valid 6-digit code.");
+                return;
+            }
+            
+            roomKey = inputKey;
+            
+            // Join the WebSocket room (this triggers the "user_joined" event on the sender's end)
+            socket.emit("join_screen", { key: roomKey });
+            
+            controlsPanel.style.display = 'none';
+            videoContainer.style.display = 'block';
+            document.getElementById('statusBadge').innerText = "CONNECTING...";
+            document.getElementById('statusBadge').style.background = "#f59e0b"; // Orange
+        }
+
+        // --------------------------------------------------
+        // WEBRTC PEER CONNECTION SETUP
+        // --------------------------------------------------
+        function createPeerConnection() {
+            peerConnection = new RTCPeerConnection(rtcConfig);
+
+            // Send ICE candidates (networking routes) to the other peer via Socket.io
+            peerConnection.onicecandidate = (event) => {
+                if (event.candidate) {
+                    socket.emit("ice_candidate", { key: roomKey, candidate: event.candidate });
+                }
+            };
+
+            // RECEIVER ONLY: When the sender's video track arrives, play it!
+            peerConnection.ontrack = (event) => {
+                videoElement.srcObject = event.streams[0];
+                document.getElementById('statusBadge').innerText = "LIVE (VIEWING)";
+                document.getElementById('statusBadge').style.background = "rgba(244, 63, 94, 0.9)";
+            };
+        }
+
+        // --------------------------------------------------
+        // SOCKET.IO SIGNALING LISTENERS
+        // --------------------------------------------------
+        
+        // Receiver gets the Offer -> Creates an Answer
+        socket.on("offer", async (offer) => {
+            if (!peerConnection) createPeerConnection();
+            
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+            const answer = await peerConnection.createAnswer();
+            await peerConnection.setLocalDescription(answer);
+            
+            socket.emit("answer", { key: roomKey, answer: answer });
+        });
+
+        // Sender gets the Answer -> Connection is successfully established
+        socket.on("answer", async (answer) => {
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+        });
+
+        // Both sides exchange ICE networking routes
+        socket.on("ice_candidate", async (candidate) => {
+            try {
+                if (peerConnection) {
+                    await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+                }
+            } catch (e) {
+                console.error("Error adding received ice candidate", e);
+            }
+        });
+    </script>
+</body>
+</html>
