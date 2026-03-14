@@ -4,7 +4,7 @@
     { "source": "/how-it-works", "destination": "/how-it-works.html" },
     { "source": "/terms-privacy", "destination": "/terms-privacy.html" },
     { "source": "/blog", "destination": "/blog.html" },
-    { "source": "/screen", "destination": "/screen.html" }
-	{ "source": "/notepad", "destination": "/notepad.html" }
+    { "source": "/screen", "destination": "/screen.html" },
+    { "source": "/notepad", "destination": "/notepad.html" }
   ]
 }
