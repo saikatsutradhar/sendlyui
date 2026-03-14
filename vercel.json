@@ -5,5 +5,6 @@
     { "source": "/terms-privacy", "destination": "/terms-privacy.html" },
     { "source": "/blog", "destination": "/blog.html" },
     { "source": "/screen", "destination": "/screen.html" }
+	{ "source": "/notepad", "destination": "/notepad.html" }
   ]
 }

@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live Notepad - Sendly</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Import Socket.io for Real-Time Connection -->
+<script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+<style>
+    :root {
+        --primary: #4F46E5;
+        --secondary: #F43F5E;
+        --text-main: #1F2937;
+        --text-muted: #6B7280;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+        background-color: #0b1120; 
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        color: var(--text-main);
+    }
+    
+    .bg-video {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+        filter: brightness(0.4);
+        pointer-events: none;
+    }
+
+    .header-logo, .footer-logo { user-select: none; -webkit-user-select: none; }
+
+    /* --- HEADER --- */
+    .header { 
+        width: 100%; 
+        padding: 5px 5%; 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        background: rgba(255, 255, 255, 0.05); 
+        backdrop-filter: blur(12px); 
+        -webkit-backdrop-filter: blur(12px); 
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+        z-index: 100; 
+        position: relative; 
+    }
+    
+    .header-logo { font-size: 24px; font-weight: 800; color: white; text-decoration: none; display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px;}
+    .header-links a { color: rgba(255, 255, 255, 0.85); text-decoration: none; font-size: 15px; font-weight: 500; margin-left: 30px; transition: color 0.3s; }
+    .header-links a:hover, .header-links a.active { color: white; }
+
+    /* --- PAGE LAYOUT --- */
+    .page-wrapper { flex: 1; padding: 100px 5% 100px; max-width: 1200px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 1; }
+
+    .page-title {
+        font-size: 48px; 
+        font-weight: 800; 
+        text-align: center;
+        letter-spacing: -1px;
+        background: linear-gradient(to right, #a855f7, var(--secondary), var(--primary), #a855f7);
+        background-size: 200% auto; 
+        color: #fff; 
+        background-clip: text; 
+        -webkit-background-clip: text; 
+        -webkit-text-fill-color: transparent; 
+        animation: gradientShine 3s linear infinite;
+        margin: 0; 
+    }
+    
+    @keyframes gradientShine { to { background-position: 200% center; } }
+    
+    .page-subtitle { 
+        text-align: center; 
+        font-size: 16px; 
+        color: rgba(255,255,255,0.7); 
+        margin: 5px auto 40px auto; 
+        max-width: 600px;
+        line-height: 1.6;
+    }
+
+    /* --- CONTROLS PANEL --- */
+    .controls-container {
+        display: flex;
+        gap: 30px;
+        width: 100%;
+        max-width: 900px;
+        margin-bottom: 40px;
+    }
+
+    .glass-card {
+        flex: 1;
+        background: rgba(17, 24, 39, 0.75);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        text-align: center;
+    }
+
+    .glass-card h2 {
+        color: white;
+        margin: 0 0 15px 0;
+        font-size: 22px;
+    }
+
+    .glass-card p {
+        color: rgba(255,255,255,0.7);
+        font-size: 14px;
+        margin-bottom: 25px;
+    }
+
+    .btn {
+        background: linear-gradient(135deg, var(--primary), #a855f7);
+        color: white;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        transition: transform 0.2s, box-shadow 0.2s;
+        font-family: inherit;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(168, 85, 247, 0.3);
+    }
+
+    .input-field {
+        width: 100%;
+        padding: 14px 20px;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.2);
+        background: rgba(0,0,0,0.2);
+        color: white;
+        font-size: 16px;
+        font-family: inherit;
+        text-align: center;
+        letter-spacing: 2px;
+        margin-bottom: 15px;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+    .input-field:focus { border-color: #a855f7; }
+
+    /* --- NOTEPAD EDITOR PANEL --- */
+    .editor-container {
+        width: 100%;
+        max-width: 1000px;
+        background: rgba(17, 24, 39, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 20px;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+        display: none; 
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .editor-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 25px;
+        background: rgba(0, 0, 0, 0.3);
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #10b981; 
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+    
+    .status-indicator::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        background: #10b981;
+        border-radius: 50%;
+        box-shadow: 0 0 10px #10b981;
+    }
+
+    .room-key-badge {
+        background: rgba(168, 85, 247, 0.2);
+        color: #e879f9;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        border: 1px dashed rgba(168, 85, 247, 0.4);
+    }
+
+    /* --- NEW RICH TEXT TOOLBAR --- */
+    .editor-toolbar {
+        display: flex;
+        gap: 10px;
+        padding: 12px 25px;
+        background: rgba(0, 0, 0, 0.2);
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .tool-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.9);
+        padding: 6px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-family: inherit;
+        font-weight: 500;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .tool-btn:hover {
+        background: rgba(168, 85, 247, 0.2);
+        border-color: rgba(168, 85, 247, 0.4);
+        color: #fff;
+    }
+
+    .toolbar-divider {
+        width: 1px;
+        height: 20px;
+        background: rgba(255, 255, 255, 0.15);
+        margin: 0 5px;
+    }
+
+    /* --- UPDATED CONTENT EDITABLE AREA --- */
+    .notepad-editable {
+        width: 100%;
+        height: 50vh;
+        min-height: 400px;
+        background: transparent;
+        border: none;
+        color: #f8fafc;
+        font-family: inherit;
+        font-size: 16px;
+        line-height: 1.8;
+        padding: 30px;
+        overflow-y: auto;
+        outline: none;
+    }
+    
+    /* CSS Trick to show placeholder text inside a div */
+    .notepad-editable:empty:before {
+        content: attr(data-placeholder);
+        color: rgba(255,255,255,0.3);
+        pointer-events: none;
+        display: block;
+    }
+
+    /* --- FOOTER --- */
+    .footer { 
+        position: fixed; 
+        bottom: 0; 
+        left: 0; 
+        width: 100%; 
+        padding: 5px; 
+        text-align: center; 
+        color: rgba(255, 255, 255, 0.7); 
+        font-size: 13px; 
+        background: rgba(0, 0, 0, 0.3); 
+        backdrop-filter: blur(12px); 
+        -webkit-backdrop-filter: blur(12px); 
+        z-index: 100; 
+        border-top: 1px solid rgba(255, 255, 255, 0.1); 
+    }
+    .footer a { color: white; text-decoration: none; font-weight: 600; }
+    .footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 768px) {
+        .controls-container { flex-direction: column; }
+        .page-title { font-size: 36px; }
+        .notepad-editable { padding: 20px; }
+        .editor-toolbar { padding: 10px 15px; }
+    }
+</style>
+</head>
+<body>
+    <video class="bg-video" autoplay loop muted playsinline>
+        <source src="background.mp4" type="video/mp4">
+    </video>
+
+    <header class="header">
+        <a href="/" class="header-logo">
+            <img src="logo.png" alt="Sendly Logo" style="height: 40px; width: auto;">
+        </a>
+        <div class="header-links">
+            <a href="/how-it-works">How it works</a>
+            <a href="/screen">Screen Share</a>
+            <a href="/notepad" class="active">Live Notepad</a>
+        </div>
+    </header>
+
+    <div class="page-wrapper">
+        <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 5px; gap: 15px;">
+            <img src="logo.png" alt="Sendly Icon" style="height: 55px; width: auto; position: relative; top: -3px;">
+            <h1 class="page-title">Live Notepad</h1>
+        </div>
+        <p class="page-subtitle">Collaborate on text instantly with multiple people. Zero accounts, syncs in real-time.</p>
+
+        <!-- Controls -->
+        <div class="controls-container" id="controlsPanel">
+            <!-- CREATE CARD -->
+            <div class="glass-card">
+                <h2>Create a Note</h2>
+                <p>Start a new collaborative document and invite others to type with you.</p>
+                <button class="btn" onclick="createNote()">Create Workspace</button>
+            </div>
+
+            <!-- JOIN CARD -->
+            <div class="glass-card">
+                <h2>Join a Note</h2>
+                <p>Enter the 6-digit access code provided by your collaborator.</p>
+                <input type="text" id="joinCode" class="input-field" placeholder="Enter 6-Digit Code" maxlength="6">
+                <button class="btn" onclick="joinNote()" style="background: linear-gradient(135deg, var(--secondary), #f43f5e);">Join Workspace</button>
+            </div>
+        </div>
+
+        <!-- Editor Panel -->
+        <div class="editor-container" id="editorContainer">
+            <div class="editor-header">
+                <div class="status-indicator">Connected & Live</div>
+                <div class="room-key-badge">Room Code: <span id="displayKey">------</span></div>
+            </div>
+            
+            <!-- Rich Text Toolbar -->
+            <div class="editor-toolbar">
+                <button class="tool-btn" onclick="formatText('bold')" title="Bold"><b>B</b></button>
+                <button class="tool-btn" onclick="formatText('italic')" title="Italic"><i>I</i></button>
+                <button class="tool-btn" onclick="formatText('underline')" title="Underline"><u>U</u></button>
+                <button class="tool-btn" onclick="formatText('strikeThrough')" title="Strikethrough"><s>S</s></button>
+                <div class="toolbar-divider"></div>
+                <button class="tool-btn" onclick="formatText('insertUnorderedList')" title="Bullet List">• List</button>
+                <button class="tool-btn" onclick="formatText('insertOrderedList')" title="Numbered List">1. List</button>
+            </div>
+
+            <!-- Content Editable Div (Replaces the basic textarea) -->
+            <div id="notepadArea" class="notepad-editable" contenteditable="true" data-placeholder="Start typing here... Everyone in the room will see this in real-time."></div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        © 2026 <img src="logo.png" alt="Sendly" style="height: 22px; vertical-align: middle;"> Secure File Transfer. <a href="/terms-privacy">Terms</a> & <a href="/terms-privacy">Privacy</a>.
+    </footer>
+
+    <!-- WebRTC & Socket.io Logic -->
+    <script>
+        // Connect to your live Render backend
+        const socket = io("https://sendlyapi.onrender.com");
+        
+        let roomKey;
+        const controlsPanel = document.getElementById('controlsPanel');
+        const editorContainer = document.getElementById('editorContainer');
+        const notepadArea = document.getElementById('notepadArea');
+        const displayKey = document.getElementById('displayKey');
+
+        // --------------------------------------------------
+        // UI AND CONNECTION LOGIC
+        // --------------------------------------------------
+        function createNote() {
+            roomKey = Math.floor(100000 + Math.random() * 900000).toString();
+            socket.emit("join_notepad", { key: roomKey });
+            
+            controlsPanel.style.display = 'none';
+            editorContainer.style.display = 'flex';
+            displayKey.innerText = roomKey;
+            notepadArea.focus();
+        }
+
+        function joinNote() {
+            const inputKey = document.getElementById('joinCode').value.trim();
+            if (inputKey.length !== 6) {
+                alert("Please enter a valid 6-digit code.");
+                return;
+            }
+            
+            roomKey = inputKey;
+            socket.emit("join_notepad", { key: roomKey });
+            
+            controlsPanel.style.display = 'none';
+            editorContainer.style.display = 'flex';
+            displayKey.innerText = roomKey;
+            notepadArea.focus();
+        }
+
+        // Re-join room if Render server goes to sleep and wakes up
+        socket.on("connect", () => {
+            if (roomKey) {
+                socket.emit("join_notepad", { key: roomKey });
+            }
+        });
+
+        // --------------------------------------------------
+        // RICH TEXT FORMATTING
+        // --------------------------------------------------
+        function formatText(command) {
+            document.execCommand(command, false, null);
+            notepadArea.focus();
+            
+            // Manually trigger the sync because execCommand doesn't always fire 'input'
+            socket.emit("text_update", { key: roomKey, text: notepadArea.innerHTML });
+        }
+
+        // --------------------------------------------------
+        // REAL-TIME SYNC WITH CURSOR PRESERVATION
+        // --------------------------------------------------
+        
+        // 1. Send HTML to everyone else when we type
+        notepadArea.addEventListener('input', () => {
+            socket.emit("text_update", { key: roomKey, text: notepadArea.innerHTML });
+        });
+
+        // 2. Receive HTML from someone else
+        socket.on("text_update", (newHtml) => {
+            if (notepadArea.innerHTML !== newHtml) {
+                
+                // Step A: Save the exact character position of our cursor before overwriting the HTML
+                const cursorOffset = saveCaretPosition(notepadArea);
+                
+                // Step B: Replace the HTML with the new incoming data
+                notepadArea.innerHTML = newHtml;
+                
+                // Step C: Put the cursor back exactly where it belongs!
+                restoreCaretPosition(notepadArea, cursorOffset);
+            }
+        });
+
+        // --- ADVANCED CURSOR MATH FOR CONTENT-EDITABLE DIVS ---
+        function saveCaretPosition(context) {
+            let selection = window.getSelection();
+            if (selection.rangeCount === 0) return 0;
+            
+            let range = selection.getRangeAt(0);
+            let preCaretRange = range.cloneRange();
+            preCaretRange.selectNodeContents(context);
+            preCaretRange.setEnd(range.endContainer, range.endOffset);
+            return preCaretRange.toString().length;
+        }
+
+        function restoreCaretPosition(context, caretOffset) {
+            let charIndex = 0, range = document.createRange();
+            range.setStart(context, 0);
+            range.collapse(true);
+            let nodeStack = [context], node, foundStart = false, stop = false;
+
+            while (!stop && (node = nodeStack.pop())) {
+                if (node.nodeType == 3) {
+                    let nextCharIndex = charIndex + node.length;
+                    if (!foundStart && caretOffset >= charIndex && caretOffset <= nextCharIndex) {
+                        range.setStart(node, caretOffset - charIndex);
+                        foundStart = true;
+                    }
+                    if (foundStart && caretOffset >= charIndex && caretOffset <= nextCharIndex) {
+                        range.setEnd(node, caretOffset - charIndex);
+                        stop = true;
+                    }
+                    charIndex = nextCharIndex;
+                } else {
+                    let i = node.childNodes.length;
+                    while (i--) {
+                        nodeStack.push(node.childNodes[i]);
+                    }
+                }
+            }
+            
+            let selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+
+    </script>
+</body>
+</html>
