@@ -6,5 +6,6 @@
     { "source": "/blog", "destination": "/blog.html" },
     { "source": "/screen", "destination": "/screen.html" },
     { "source": "/notepad", "destination": "/notepad.html" }
+    { "source": "/json-formatter", "destination": "/json-formatter.html" }
   ]
 }

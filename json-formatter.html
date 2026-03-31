@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zero-Knowledge JSON Formatter - Sendly</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/material-darker.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/fold/foldgutter.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/fold/foldcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/fold/foldgutter.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/fold/brace-fold.min.js"></script>
+
+<style>
+    :root { --primary: #4F46E5; --secondary: #F43F5E; --text-main: #1F2937; --text-muted: #6B7280; }
+    * { box-sizing: border-box; }
+    html, body { background-color: #0b1120; margin: 0; padding: 0; }
+    body { font-family: 'Poppins', sans-serif; display: flex; flex-direction: column; min-height: 100vh; color: var(--text-main); }
+    
+    .bg-video { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; filter: brightness(0.4); pointer-events: none; }
+
+    /* --- SLEEK CUSTOM SCROLLBARS --- */
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 8px; margin: 4px; }
+    ::-webkit-scrollbar-thumb { background: rgba(168, 85, 247, 0.5); border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
+    ::-webkit-scrollbar-thumb:hover { background-color: rgba(168, 85, 247, 0.8); }
+
+    /* --- HEADER --- */
+    .header { width: 100%; padding: 5px 5%; display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); z-index: 100; position: relative; }
+    .header-logo { font-size: 24px; font-weight: 800; color: white; text-decoration: none; display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px; }
+    .header-links a { color: rgba(255, 255, 255, 0.85); text-decoration: none; font-size: 14px; font-weight: 500; margin-left: 20px; transition: color 0.3s; }
+    .header-links a:hover, .header-links a.active { color: white; }
+
+    /* --- PAGE LAYOUT --- */
+    .page-wrapper { flex: 1; padding: 40px 2% 100px; max-width: 1600px; margin: 0 auto; width: 100%; position: relative; z-index: 1; }
+    .page-title { font-size: 38px; font-weight: 800; text-align: center; letter-spacing: -1px; background: linear-gradient(to right, #a855f7, var(--secondary), var(--primary), #a855f7); background-size: 200% auto; color: #fff; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: gradientShine 3s linear infinite; margin: 0; }
+    @keyframes gradientShine { to { background-position: 200% center; } }
+    .page-subtitle { text-align: center; font-size: 14px; color: rgba(255,255,255,0.7); margin: 5px auto 30px auto; max-width: 700px; line-height: 1.6; }
+
+    /* --- 3-COLUMN SPLIT LAYOUT --- */
+    .split-layout { display: flex; gap: 20px; height: 70vh; min-height: 550px; transition: all 0.3s ease; }
+    
+    .panel { flex: 1; background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.4); width: 0; transition: all 0.3s ease; }
+    .panel-header { background: rgba(0,0,0,0.4); padding: 12px 20px; font-size: 14px; font-weight: 600; color: #e879f9; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; transition: all 0.3s;}
+    
+    /* --- IN-APP MAXIMIZE MODE (NO FULLSCREEN API) --- */
+    /* Hides other columns and expands the selected panel to 100% width */
+    .split-layout.is-maximized > :not(.maximized-panel) { display: none !important; }
+    .panel.maximized-panel { flex: 1 1 100% !important; max-width: 100% !important; }
+
+    /* CODEMIRROR OVERRIDES */
+    .CodeMirror { flex: 1; height: auto; background: transparent !important; font-family: monospace; font-size: 14px; padding: 10px 0; transition: font-size 0.2s ease; }
+    .CodeMirror-gutters { background: rgba(0,0,0,0.3) !important; border-right: 1px solid rgba(255,255,255,0.05) !important; padding-right: 5px; }
+    .CodeMirror-linenumber { color: rgba(255,255,255,0.3) !important; }
+    .CodeMirror-cursor { border-left: 2px solid #a855f7 !important; }
+    .CodeMirror-foldmarker { color: #a855f7; text-shadow: none; font-family: arial; font-size: 14px; cursor: pointer; padding: 0 4px; }
+    .CodeMirror-foldgutter-open, .CodeMirror-foldgutter-folded { color: rgba(255,255,255,0.6); cursor: pointer; text-align: center; }
+
+    /* MIDDLE ACTION BUTTONS */
+    .action-column { display: flex; flex-direction: column; gap: 15px; justify-content: center; width: 200px; transition: all 0.3s; }
+    
+    .tool-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white; padding: 14px; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: 600; font-family: inherit; transition: all 0.2s; backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; gap: 8px;}
+    .tool-btn:hover { background: rgba(168, 85, 247, 0.2); border-color: rgba(168, 85, 247, 0.5); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(168, 85, 247, 0.2); }
+    
+    .btn-primary { background: linear-gradient(135deg, var(--primary), #a855f7); border: none; }
+    .btn-primary:hover { background: linear-gradient(135deg, #4338CA, #9333ea); border: none; }
+    .btn-clear { border-color: rgba(244, 63, 94, 0.3); color: #f43f5e; }
+    .btn-clear:hover { background: rgba(244, 63, 94, 0.1); border-color: #f43f5e; }
+
+    .tab-select { background: rgba(0,0,0,0.3); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 12px; border-radius: 12px; font-family: inherit; font-size: 14px; outline: none; cursor: pointer; appearance: none; text-align: center; transition: all 0.3s;}
+    .tab-select option { background: #111827; color: white; }
+
+    .action-row { display: flex; gap: 8px; }
+    .copy-sm { background: rgba(255,255,255,0.1); border: none; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; transition: 0.2s; font-family: inherit; display: flex; align-items: center; gap: 4px;}
+    .copy-sm:hover { background: rgba(255,255,255,0.2); }
+
+    /* --- LIGHT MODE (COHESIVE WORKSPACE) --- */
+    .split-layout.light-theme .panel { background: rgba(255,255,255,0.95); border-color: #cbd5e1; }
+    .split-layout.light-theme .panel-header { background: #f8fafc; color: var(--primary); border-bottom-color: #cbd5e1; }
+    .split-layout.light-theme .copy-sm { background: #e2e8f0; color: #475569; }
+    .split-layout.light-theme .copy-sm:hover { background: #cbd5e1; color: var(--primary); }
+    
+    /* CodeMirror Light Fixes */
+    .split-layout.light-theme .CodeMirror-gutters { background: #f8fafc !important; border-right: 1px solid #e2e8f0 !important; }
+    .split-layout.light-theme .CodeMirror-linenumber { color: #94a3b8 !important; }
+    .split-layout.light-theme .CodeMirror-foldgutter-open, .split-layout.light-theme .CodeMirror-foldgutter-folded { color: #94a3b8; }
+    
+    /* Action Column Light Fixes */
+    .split-layout.light-theme .action-column .tool-btn { background: #ffffff; color: #1e293b; border-color: #cbd5e1; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    .split-layout.light-theme .action-column .tool-btn:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-2px); }
+    .split-layout.light-theme .action-column .btn-primary { background: linear-gradient(135deg, var(--primary), #a855f7); color: white; border: none; }
+    .split-layout.light-theme .action-column .btn-primary:hover { color: white; }
+    .split-layout.light-theme .action-column .tab-select { background: #ffffff; color: #1e293b; border-color: #cbd5e1; }
+    .split-layout.light-theme .action-column .tab-select option { background: #ffffff; color: #1e293b; }
+
+    .footer { position: fixed; bottom: 0; left: 0; width: 100%; padding: 5px; text-align: center; color: rgba(255, 255, 255, 0.7); font-size: 13px; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(12px); z-index: 100; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+    
+    @media (max-width: 1050px) { 
+        .split-layout { flex-direction: column; height: auto; } 
+        .action-column { width: 100%; flex-direction: row; flex-wrap: wrap; }
+        .tool-btn, .tab-select { flex: 1; min-width: 140px; }
+        .panel { min-height: 400px; } 
+        .header-links { display: none; }
+    }
+</style>
+</head>
+<body>
+    <video class="bg-video" autoplay loop muted playsinline><source src="background.mp4" type="video/mp4"></video>
+
+    <header class="header">
+        <a href="/" class="header-logo"><img src="logo.png" alt="Sendly Logo" style="height: 40px;"></a>
+        <div class="header-links">
+            <a href="/how-it-works">How it works</a>
+            <a href="/screen">Screen Share</a>
+            <a href="/notepad">Live Notepad</a>
+            <!-- <a href="/mock">Mock API</a> -->
+            <a href="/json-formatter" class="active">JSON Formatter</a>
+        </div>
+    </header>
+
+    <div class="page-wrapper">
+        <h1 class="page-title">Zero-Knowledge JSON Formatter</h1>
+        <p class="page-subtitle">Format, validate, and minify JSON offline. Your data never leaves your browser.</p>
+
+        <div class="split-layout" id="mainWorkspace">
+            <div class="panel" id="inputPanel">
+                <div class="panel-header">
+                    <span style="color: inherit;">Input Data</span>
+                    <div class="action-row">
+                        <button class="copy-sm" onclick="pasteFromClipboard()">📋 Paste</button>
+                        <button class="copy-sm" onclick="toggleMaximize('inputPanel', inputEditor)" title="Toggle Full Screen">⛶</button>
+                    </div>
+                </div>
+                <textarea id="inputEditor"></textarea>
+            </div>
+
+            <div class="action-column" id="actionColumn">
+                <button class="tool-btn" onclick="toggleTheme()" id="themeToggle">☀️ Light Editor</button>
+                
+                <div style="display: flex; gap: 10px;">
+                    <select id="fontSize" class="tab-select" style="flex: 1; padding: 12px 5px;" onchange="changeFontSize()">
+                        <option value="12px">12px</option>
+                        <option value="14px" selected>14px</option>
+                        <option value="16px">16px</option>
+                        <option value="18px">18px</option>
+                        <option value="20px">20px</option>
+                    </select>
+
+                    <select id="tabSpace" class="tab-select" style="flex: 1; padding: 12px 5px;">
+                        <option value="2">2 Tabs</option>
+                        <option value="3">3 Tabs</option>
+                        <option value="4" selected>4 Tabs</option>
+                    </select>
+                </div>
+
+                <button class="tool-btn btn-primary" onclick="formatJSON()">Format / Beautify</button>
+                <button class="tool-btn" onclick="minifyJSON()">Minify / Compact</button>
+                <button class="tool-btn" onclick="validateJSON()">Validate JSON</button>
+                <button class="tool-btn" onclick="downloadJSON()">💾 Download</button>
+                <button class="tool-btn btn-clear" onclick="clearEditors()">Clear All</button>
+            </div>
+
+            <div class="panel" id="outputPanel">
+                <div class="panel-header">
+                    <span style="color: inherit;">Output</span>
+                    <div class="action-row">
+                        <button class="copy-sm" onclick="copyOutput()" id="copyBtn">📋 Copy</button>
+                        <button class="copy-sm" onclick="toggleMaximize('outputPanel', outputEditor)" title="Toggle Full Screen">⛶</button>
+                    </div>
+                </div>
+                <textarea id="outputEditor"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">© 2026 Sendly Secure Tools.</footer>
+
+    <script>
+        const editorConfig = {
+            mode: "application/json",
+            theme: "material-darker",
+            lineNumbers: true,
+            matchBrackets: true,
+            foldGutter: true, 
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"] 
+        };
+
+        const inputEditor = CodeMirror.fromTextArea(document.getElementById("inputEditor"), {
+            ...editorConfig,
+            placeholder: "Paste your raw or messy JSON data here..."
+        });
+
+        const outputEditor = CodeMirror.fromTextArea(document.getElementById("outputEditor"), {
+            ...editorConfig,
+            readOnly: true,
+            placeholder: "Result will appear here..."
+        });
+
+        // --- NEW: IN-APP MAXIMIZE ---
+        // Stretches the panel to fill the layout without hiding your browser tabs
+        function toggleMaximize(panelId, editorInstance) {
+            const workspace = document.getElementById('mainWorkspace');
+            const panel = document.getElementById(panelId);
+            const btn = panel.querySelector('button[title="Toggle Full Screen"]');
+            
+            if (panel.classList.contains('maximized-panel')) {
+                // Restore layout
+                panel.classList.remove('maximized-panel');
+                workspace.classList.remove('is-maximized');
+                btn.innerHTML = "⛶";
+            } else {
+                // Maximize layout
+                panel.classList.add('maximized-panel');
+                workspace.classList.add('is-maximized');
+                btn.innerHTML = "✖ Exit";
+            }
+            
+            setTimeout(() => { editorInstance.refresh(); }, 150);
+        }
+
+        // --- NEW: CLEAN THEME TOGGLE ---
+        let isLightMode = false;
+        function toggleTheme() {
+            const workspace = document.getElementById('mainWorkspace');
+            const toggleBtn = document.getElementById('themeToggle');
+            
+            isLightMode = !isLightMode;
+            
+            if (isLightMode) {
+                workspace.classList.add('light-theme');
+                toggleBtn.innerText = "🌙 Dark Editor";
+                
+                inputEditor.setOption("theme", "default");
+                outputEditor.setOption("theme", "default");
+            } else {
+                workspace.classList.remove('light-theme');
+                toggleBtn.innerText = "☀️ Light Editor";
+                
+                inputEditor.setOption("theme", "material-darker");
+                outputEditor.setOption("theme", "material-darker");
+            }
+        }
+
+        function changeFontSize() {
+            const size = document.getElementById('fontSize').value;
+            const cmInstances = document.querySelectorAll('.CodeMirror');
+            cmInstances.forEach(cm => {
+                cm.style.fontSize = size;
+            });
+            inputEditor.refresh();
+            outputEditor.refresh();
+        }
+
+        async function pasteFromClipboard() {
+            try {
+                const text = await navigator.clipboard.readText();
+                inputEditor.setValue(text);
+            } catch (err) {
+                alert("Failed to read clipboard. Please paste manually using Ctrl+V.");
+            }
+        }
+
+        function formatJSON() {
+            const rawData = inputEditor.getValue().trim();
+            if (!rawData) return;
+            try {
+                const parsed = JSON.parse(rawData);
+                const spaces = parseInt(document.getElementById('tabSpace').value);
+                outputEditor.setValue(JSON.stringify(parsed, null, spaces));
+            } catch (e) {
+                showError(e);
+            }
+        }
+
+        function minifyJSON() {
+            const rawData = inputEditor.getValue().trim();
+            if (!rawData) return;
+            try {
+                const parsed = JSON.parse(rawData);
+                outputEditor.setValue(JSON.stringify(parsed));
+            } catch (e) {
+                showError(e);
+            }
+        }
+
+        function validateJSON() {
+            const rawData = inputEditor.getValue().trim();
+            if (!rawData) return;
+            try {
+                JSON.parse(rawData);
+                outputEditor.setValue("// ✅ Valid JSON!\n// The syntax is perfect.\n// Use 'Format / Beautify' to make it readable.");
+            } catch (e) {
+                showError(e);
+            }
+        }
+
+        function showError(error) {
+            outputEditor.setValue(`// ❌ Invalid JSON\n// Error Details:\n// ${error.message}`);
+        }
+
+        function clearEditors() {
+            inputEditor.setValue('');
+            outputEditor.setValue('');
+        }
+
+        function copyOutput() {
+            const data = outputEditor.getValue().trim();
+            if (!data) return;
+            navigator.clipboard.writeText(data);
+            
+            const copyBtn = document.getElementById('copyBtn');
+            const originalText = copyBtn.innerText;
+            copyBtn.innerText = "Copied!";
+            copyBtn.style.background = "#10b981"; 
+            setTimeout(() => { 
+                copyBtn.innerText = originalText; 
+                copyBtn.style.background = ""; // Returns to CSS defined background
+            }, 2000);
+        }
+
+        function downloadJSON() {
+            const data = outputEditor.getValue().trim();
+            if (!data || data.startsWith("//")) {
+                alert("Please format valid JSON before downloading.");
+                return;
+            }
+            const blob = new Blob([data], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "sendly_formatted.json";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
