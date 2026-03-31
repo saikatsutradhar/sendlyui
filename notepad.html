@@ -47,21 +47,21 @@
     .header-logo, .footer-logo { user-select: none; -webkit-user-select: none; }
 
     /* --- HEADER --- */
-    .header { 
-        width: 100%; 
-        padding: 5px 5%; 
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center; 
-        background: rgba(255, 255, 255, 0.05); 
-        backdrop-filter: blur(12px); 
-        -webkit-backdrop-filter: blur(12px); 
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
-        z-index: 100; 
-        position: relative; 
+    .header {
+        width: 100%;
+        padding: 5px 5%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 100;
+        position: relative; /* Keeps header on top */
     }
-    
-    .header-logo { font-size: 24px; font-weight: 800; color: white; text-decoration: none; display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px;}
+
+    .header-logo { font-size: 24px; font-weight: 800; color: white; text-decoration: none; display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px; }
     .header-links a { color: rgba(255, 255, 255, 0.85); text-decoration: none; font-size: 15px; font-weight: 500; margin-left: 30px; transition: color 0.3s; }
     .header-links a:hover, .header-links a.active { color: white; }
 
