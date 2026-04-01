@@ -25,49 +25,29 @@
     
     .bg-video { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; filter: brightness(0.4); pointer-events: none; }
 
-    /* --- SLEEK CUSTOM SCROLLBARS --- */
     ::-webkit-scrollbar { width: 10px; height: 10px; }
     ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 8px; margin: 4px; }
     ::-webkit-scrollbar-thumb { background: rgba(168, 85, 247, 0.5); border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
     ::-webkit-scrollbar-thumb:hover { background-color: rgba(168, 85, 247, 0.8); }
 
-    /* --- HEADER --- */
-    .header {
-        width: 100%;
-        padding: 5px 5%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        z-index: 100;
-        position: relative; /* Keeps header on top */
-    }
-
+    .header { width: 100%; padding: 5px 5%; display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); z-index: 100; position: relative; }
     .header-logo { font-size: 24px; font-weight: 800; color: white; text-decoration: none; display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px; }
-    .header-links a { color: rgba(255, 255, 255, 0.85); text-decoration: none; font-size: 15px; font-weight: 500; margin-left: 30px; transition: color 0.3s; }
+    .header-links a { color: rgba(255, 255, 255, 0.85); text-decoration: none; font-size: 15px; font-weight: 500; margin-left: 20px; transition: color 0.3s; }
     .header-links a:hover, .header-links a.active { color: white; }
 
-    /* --- PAGE LAYOUT --- */
     .page-wrapper { flex: 1; padding: 40px 2% 100px; max-width: 1600px; margin: 0 auto; width: 100%; position: relative; z-index: 1; }
-    .page-title { font-size: 38px; font-weight: 800; text-align: center; letter-spacing: -1px; background: linear-gradient(to right, #a855f7, var(--secondary), var(--primary), #a855f7); background-size: 200% auto; color: #fff; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: gradientShine 3s linear infinite; margin: 0; }
-    @keyframes gradientShine { to { background-position: 200% center; } }
+    .page-title { font-size: 38px; font-weight: 800; text-align: center; letter-spacing: -1px; color: #fff; margin: 0; }
     .page-subtitle { text-align: center; font-size: 14px; color: rgba(255,255,255,0.7); margin: 5px auto 30px auto; max-width: 700px; line-height: 1.6; }
 
-    /* --- 3-COLUMN SPLIT LAYOUT --- */
     .split-layout { display: flex; gap: 20px; height: 70vh; min-height: 550px; transition: all 0.3s ease; }
     
+    /* DEFAULT DARK STYLES (Used when light-theme is removed) */
     .panel { flex: 1; background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.4); width: 0; transition: all 0.3s ease; }
     .panel-header { background: rgba(0,0,0,0.4); padding: 12px 20px; font-size: 14px; font-weight: 600; color: #e879f9; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; transition: all 0.3s;}
     
-    /* --- IN-APP MAXIMIZE MODE (NO FULLSCREEN API) --- */
-    /* Hides other columns and expands the selected panel to 100% width */
     .split-layout.is-maximized > :not(.maximized-panel) { display: none !important; }
     .panel.maximized-panel { flex: 1 1 100% !important; max-width: 100% !important; }
 
-    /* CODEMIRROR OVERRIDES */
     .CodeMirror { flex: 1; height: auto; background: transparent !important; font-family: monospace; font-size: 14px; padding: 10px 0; transition: font-size 0.2s ease; }
     .CodeMirror-gutters { background: rgba(0,0,0,0.3) !important; border-right: 1px solid rgba(255,255,255,0.05) !important; padding-right: 5px; }
     .CodeMirror-linenumber { color: rgba(255,255,255,0.3) !important; }
@@ -75,10 +55,9 @@
     .CodeMirror-foldmarker { color: #a855f7; text-shadow: none; font-family: arial; font-size: 14px; cursor: pointer; padding: 0 4px; }
     .CodeMirror-foldgutter-open, .CodeMirror-foldgutter-folded { color: rgba(255,255,255,0.6); cursor: pointer; text-align: center; }
 
-    /* MIDDLE ACTION BUTTONS */
-    .action-column { display: flex; flex-direction: column; gap: 15px; justify-content: center; width: 200px; transition: all 0.3s; }
+    .action-column { display: flex; flex-direction: column; gap: 15px; justify-content: center; width: 200px; transition: all 0.3s; background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 16px; padding: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.4); }
     
-    .tool-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white; padding: 14px; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: 600; font-family: inherit; transition: all 0.2s; backdrop-filter: blur(10px); display: flex; justify-content: center; align-items: center; gap: 8px;}
+    .tool-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white; padding: 14px; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: 600; font-family: inherit; transition: all 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px;}
     .tool-btn:hover { background: rgba(168, 85, 247, 0.2); border-color: rgba(168, 85, 247, 0.5); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(168, 85, 247, 0.2); }
     
     .btn-primary { background: linear-gradient(135deg, var(--primary), #a855f7); border: none; }
@@ -93,11 +72,17 @@
     .copy-sm { background: rgba(255,255,255,0.1); border: none; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; transition: 0.2s; font-family: inherit; display: flex; align-items: center; gap: 4px;}
     .copy-sm:hover { background: rgba(255,255,255,0.2); }
 
-    /* --- LIGHT MODE (COHESIVE WORKSPACE) --- */
-    .split-layout.light-theme .panel { background: rgba(255,255,255,0.95); border-color: #cbd5e1; }
-    .split-layout.light-theme .panel-header { background: #f8fafc; color: var(--primary); border-bottom-color: #cbd5e1; }
-    .split-layout.light-theme .copy-sm { background: #e2e8f0; color: #475569; }
-    .split-layout.light-theme .copy-sm:hover { background: #cbd5e1; color: var(--primary); }
+    /* --- LIGHT MODE (DEFAULT LOAD STATE) --- */
+    .split-layout.light-theme .panel, .split-layout.light-theme .action-column { 
+        background: rgba(255, 255, 255, 0.85); 
+        border: 1px solid rgba(255, 255, 255, 0.5); 
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+    }
+    .split-layout.light-theme .panel-header { background: #f8fafc; color: var(--primary); border-bottom: 1px solid #cbd5e1; }
+    .split-layout.light-theme .copy-sm { background: #e2e8f0; color: #475569; border: 1px solid transparent; }
+    .split-layout.light-theme .copy-sm:hover { background: #ffffff; color: var(--primary); border-color: #cbd5e1; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
     
     /* CodeMirror Light Fixes */
     .split-layout.light-theme .CodeMirror-gutters { background: #f8fafc !important; border-right: 1px solid #e2e8f0 !important; }
@@ -113,11 +98,8 @@
     .split-layout.light-theme .action-column .tab-select option { background: #ffffff; color: #1e293b; }
 
 
-    .footer { position: fixed; bottom: 0; left: 0; width: 100%; padding: 5px; text-align: center; color: rgba(255, 255, 255, 0.7); font-size: 13px; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 100; border-top: 1px solid rgba(255, 255, 255, 0.1); }
-    .footer a { color: white; text-decoration: none; font-weight: 600; }
-    .footer a:hover { text-decoration: underline; }
-    .footer-logo { height: 22px; width: auto; vertical-align: middle; margin: 0 4px; position: relative; top: -1px; }
-
+    .footer { position: fixed; bottom: 0; left: 0; width: 100%; padding: 5px; text-align: center; color: rgba(255, 255, 255, 0.7); font-size: 13px; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(12px); z-index: 100; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+    
     @media (max-width: 1050px) { 
         .split-layout { flex-direction: column; height: auto; } 
         .action-column { width: 100%; flex-direction: row; flex-wrap: wrap; }
@@ -136,7 +118,6 @@
             <a href="/how-it-works">How it works</a>
             <a href="/screen">Screen Share</a>
             <a href="/notepad">Live Notepad</a>
-            <!-- <a href="/mock">Mock API</a> -->
             <a href="/json-formatter" class="active">JSON Formatter</a>
         </div>
     </header>
@@ -145,7 +126,7 @@
         <h1 class="page-title">Zero-Knowledge JSON Formatter</h1>
         <p class="page-subtitle">Format, validate, and minify JSON offline. Your data never leaves your browser.</p>
 
-        <div class="split-layout" id="mainWorkspace">
+        <div class="split-layout light-theme" id="mainWorkspace">
             <div class="panel" id="inputPanel">
                 <div class="panel-header">
                     <span style="color: inherit;">Input Data</span>
@@ -158,7 +139,7 @@
             </div>
 
             <div class="action-column" id="actionColumn">
-                <button class="tool-btn" onclick="toggleTheme()" id="themeToggle">☀️ Light Editor</button>
+                <button class="tool-btn" onclick="toggleTheme()" id="themeToggle">🌙 Dark Editor</button>
                 
                 <div style="display: flex; gap: 10px;">
                     <select id="fontSize" class="tab-select" style="flex: 1; padding: 12px 5px;" onchange="changeFontSize()">
@@ -196,14 +177,12 @@
         </div>
     </div>
 
-    <footer class="footer">
-        © 2026 <img src="logo.png" alt="Sendly" style="height: 22px; vertical-align: middle;"> Secure File Transfer. <a href="/terms-privacy">Terms</a> & <a href="/terms-privacy">Privacy</a>.
-    </footer>
+    <footer class="footer">© 2026 Sendly Secure Tools.</footer>
 
     <script>
         const editorConfig = {
             mode: "application/json",
-            theme: "material-darker",
+            theme: "default", // INITIALIZED IN LIGHT THEME
             lineNumbers: true,
             matchBrackets: true,
             foldGutter: true, 
@@ -221,20 +200,16 @@
             placeholder: "Result will appear here..."
         });
 
-        // --- NEW: IN-APP MAXIMIZE ---
-        // Stretches the panel to fill the layout without hiding your browser tabs
         function toggleMaximize(panelId, editorInstance) {
             const workspace = document.getElementById('mainWorkspace');
             const panel = document.getElementById(panelId);
             const btn = panel.querySelector('button[title="Toggle Full Screen"]');
             
             if (panel.classList.contains('maximized-panel')) {
-                // Restore layout
                 panel.classList.remove('maximized-panel');
                 workspace.classList.remove('is-maximized');
                 btn.innerHTML = "⛶";
             } else {
-                // Maximize layout
                 panel.classList.add('maximized-panel');
                 workspace.classList.add('is-maximized');
                 btn.innerHTML = "✖ Exit";
@@ -243,8 +218,8 @@
             setTimeout(() => { editorInstance.refresh(); }, 150);
         }
 
-        // --- NEW: CLEAN THEME TOGGLE ---
-        let isLightMode = false;
+        // --- TOGGLE START STATE MODIFIED ---
+        let isLightMode = true; 
         function toggleTheme() {
             const workspace = document.getElementById('mainWorkspace');
             const toggleBtn = document.getElementById('themeToggle');
@@ -337,9 +312,11 @@
             const originalText = copyBtn.innerText;
             copyBtn.innerText = "Copied!";
             copyBtn.style.background = "#10b981"; 
+            copyBtn.style.color = "white";
             setTimeout(() => { 
                 copyBtn.innerText = originalText; 
-                copyBtn.style.background = ""; // Returns to CSS defined background
+                copyBtn.style.background = "";
+                copyBtn.style.color = "";
             }, 2000);
         }
 
