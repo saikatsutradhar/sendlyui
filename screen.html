@@ -1,63 +1,308 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Screen Share - Sendly</title>
-<link rel="icon" type="image/png" href="favicon.png">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
-<style>
-    :root { --primary: #4F46E5; --secondary: #F43F5E; --text-main: #1F2937; --text-muted: #6B7280; }
-    * { box-sizing: border-box; }
-    html, body { background-color: #0b1120; margin: 0; padding: 0; }
-    body { font-family: 'Poppins', sans-serif; display: flex; flex-direction: column; min-height: 100vh; color: var(--text-main); }
-    
-    .bg-video { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; filter: brightness(0.4); pointer-events: none; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Screen Share - Sendly</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --secondary: #F43F5E;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+        }
 
-    /* HEADER */
-    .header { width: 100%; padding: 5px 5%; display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); z-index: 100; position: relative; }
-    .header-logo { font-size: 24px; font-weight: 800; color: white; text-decoration: none; display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px; }
-    .header-links a { color: rgba(255, 255, 255, 0.85); text-decoration: none; font-size: 15px; font-weight: 500; margin-left: 30px; transition: color 0.3s; }
-    .header-links a:hover, .header-links a.active { color: white; }
+        * {
+            box-sizing: border-box;
+        }
 
-    /* PAGE LAYOUT */
-    .page-wrapper { flex: 1; padding: 100px 5% 100px; max-width: 1200px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 1; }
-    .page-title { font-size: 48px; font-weight: 800; text-align: center; letter-spacing: -1px; color: #fff; margin: 0; }
-    .page-subtitle { text-align: center; font-size: 16px; color: rgba(255,255,255,0.7); margin: 5px auto 40px auto; max-width: 600px; line-height: 1.6; }
+        html,
+        body {
+            background-color: #0b1120;
+            margin: 0;
+            padding: 0;
+        }
 
-    /* CONTROLS PANEL (Light frosted style to match index.html) */
-    .controls-container { display: flex; gap: 30px; width: 100%; max-width: 900px; margin-bottom: 40px; }
-    .glass-card { flex: 1; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 24px; padding: 40px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2); text-align: center;}
-    .glass-card h2 { color: var(--text-main); margin: 0 0 15px 0; font-size: 22px; font-weight: 700;}
-    .glass-card p { color: var(--text-muted); font-size: 14px; margin-bottom: 25px; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            color: var(--text-main);
+        }
 
-    .btn { background: linear-gradient(135deg, var(--primary), #a855f7); color: white; border: none; padding: 14px 28px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; transition: transform 0.2s, box-shadow 0.2s; font-family: inherit; }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(168, 85, 247, 0.3); }
+        .bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            filter: brightness(80%);
+            pointer-events: none;
+        }
 
-    .input-field { width: 100%; padding: 14px 20px; border-radius: 12px; border: 1px solid #CBD5E1; background: #F8FAFC; color: var(--text-main); font-size: 16px; font-family: inherit; text-align: center; letter-spacing: 2px; margin-bottom: 15px; outline: none; transition: border-color 0.3s; }
-    .input-field:focus { border-color: var(--primary); }
+        /* HEADER */
+        .header {
+            width: 100%;
+            padding: 5px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-sizing: border-box;
+        }
 
-    .key-display { font-size: 32px; font-weight: 800; color: var(--primary); letter-spacing: 4px; margin: 20px 0; padding: 15px; background: rgba(79, 70, 229, 0.1); border: 1px dashed rgba(79, 70, 229, 0.3); border-radius: 12px; display: none; }
+        .header-logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.5px;
+        }
 
-    /* VIDEO PLAYER */
-    .video-container { width: 100%; max-width: 1100px; border-radius: 16px; overflow: hidden; background: #000; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5); display: none; border: 1px solid rgba(255,255,255,0.1); position: relative; }
-    video { width: 100%; height: auto; max-height: 70vh; display: block; object-fit: contain; }
-    .status-badge { position: absolute; top: 20px; left: 20px; background: rgba(244, 63, 94, 0.9); color: white; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(5px); }
-    .status-badge::before { content: ''; width: 8px; height: 8px; background: #fff; border-radius: 50%; animation: pulse 1.5s infinite; }
-    @keyframes pulse { 0% { transform: scale(0.95); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+        .header-links a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            margin-left: 30px;
+            transition: color 0.3s;
+        }
 
-    /* FOOTER */
-    .footer { position: fixed; bottom: 0; left: 0; width: 100%; padding: 5px; text-align: center; color: rgba(255, 255, 255, 0.7); font-size: 13px; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(12px); border-top: 1px solid rgba(255, 255, 255, 0.1); z-index: 100; }
-    .footer a { color: white; text-decoration: none; font-weight: 600; }
+        .header-links a:hover,
+        .header-links a.active {
+            color: white;
+        }
 
-    @media (max-width: 768px) { .controls-container { flex-direction: column; } .page-title { font-size: 36px; } }
-</style>
+        /* PAGE LAYOUT */
+        .page-wrapper {
+            flex: 1;
+            padding: 100px 5% 100px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-title {
+            font-size: 48px;
+            font-weight: 800;
+            text-align: center;
+            letter-spacing: -1px;
+            color: #fff;
+            margin: 0;
+        }
+
+        .page-subtitle {
+            text-align: center;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+            margin: 5px auto 40px auto;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        /* CONTROLS PANEL (Light frosted style to match index.html) */
+        .controls-container {
+            display: flex;
+            gap: 30px;
+            width: 100%;
+            max-width: 900px;
+            margin-bottom: 40px;
+        }
+
+        .glass-card {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .glass-card h2 {
+            color: var(--text-main);
+            margin: 0 0 15px 0;
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .glass-card p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(168, 85, 247, 0.3);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: 12px;
+            border: 1px solid #CBD5E1;
+            background: #F8FAFC;
+            color: var(--text-main);
+            font-size: 16px;
+            font-family: inherit;
+            text-align: center;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-field:focus {
+            border-color: var(--primary);
+        }
+
+        .key-display {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: 4px;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(79, 70, 229, 0.1);
+            border: 1px dashed rgba(79, 70, 229, 0.3);
+            border-radius: 12px;
+            display: none;
+        }
+
+        /* VIDEO PLAYER */
+        .video-container {
+            width: 100%;
+            max-width: 1100px;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #000;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            display: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        video {
+            width: 100%;
+            height: auto;
+            max-height: 70vh;
+            display: block;
+            object-fit: contain;
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(244, 63, 94, 0.9);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(5px);
+        }
+
+        .status-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* FOOTER */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 5px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .controls-container {
+                flex-direction: column;
+            }
+
+            .page-title {
+                font-size: 36px;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <!-- <video class="bg-video" autoplay loop muted playsinline>
-        <source src="background.mp4" type="video/mp4">
-    </video> -->
+    <img class="bg-video" src="background.png" alt="Background">
 
     <header class="header">
         <a href="/" class="header-logo"><img src="logo.png" alt="Sendly Logo" style="height: 40px; width: auto;"></a>
@@ -74,7 +319,8 @@
             <img src="logo.png" alt="Sendly Icon" style="height: 55px; width: auto; position: relative; top: -3px;">
             <h1 class="page-title">Live Mirror</h1>
         </div>
-        <p class="page-subtitle">Instantly beam your screen to another device using secure, peer-to-peer WebRTC signaling. No downloads required.</p>
+        <p class="page-subtitle">Instantly beam your screen to another device using secure, peer-to-peer WebRTC
+            signaling. No downloads required.</p>
 
         <div class="controls-container" id="controlsPanel">
             <div class="glass-card">
@@ -82,14 +328,16 @@
                 <p>Broadcast your screen or a specific app window in real-time.</p>
                 <button class="btn" onclick="startSharing()" id="shareBtn">Start Broadcast</button>
                 <div class="key-display" id="generatedKey"></div>
-                <p id="waitingText" style="display:none; color: var(--primary); font-weight: 600; margin-top: 15px;">Waiting for viewer to connect...</p>
+                <p id="waitingText" style="display:none; color: var(--primary); font-weight: 600; margin-top: 15px;">
+                    Waiting for viewer to connect...</p>
             </div>
 
             <div class="glass-card">
                 <h2>View a Screen</h2>
                 <p>Enter the 6-digit access code provided by the sender.</p>
                 <input type="text" id="joinCode" class="input-field" placeholder="Enter 6-Digit Code" maxlength="6">
-                <button class="btn" onclick="joinStream()" style="background: linear-gradient(135deg, var(--secondary), #f43f5e);">Connect to Stream</button>
+                <button class="btn" onclick="joinStream()"
+                    style="background: linear-gradient(135deg, var(--secondary), #f43f5e);">Connect to Stream</button>
             </div>
         </div>
 
@@ -100,7 +348,8 @@
     </div>
 
     <footer class="footer">
-        © 2026 <img src="logo.png" alt="Sendly" style="height: 22px; vertical-align: middle;"> Secure File Transfer. <a href="/terms-privacy">Terms</a> & <a href="/terms-privacy">Privacy</a>.
+        © 2026 <img src="logo.png" alt="Sendly" style="height: 22px; vertical-align: middle;"> Secure File Transfer. <a
+            href="/terms-privacy">Terms</a> & <a href="/terms-privacy">Privacy</a>.
     </footer>
 
     <script>
@@ -108,7 +357,7 @@
         let peerConnection;
         let localStream;
         let roomKey;
-        
+
         const rtcConfig = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }, { urls: "stun:stun1.l.google.com:19302" }] };
         const videoElement = document.getElementById('streamVideo');
         const videoContainer = document.getElementById('videoContainer');
@@ -133,8 +382,8 @@
                 socket.on("user_joined", async () => {
                     document.getElementById('waitingText').innerText = "Viewer connected! Streaming...";
                     document.getElementById('waitingText').style.color = "#10b981";
-                    controlsPanel.style.display = 'none'; 
-                    
+                    controlsPanel.style.display = 'none';
+
                     createPeerConnection();
                     localStream.getTracks().forEach(track => { peerConnection.addTrack(track, localStream); });
                     const offer = await peerConnection.createOffer();
@@ -152,7 +401,7 @@
             const inputKey = document.getElementById('joinCode').value.trim();
             if (inputKey.length !== 6) { alert("Please enter a valid 6-digit code."); return; }
             roomKey = inputKey;
-            
+
             socket.emit("join_screen", { key: roomKey });
             controlsPanel.style.display = 'none';
             videoContainer.style.display = 'block';
@@ -186,4 +435,5 @@
         });
     </script>
 </body>
+
 </html>

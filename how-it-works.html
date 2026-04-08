@@ -1,159 +1,318 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>How it works - Sendly</title>
-<link rel="icon" type="image/png" href="favicon.png">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-    :root {
-        --primary: #4F46E5;
-        --primary-hover: #4338CA;
-        --secondary: #F43F5E;
-        --secondary-hover: #E11D48;
-        --text-main: #1F2937;
-        --text-muted: #6B7280;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>How it works - Sendly</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --secondary: #F43F5E;
+            --secondary-hover: #E11D48;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+        }
 
-    * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
-    html, body { background-color: #0b1120; margin: 0; padding: 0; }
+        html,
+        body {
+            background-color: #0b1120;
+            margin: 0;
+            padding: 0;
+        }
 
-    body {
-        font-family: 'Poppins', sans-serif;
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-        color: var(--text-main);
-    }
-    
-    .bg-video {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        z-index: 0;
-        filter: brightness(0.4);
-        pointer-events: none;
-    }
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            color: var(--text-main);
+        }
 
-    .header-logo, .footer-logo { user-select: none; -webkit-user-select: none; }
+        .bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            filter: brightness(80%);
+            pointer-events: none;
+        }
 
-    /* --- HEADER --- */
-    .header {
-        width: 100%;
-        padding: 5px 5%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        z-index: 100;
-        position: relative; 
-    }
+        .header-logo,
+        .footer-logo {
+            user-select: none;
+            -webkit-user-select: none;
+        }
 
-    .header-logo { font-size: 24px; font-weight: 800; color: white; text-decoration: none; display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px; }
-    .header-links a { color: rgba(255, 255, 255, 0.85); text-decoration: none; font-size: 15px; font-weight: 500; margin-left: 30px; transition: color 0.3s; }
-    .header-links a:hover, .header-links a.active { color: white; }
+        /* --- HEADER --- */
+        .header {
+            width: 100%;
+            padding: 5px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-sizing: border-box;
+        }
 
-    /* --- PAGE LAYOUT --- */
-    .page-wrapper { 
-        flex: 1; 
-        display: flex; 
-        flex-direction: column;
-        align-items: center; 
-        padding: 100px 5% 100px; 
-        position: relative; 
-        z-index: 1; 
-        gap: 60px; 
-    }
+        .header-logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.5px;
+        }
 
-    .page-main-title {
-        text-align: center;
-        font-size: 48px;
-        font-weight: 800;
-        margin: 20px 0 0 0;
-        letter-spacing: -1px;
-        color: white;
-    }
-    
-    .page-main-subtitle {
-        text-align: center;
-        font-size: 16px;
-        color: rgba(255,255,255,0.7);
-        max-width: 600px;
-        margin: 10px auto 20px auto;
-        line-height: 1.6;
-    }
+        .header-links a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            margin-left: 30px;
+            transition: color 0.3s;
+        }
 
-    .glass-panel {
-        background: rgba(255, 255, 255, 0.85);
-        border: 1px solid rgba(255, 255, 255, 0.5);
-        border-radius: 24px;
-        padding: 60px 50px;
-        max-width: 1000px;
-        width: 100%;
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        animation: fadeIn 0.5s ease-out;
-    }
+        .header-links a:hover,
+        .header-links a.active {
+            color: white;
+        }
 
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        /* --- PAGE LAYOUT --- */
+        .page-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 100px 5% 100px;
+            position: relative;
+            z-index: 1;
+            gap: 60px;
+        }
 
-    .panel-title {
-        text-align: center;
-        font-size: 36px;
-        font-weight: 800;
-        margin: 0 0 10px 0;
-        letter-spacing: -1px;
-        color: var(--text-main);
-    }
+        .page-main-title {
+            text-align: center;
+            font-size: 48px;
+            font-weight: 800;
+            margin: 20px 0 0 0;
+            letter-spacing: -1px;
+            color: white;
+        }
 
-    .panel-subtitle {
-        text-align: center;
-        font-size: 15px;
-        color: var(--text-muted);
-        max-width: 700px;
-        margin: 0 auto 50px auto;
-        line-height: 1.6;
-    }
+        .page-main-subtitle {
+            text-align: center;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 600px;
+            margin: 10px auto 20px auto;
+            line-height: 1.6;
+        }
 
-    .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-bottom: 40px; }
-    .step-card { text-align: center; padding: 30px 20px; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: transform 0.4s ease, box-shadow 0.4s ease; }
-    .step-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(79, 70, 229, 0.15); }
-    .step-icon { background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); width: 65px; height: 65px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; color: white; box-shadow: 0 10px 20px rgba(244, 63, 94, 0.3); transform: rotate(-5deg); transition: transform 0.3s ease; }
-    .step-card:hover .step-icon { transform: rotate(0deg) scale(1.05); }
-    .step-icon svg { width: 30px; height: 30px; }
-    .step-title { font-size: 18px; font-weight: 700; margin: 0 0 10px 0; color: var(--text-main); }
-    .step-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin: 0; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
+            padding: 60px 50px;
+            max-width: 1000px;
+            width: 100%;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            animation: fadeIn 0.5s ease-out;
+        }
 
-    .cta-container { text-align: center; margin-top: 10px; }
-    .btn-start { display: inline-flex; align-items: center; gap: 8px; background: var(--primary); color: white; padding: 14px 35px; border-radius: 12px; font-size: 15px; font-weight: 600; text-decoration: none; box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4); transition: all 0.3s ease; }
-    .btn-start:hover { background: var(--primary-hover); box-shadow: 0 15px 35px rgba(79, 70, 229, 0.5); transform: translateY(-2px); }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
 
-    .footer { position: fixed; bottom: 0; left: 0; width: 100%; padding: 5px; text-align: center; color: rgba(255, 255, 255, 0.7); font-size: 13px; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(12px); z-index: 100; border-top: 1px solid rgba(255, 255, 255, 0.1); }
-    .footer a { color: white; text-decoration: none; font-weight: 600; }
-    .footer a:hover { text-decoration: underline; }
-    .footer-logo { height: 22px; width: auto; vertical-align: middle; margin: 0 4px; position: relative; top: -1px; }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-    @media (max-width: 900px) {
-        .steps-grid { grid-template-columns: 1fr; gap: 20px; }
-        .glass-panel { padding: 40px 20px; }
-        .panel-title { font-size: 32px; }
-        .header-links { display: none; }
-    }
-</style>
+        .panel-title {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 800;
+            margin: 0 0 10px 0;
+            letter-spacing: -1px;
+            color: var(--text-main);
+        }
+
+        .panel-subtitle {
+            text-align: center;
+            font-size: 15px;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto 50px auto;
+            line-height: 1.6;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .step-card {
+            text-align: center;
+            padding: 30px 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .step-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(79, 70, 229, 0.15);
+        }
+
+        .step-icon {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            width: 65px;
+            height: 65px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px auto;
+            color: white;
+            box-shadow: 0 10px 20px rgba(244, 63, 94, 0.3);
+            transform: rotate(-5deg);
+            transition: transform 0.3s ease;
+        }
+
+        .step-card:hover .step-icon {
+            transform: rotate(0deg) scale(1.05);
+        }
+
+        .step-icon svg {
+            width: 30px;
+            height: 30px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            color: var(--text-main);
+        }
+
+        .step-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .cta-container {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .btn-start {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--primary);
+            color: white;
+            padding: 14px 35px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .btn-start:hover {
+            background: var(--primary-hover);
+            box-shadow: 0 15px 35px rgba(79, 70, 229, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 5px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(12px);
+            z-index: 100;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-logo {
+            height: 22px;
+            width: auto;
+            vertical-align: middle;
+            margin: 0 4px;
+            position: relative;
+            top: -1px;
+        }
+
+        @media (max-width: 900px) {
+            .steps-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .glass-panel {
+                padding: 40px 20px;
+            }
+
+            .panel-title {
+                font-size: 32px;
+            }
+
+            .header-links {
+                display: none;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <video class="bg-video" autoplay loop muted playsinline>
-        <source src="background.mp4" type="video/mp4">
-    </video>
+    <img class="bg-video" src="background.png" alt="Background">
 
     <header class="header">
         <a href="/" class="header-logo">
@@ -168,37 +327,56 @@
     </header>
 
     <div class="page-wrapper">
-        
+
         <div>
             <h1 class="page-main-title">Sendly Platform Engine</h1>
-            <p class="page-main-subtitle">Discover the Zero-Knowledge and Peer-to-Peer architecture powering our suite of developer and productivity tools.</p>
+            <p class="page-main-subtitle">Discover the Zero-Knowledge and Peer-to-Peer architecture powering our suite
+                of developer and productivity tools.</p>
         </div>
 
         <div class="glass-panel">
             <h2 class="panel-title">Secure File Transfer</h2>
-            <p class="panel-subtitle">Using military-grade AES encryption directly in your browser. We never see your files, and they are instantly deleted the moment they are downloaded.</p>
+            <p class="panel-subtitle">Using military-grade AES encryption directly in your browser. We never see your
+                files, and they are instantly deleted the moment they are downloaded.</p>
 
             <div class="steps-grid">
                 <div class="step-card">
                     <div class="step-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
                     </div>
                     <h3 class="step-title">1. Upload & Encrypt</h3>
-                    <p class="step-desc">Select files up to 500MB. Add a password to mathematically lock your file before it ever leaves your device.</p>
+                    <p class="step-desc">Select files up to 500MB. Add a password to mathematically lock your file
+                        before it ever leaves your device.</p>
                 </div>
                 <div class="step-card">
                     <div class="step-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
                     </div>
                     <h3 class="step-title">2. Get Your Key</h3>
-                    <p class="step-desc">We generate a single-use 6-digit key. Your scrambled file waits on our server, unreadable to us.</p>
+                    <p class="step-desc">We generate a single-use 6-digit key. Your scrambled file waits on our server,
+                        unreadable to us.</p>
                 </div>
                 <div class="step-card">
                     <div class="step-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
                     </div>
                     <h3 class="step-title">3. Decrypt Locally</h3>
-                    <p class="step-desc">The receiver enters the key and password. The file unlocks directly in their browser.</p>
+                    <p class="step-desc">The receiver enters the key and password. The file unlocks directly in their
+                        browser.</p>
                 </div>
             </div>
             <div class="cta-container">
@@ -208,29 +386,46 @@
 
         <div class="glass-panel">
             <h2 class="panel-title">Live Screen Mirror</h2>
-            <p class="panel-subtitle">Zero-latency, peer-to-peer screen sharing using raw WebRTC protocols. No software downloads or browser extensions required.</p>
+            <p class="panel-subtitle">Zero-latency, peer-to-peer screen sharing using raw WebRTC protocols. No software
+                downloads or browser extensions required.</p>
 
             <div class="steps-grid">
                 <div class="step-card">
                     <div class="step-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
                     </div>
                     <h3 class="step-title">1. Capture Screen</h3>
-                    <p class="step-desc">Your browser securely accesses your system's Display Media API to capture a window or entire monitor.</p>
+                    <p class="step-desc">Your browser securely accesses your system's Display Media API to capture a
+                        window or entire monitor.</p>
                 </div>
                 <div class="step-card">
                     <div class="step-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                            <polyline points="16 6 12 2 8 6"></polyline>
+                            <line x1="12" y1="2" x2="12" y2="15"></line>
+                        </svg>
                     </div>
                     <h3 class="step-title">2. P2P Handshake</h3>
-                    <p class="step-desc">We use Socket.io to exchange ICE candidates and establish a direct route between the two computers.</p>
+                    <p class="step-desc">We use Socket.io to exchange ICE candidates and establish a direct route
+                        between the two computers.</p>
                 </div>
                 <div class="step-card">
                     <div class="step-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
                     </div>
                     <h3 class="step-title">3. Direct Stream</h3>
-                    <p class="step-desc">The video feed bypasses our servers completely, streaming directly from your computer to the viewer.</p>
+                    <p class="step-desc">The video feed bypasses our servers completely, streaming directly from your
+                        computer to the viewer.</p>
                 </div>
             </div>
             <div class="cta-container">
@@ -240,29 +435,46 @@
 
         <div class="glass-panel">
             <h2 class="panel-title">Collaborative Notepad</h2>
-            <p class="panel-subtitle">Real-time multiplayer text editing. We use sub-millisecond WebSocket events to sync cursors and HTML elements across multiple devices instantly.</p>
+            <p class="panel-subtitle">Real-time multiplayer text editing. We use sub-millisecond WebSocket events to
+                sync cursors and HTML elements across multiple devices instantly.</p>
 
             <div class="steps-grid">
                 <div class="step-card">
                     <div class="step-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 20h9"></path>
+                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                        </svg>
                     </div>
                     <h3 class="step-title">1. Open Workspace</h3>
-                    <p class="step-desc">Instantly spin up a rich-text content editable environment attached to a secure WebSockets room.</p>
+                    <p class="step-desc">Instantly spin up a rich-text content editable environment attached to a secure
+                        WebSockets room.</p>
                 </div>
                 <div class="step-card">
                     <div class="step-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
                     </div>
                     <h3 class="step-title">2. Invite Peers</h3>
-                    <p class="step-desc">Share your access key. Colleagues instantly join your exact session without needing accounts.</p>
+                    <p class="step-desc">Share your access key. Colleagues instantly join your exact session without
+                        needing accounts.</p>
                 </div>
                 <div class="step-card">
                     <div class="step-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
                     </div>
                     <h3 class="step-title">3. Instant Sync</h3>
-                    <p class="step-desc">Every keystroke emits a tiny data packet, calculating exact cursor offsets to prevent layout jumping.</p>
+                    <p class="step-desc">Every keystroke emits a tiny data packet, calculating exact cursor offsets to
+                        prevent layout jumping.</p>
                 </div>
             </div>
             <div class="cta-container">
@@ -272,29 +484,45 @@
 
         <div class="glass-panel">
             <h2 class="panel-title">Zero-Knowledge JSON Formatter</h2>
-            <p class="panel-subtitle">Offline CodeMirror data processing. You can safely paste massive, sensitive database payloads without fear of data leakage.</p>
+            <p class="panel-subtitle">Offline CodeMirror data processing. You can safely paste massive, sensitive
+                database payloads without fear of data leakage.</p>
 
             <div class="steps-grid">
                 <div class="step-card">
                     <div class="step-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
                     </div>
                     <h3 class="step-title">1. Local Import</h3>
-                    <p class="step-desc">Paste messy or minified JSON code directly into the browser. The data never hits a backend network.</p>
+                    <p class="step-desc">Paste messy or minified JSON code directly into the browser. The data never
+                        hits a backend network.</p>
                 </div>
                 <div class="step-card">
                     <div class="step-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
                     </div>
                     <h3 class="step-title">2. Offline Formatting</h3>
-                    <p class="step-desc">Our integrated CodeMirror engine uses pure client-side Javascript to instantly beautify the code.</p>
+                    <p class="step-desc">Our integrated CodeMirror engine uses pure client-side Javascript to instantly
+                        beautify the code.</p>
                 </div>
                 <div class="step-card">
                     <div class="step-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
                     </div>
                     <h3 class="step-title">3. Export Safely</h3>
-                    <p class="step-desc">Copy the formatted string or generate an instant local .json file download from the browser memory.</p>
+                    <p class="step-desc">Copy the formatted string or generate an instant local .json file download from
+                        the browser memory.</p>
                 </div>
             </div>
             <div class="cta-container">
@@ -305,7 +533,9 @@
     </div>
 
     <footer class="footer">
-        © 2026 <img src="logo.png" alt="Sendly" class="footer-logo"> Secure File Transfer. <a href="/terms-privacy">Terms</a> & <a href="/terms-privacy">Privacy</a>.
+        © 2026 <img src="logo.png" alt="Sendly" class="footer-logo"> Secure File Transfer. <a
+            href="/terms-privacy">Terms</a> & <a href="/terms-privacy">Privacy</a>.
     </footer>
 </body>
+
 </html>
