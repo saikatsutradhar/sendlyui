@@ -419,6 +419,7 @@
             z-index: 100;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
+
         .mobile-menu-btn {
             display: none;
             font-size: 24px;
@@ -431,6 +432,23 @@
             transition: transform 0.3s ease;
         }
 
+        .hero-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            font-size: 48px;
+            font-weight: 800;
+            margin: 0 0 15px 0;
+            letter-spacing: -1px;
+            color: #ffffff;
+        }
+
+        .hero-title img {
+            height: 70px;
+            width: auto;
+        }
+
         @media (max-width: 1024px) {
             .page-wrapper {
                 padding-bottom: 200px;
@@ -440,11 +458,13 @@
                 flex-direction: column;
                 height: auto;
             }
+
             .action-column {
                 width: 100%;
                 flex-direction: row;
                 flex-wrap: wrap;
             }
+
             .action-column .tool-btn {
                 flex: 1 1 calc(33% - 15px);
             }
@@ -468,8 +488,8 @@
                 gap: 25px;
                 padding: 30px 0;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-                
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+
                 display: flex;
                 opacity: 0;
                 visibility: hidden;
@@ -493,7 +513,7 @@
                 color: rgba(255, 255, 255, 0.8);
                 transition: color 0.3s, transform 0.3s;
             }
-            
+
             .header-links a:hover {
                 color: white;
                 transform: scale(1.05);
@@ -517,7 +537,9 @@
     </header>
 
     <div class="page-wrapper">
-        <h1 class="page-title">Zero-Knowledge JSON Formatter</h1>
+        <h1 class="hero-title">
+            <img src="logo.png" alt="Sendly Icon"> JSON Formatter
+        </h1>
         <p class="page-subtitle">Format, validate, and minify JSON offline. Your data never leaves your browser.</p>
 
         <div class="split-layout light-theme" id="mainWorkspace">

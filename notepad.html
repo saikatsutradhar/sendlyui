@@ -126,13 +126,21 @@
             z-index: 1;
         }
 
-        .page-title {
+        .hero-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
             font-size: 48px;
             font-weight: 800;
-            text-align: center;
+            margin: 0 0 15px 0;
             letter-spacing: -1px;
-            color: #fff;
-            margin: 0;
+            color: #ffffff;
+        }
+
+        .hero-title img {
+            height: 70px;
+            width: auto;
         }
 
         .page-subtitle {
@@ -370,7 +378,7 @@
             .mobile-menu-btn {
                 display: block;
             }
-            
+
             .header-links {
                 position: absolute;
                 top: 55px;
@@ -384,8 +392,8 @@
                 gap: 25px;
                 padding: 30px 0;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-                
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+
                 display: flex;
                 opacity: 0;
                 visibility: hidden;
@@ -409,7 +417,7 @@
                 color: rgba(255, 255, 255, 0.8);
                 transition: color 0.3s, transform 0.3s;
             }
-            
+
             .header-links a:hover {
                 color: white;
                 transform: scale(1.05);
@@ -425,8 +433,12 @@
                 flex-direction: column;
             }
 
-            .page-title {
+            .hero-title {
                 font-size: 36px;
+            }
+
+            .hero-title img {
+                height: 48px;
             }
 
             .notepad-editable {
@@ -455,10 +467,9 @@
     </header>
 
     <div class="page-wrapper">
-        <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 5px; gap: 15px;">
-            <img src="logo.png" alt="Sendly Icon" style="height: 55px; width: auto; position: relative; top: -3px;">
-            <h1 class="page-title">Notepad</h1>
-        </div>
+        <h1 class="hero-title">
+            <img src="logo.png" alt="Sendly Icon"> Notepad
+        </h1>
         <p class="page-subtitle">Collaborate on text instantly with multiple people. Zero accounts, syncs in real-time.
         </p>
 

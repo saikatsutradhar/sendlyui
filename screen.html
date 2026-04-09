@@ -126,13 +126,21 @@
             z-index: 1;
         }
 
-        .page-title {
+        .hero-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
             font-size: 48px;
             font-weight: 800;
-            text-align: center;
+            margin: 0 0 15px 0;
             letter-spacing: -1px;
-            color: #fff;
-            margin: 0;
+            color: #ffffff;
+        }
+
+        .hero-title img {
+            height: 70px;
+            width: auto;
         }
 
         .page-subtitle {
@@ -382,8 +390,12 @@
                 flex-direction: column;
             }
 
-            .page-title {
+            .hero-title {
                 font-size: 36px;
+            }
+
+            .hero-title img {
+                height: 48px;
             }
         }
     </style>
@@ -404,10 +416,9 @@
     </header>
 
     <div class="page-wrapper">
-        <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 5px; gap: 15px;">
-            <img src="logo.png" alt="Sendly Icon" style="height: 55px; width: auto; position: relative; top: -3px;">
-            <h1 class="page-title">Live Mirror</h1>
-        </div>
+        <h1 class="hero-title">
+            <img src="logo.png" alt="Sendly Icon"> Live Mirror
+        </h1>
         <p class="page-subtitle">Instantly beam your screen to another device using secure, peer-to-peer WebRTC
             signaling. No downloads required.</p>
 
