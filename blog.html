@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Blog - Sendly</title>
+    <title>Articles - Sendly</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
@@ -12,8 +12,8 @@
         :root {
             --primary: #4F46E5;
             --secondary: #F43F5E;
-            --text-main: #1F2937;
-            --text-muted: #6B7280;
+            --text-main: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.65);
         }
 
         * {
@@ -57,7 +57,8 @@
             color: var(--text-main);
         }
 
-        .bg-video {
+        /* --- BACKGROUND --- */
+        .bg-image {
             position: fixed;
             top: 0;
             left: 0;
@@ -69,10 +70,10 @@
             pointer-events: none;
         }
 
-        /* --- HEADER --- */
+        /* --- FIXED HEADER --- */
         .header {
             width: 100%;
-            padding: 5px 5%;
+            padding: 10px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -84,7 +85,6 @@
             position: fixed;
             top: 0;
             left: 0;
-            box-sizing: border-box;
         }
 
         .header-logo {
@@ -95,13 +95,12 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            letter-spacing: -0.5px;
         }
 
         .header-links a {
             color: rgba(255, 255, 255, 0.85);
             text-decoration: none;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 500;
             margin-left: 30px;
             transition: color 0.3s;
@@ -110,117 +109,166 @@
         .header-links a:hover,
         .header-links a.active {
             color: white;
+            font-weight: 600;
         }
 
         /* --- PAGE LAYOUT --- */
         .page-wrapper {
             flex: 1;
-            padding: 100px 5% 100px;
-            max-width: 1400px;
+            padding: 120px 5% 100px;
+            max-width: 1200px;
             margin: 0 auto;
             width: 100%;
             position: relative;
             z-index: 1;
         }
 
-        .page-title {
-            font-size: 48px;
-            font-weight: 800;
+        /* --- HERO SECTION --- */
+        .hero-container {
             text-align: center;
-            letter-spacing: -1px;
-            color: #fff;
-            margin: 0;
+            margin-bottom: 60px;
         }
 
-        .page-subtitle {
-            text-align: center;
+        .hero-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            font-size: 48px;
+            font-weight: 800;
+            margin: 0 0 15px 0;
+            letter-spacing: -1px;
+        }
+
+        .hero-title img {
+            height: 48px;
+            width: auto;
+        }
+
+        .hero-subtitle {
             font-size: 16px;
             color: rgba(255, 255, 255, 0.7);
-            margin: 5px auto 50px auto;
             max-width: 600px;
+            margin: 0 auto;
             line-height: 1.6;
         }
 
-        /* --- DRIBBBLE STYLE GALLERY GRID --- */
-        .blog-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            /* Perfectly centers 1, 2, or 3 cards without stretching them */
+        .loader {
+            text-align: center;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+            margin-top: 50px;
+        }
+
+        /* --- ARTICLES GRID --- */
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 40px 30px;
         }
 
-        /* Transparent card container, focuses purely on the image and text */
-        .blog-card {
-            width: 340px;
-            /* Fixed width exactly like Dribbble gallery shots */
+        /* --- CLEAN ARTICLE CARDS (MATCHING SCREENSHOT) --- */
+        .article-card {
             text-decoration: none;
             display: flex;
             flex-direction: column;
-            transition: transform 0.2s ease;
+            transition: all 0.3s ease;
             cursor: pointer;
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
         }
 
-        /* Hover Effect - Subtle Image Zoom */
-        .blog-card:hover .blog-image {
-            transform: scale(1.05);
+        .article-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(168, 85, 247, 0.4);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
         }
 
-        .blog-card:hover .blog-title {
+        .article-card:hover .article-image {
+            transform: scale(1.03);
+        }
+
+        .article-card:hover .article-title {
             color: #e879f9;
         }
 
-        .blog-image-wrapper {
+        /* Image Box */
+        .article-image-wrapper {
             width: 100%;
-            height: 255px;
-            /* 4:3 Ratio */
-            border-radius: 12px;
+            aspect-ratio: 16 / 10;
             overflow: hidden;
             position: relative;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-            margin-bottom: 12px;
+            background: #111827;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .blog-image {
+        .article-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.4s ease;
-            background: #111827;
+            transition: transform 0.5s ease;
         }
 
-        .blog-content-wrapper {
+        /* Content Area */
+        .article-content {
             display: flex;
             flex-direction: column;
-            padding: 0 4px;
+            padding: 24px;
+            flex: 1;
         }
 
-        .blog-title {
-            font-size: 15px;
-            font-weight: 600;
+        .article-title {
+            font-size: 18px;
+            font-weight: 700;
             margin: 0 0 12px 0;
             color: #ffffff;
             line-height: 1.4;
-            transition: color 0.2s ease;
-            /* Limits title to 2 lines neatly */
+            transition: color 0.3s ease;
+        }
+
+        .article-summary {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin: 0 0 15px 0;
             display: -webkit-box;
-            -webkit-line-clamp: 2;
+            -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
 
-        /* Dribbble-style Author & Stats row */
-        .blog-meta {
+        .read-link {
+            font-size: 13px;
+            color: #a855f7;
+            /* Sendly Purple */
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: inline-block;
+            transition: opacity 0.2s;
+        }
+
+        .article-card:hover .read-link {
+            opacity: 0.8;
+        }
+
+        /* Footer Metadata */
+        .article-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-top: auto;
         }
 
-        .blog-author {
+        .author-info {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .author-avatar {
@@ -235,42 +283,33 @@
         }
 
         .author-avatar img {
-            width: 16px;
+            width: 14px;
             height: auto;
         }
 
         .author-name {
             font-size: 13px;
-            font-weight: 500;
-            color: rgba(255, 255, 255, 0.85);
+            font-weight: 600;
+            color: #ffffff;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
-        /* Pro Badge */
-        .badge {
+        .pro-badge {
             background: rgba(168, 85, 247, 0.2);
             color: #e879f9;
             font-size: 10px;
-            font-weight: 700;
-            padding: 2px 5px;
+            font-weight: 800;
+            padding: 2px 6px;
             border-radius: 4px;
             letter-spacing: 0.5px;
         }
 
-        .blog-stats {
+        .article-date {
             font-size: 12px;
             color: rgba(255, 255, 255, 0.5);
             font-weight: 500;
-        }
-
-        .loader {
-            text-align: center;
-            color: white;
-            font-weight: 600;
-            font-size: 18px;
-            margin-top: 50px;
         }
 
         /* --- FOOTER --- */
@@ -285,7 +324,6 @@
             font-size: 13px;
             background: rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             z-index: 100;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
@@ -300,77 +338,66 @@
             text-decoration: underline;
         }
 
-        .footer-logo {
-            height: 22px;
-            width: auto;
-            vertical-align: middle;
-            margin: 0 4px;
-            position: relative;
-            top: -1px;
-        }
-
-        /* Responsive */
         @media (max-width: 850px) {
-            .page-title {
+            .hero-title {
                 font-size: 36px;
+            }
+
+            .hero-title img {
+                height: 36px;
             }
 
             .header-links {
                 display: none;
             }
         }
-
-        @media (max-width: 400px) {
-            .blog-card {
-                width: 100%;
-            }
-
-            /* Fills screen on tiny phones */
-        }
     </style>
 </head>
 
 <body>
-    <img class="bg-video" src="background.png" alt="Background">
+    <img src="background.png" alt="Background" class="bg-image">
 
     <header class="header">
         <a href="/" class="header-logo">
-            <img src="logo.png" alt="Sendly Logo" style="height: 40px; width: auto;">
+            <img src="logo.png" alt="Sendly Logo" style="height: 35px; width: auto;">
         </a>
         <div class="header-links">
             <a href="/how-it-works">How it works</a>
-            <a href="/blog" class="active">Articles</a>
+            <a href="/screen">Screen Share</a>
+            <a href="/notepad">Live Notepad</a>
+            <a href="/json-formatter">JSON Formatter</a>
+            <a href="/articles" class="active">Articles</a>
         </div>
     </header>
 
     <div class="page-wrapper">
-        <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 5px; gap: 15px;">
-            <img src="logo.png" alt="Sendly Icon" style="height: 55px; width: auto; position: relative; top: -3px;">
-            <h1 class="page-title">Articles</h1>
+        <div class="hero-container">
+            <h1 class="hero-title">
+                <img src="logo.png" alt="Sendly Icon"> Articles
+            </h1>
+            <p class="hero-subtitle">The latest news in cybersecurity, data privacy, and safe file sharing, curated
+                daily by AI.</p>
         </div>
-
-        <p class="page-subtitle">The latest news in cybersecurity, data privacy, and safe file sharing, curated daily by
-            AI.</p>
 
         <div id="loader" class="loader">Fetching latest articles...</div>
 
-        <!-- Gallery Grid -->
-        <div class="blog-grid" id="blogGrid">
-            <!-- Blogs will be injected here by Javascript -->
+        <div class="articles-grid" id="articlesGrid">
         </div>
     </div>
 
     <footer class="footer">
-        © 2026 <img src="logo.png" alt="Sendly" class="footer-logo"> Secure File Transfer. <a
-            href="/terms-privacy">Terms</a> & <a href="/terms-privacy">Privacy</a>.
+        © 2026 <img src="logo.png" alt="Sendly"
+            style="height: 18px; vertical-align: middle; margin: 0 4px; position: relative; top: -1px;"> Secure File
+        Transfer. <a href="/terms-privacy">Terms</a> & <a href="/terms-privacy">Privacy</a>.
     </footer>
 
     <script>
+        // Fetch real data from your backend
         fetch("https://sendlyapi.onrender.com/api/blogs")
             .then(res => res.json())
             .then(data => {
                 document.getElementById("loader").style.display = 'none';
-                const grid = document.getElementById("blogGrid");
+                const grid = document.getElementById("articlesGrid");
 
                 if (data.length === 0) {
                     grid.innerHTML = "<p style='color:rgba(255,255,255,0.7); text-align:center; width:100%;'>The AI is currently writing our first post. Check back soon!</p>";
@@ -378,22 +405,27 @@
                 }
 
                 data.forEach(blog => {
-                    // Stripped out the HTML content preview to match Dribbble's clean, image-first aesthetic
+                    // Clean summary creation
+                    let rawText = blog.summary || blog.content || "Click to read the full article and learn more about this topic.";
+                    let plainText = rawText.replace(/<[^>]+>/g, '');
+                    let shortSummary = plainText.length > 130 ? plainText.substring(0, 130) + "..." : plainText;
+
                     grid.innerHTML += `
-                        <a href="${blog.source_url}" target="_blank" class="blog-card">
-                            <div class="blog-image-wrapper">
-                                <img src="${blog.image_url}" alt="Article Image" class="blog-image" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80'">
+                        <a href="${blog.source_url}" target="_blank" class="article-card">
+                            <div class="article-image-wrapper">
+                                <img src="${blog.image_url}" alt="Article Image" class="article-image" onerror="this.src='https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80'">
                             </div>
-                            <div class="blog-content-wrapper">
-                                <h2 class="blog-title">${blog.title}</h2>
-                                <div class="blog-meta">
-                                    <div class="blog-author">
-                                        <div class="author-avatar"><img src="logo.png" alt="Sendly"></div>
-                                        <span class="author-name">Sendly AI <span class="badge">PRO+</span></span>
+                            <div class="article-content">
+                                <h2 class="article-title">${blog.title}</h2>
+                                <p class="article-summary">${shortSummary}</p>
+                                <span class="read-link">Read full article &rarr;</span>
+                                
+                                <div class="article-meta">
+                                    <div class="author-info">
+                                        <div class="author-avatar"><img src="logo.png" alt="S"></div>
+                                        <span class="author-name">Sendly AI <span class="pro-badge">PRO+</span></span>
                                     </div>
-                                    <div class="blog-stats">
-                                        <span class="date">${blog.date}</span>
-                                    </div>
+                                    <span class="article-date">${blog.date}</span>
                                 </div>
                             </div>
                         </a>
@@ -401,7 +433,7 @@
                 });
             })
             .catch(err => {
-                document.getElementById("loader").innerText = "Failed to load blog posts. Server might be spinning up.";
+                document.getElementById("loader").innerText = "Failed to load articles. Server might be spinning up.";
             });
     </script>
 </body>
