@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <url>
+    <loc>https://sendlyui.vercel.app/</loc>
+  </url>
+
+  <url>
+    <loc>https://sendlyui.vercel.app/notepad</loc>
+  </url>
+
+  <url>
+    <loc>https://sendlyui.vercel.app/json-formatter</loc>
+  </url>
+
+  <url>
+    <loc>https://sendlyui.vercel.app/screen</loc>
+  </url>
+
+  <url>
+    <loc>https://sendlyui.vercel.app/blog</loc>
+  </url>
+
+  <url>
+    <loc>https://sendlyui.vercel.app/how-it-works</loc>
+  </url>
+
+  <url>
+    <loc>https://sendlyui.vercel.app/terms-privacy</loc>
+  </url>
+
+</urlset>
