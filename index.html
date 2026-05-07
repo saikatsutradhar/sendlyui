@@ -2,16 +2,29 @@
 <html lang="en">
 
 <head>
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-PMZFLK55');</script>
-<!-- End Google Tag Manager -->
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-PMZFLK55');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sendly</title>
+    <title>Sendly - Secure File Sharing & Fast File Transfer</title>
+
+    <meta name="description"
+        content="Sendly lets you securely share files instantly between devices with optional encryption and fast peer-to-peer transfer.">
+
+    <link rel="canonical" href="https://sendlyui.vercel.app/">
+
+    <meta property="og:title" content="Sendly - Secure File Sharing">
+    <meta property="og:description" content="Fast and secure peer-to-peer file sharing platform.">
+    <meta property="og:image" content="https://sendlyui.vercel.app/logo.png">
+    <meta property="og:url" content="https://sendlyui.vercel.app">
+    <meta property="og:type" content="website">
+
     <meta name="google-site-verification" content="vb2yvE-S31j1fjFqcvwyx6CD000Faou2v0gB_gGD8jo" />
     <link rel="icon" type="image/png" href="favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
@@ -73,7 +86,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             height: 100vh;
             object-fit: cover;
             z-index: -1;
-            /* filter: brightness(0.4); */
             filter: brightness(80%)
         }
 
@@ -349,36 +361,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             opacity: 0.8;
         }
 
-        /* Progress Bar */
-        .progress-container {
-            display: none;
-            margin-bottom: 15px;
-        }
-
-        .progress-text-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-
-        .progress-track {
-            width: 100%;
-            height: 10px;
-            background: rgba(203, 213, 225, 0.6);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, var(--secondary), var(--primary));
-            border-radius: 10px;
-            transition: width 0.2s ease;
-        }
-
         /* Buttons */
         button {
             font-family: inherit;
@@ -396,19 +378,113 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             transform: scale(0.97);
         }
 
-        button.primary-btn {
+        /* --- ANIMATED SEND BUTTON --- */
+        .animated-send-btn {
+            position: relative;
             background: var(--secondary);
             color: white;
-            padding: 14px;
+            padding: 0;
+            border: none;
             border-radius: 12px;
             width: 100%;
+            height: 50px;
             font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.65, 0, 0.35, 1);
             box-shadow: 0 4px 15px rgba(244, 63, 94, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
         }
 
-        button.primary-btn:hover {
+        .animated-send-btn:hover {
             background: var(--secondary-hover);
             box-shadow: 0 6px 20px rgba(244, 63, 94, 0.4);
+        }
+
+        .animated-send-btn span {
+            transition: opacity 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .animated-send-btn:hover .btn-icon {
+            transform: translate(4px, -4px);
+        }
+
+        .btn-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .animated-send-btn .btn-ring,
+        .animated-send-btn .btn-check {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        /* Loading State: Morphs into a circle */
+        .animated-send-btn.is-loading {
+            width: 50px;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .animated-send-btn.is-loading span,
+        .animated-send-btn.is-success span {
+            opacity: 0;
+        }
+
+        /* The spinning ring */
+        .btn-ring {
+            opacity: 0;
+            stroke: var(--secondary);
+            stroke-dasharray: 125.6;
+            stroke-dashoffset: 125.6;
+            transition: stroke-dashoffset 0.1s linear, opacity 0.3s;
+            transform: translate(-50%, -50%) rotate(-90deg);
+            /* Start at top */
+        }
+
+        .animated-send-btn.is-loading .btn-ring {
+            opacity: 1;
+        }
+
+        /* Success State: Green Checkmark */
+        .animated-send-btn.is-success {
+            width: 50px;
+            border-radius: 50%;
+            background: #10B981;
+            /* Success Green */
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+            pointer-events: none;
+        }
+
+        .btn-check {
+            opacity: 0;
+            stroke: white;
+            stroke-dasharray: 30;
+            stroke-dashoffset: 30;
+            transition: stroke-dashoffset 0.5s ease-out 0.2s, opacity 0.1s;
+        }
+
+        .animated-send-btn.is-success .btn-ring {
+            opacity: 0;
+        }
+
+        .animated-send-btn.is-success .btn-check {
+            opacity: 1;
+            stroke-dashoffset: 0;
         }
 
         .secure-badge {
@@ -476,6 +552,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             background: var(--primary);
             padding: 14px;
             width: 100%;
+            height: 50px;
             color: white;
             border-radius: 12px;
             font-size: 15px;
@@ -901,22 +978,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             }
         }
     </style>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-TVXFJP7LLL"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TVXFJP7LLL"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
 
-  gtag('config', 'G-TVXFJP7LLL');
-</script>
+        gtag('config', 'G-TVXFJP7LLL');
+    </script>
 </head>
 
 <body>
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PMZFLK55"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PMZFLK55" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
     <img class="bg-video" src="background.png" alt="Background">
 
     <header class="header">
@@ -988,17 +1062,26 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <input type="password" id="encryptPass" class="crypto-input"
                         placeholder="Set a password to lock this file" style="display: none;">
 
-                    <div id="uploadProgress" class="progress-container">
-                        <div class="progress-text-row">
-                            <span style="color: var(--text-muted);" id="progressStatusText">Uploading...</span>
-                            <span style="color: var(--primary);" id="progressPercent">0%</span>
-                        </div>
-                        <div class="progress-track">
-                            <div id="progressFill" class="progress-fill"></div>
-                        </div>
-                    </div>
+                    <button id="sendBtn" class="animated-send-btn" onclick="sendFiles()">
+                        <span>
+                            <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 2L11 13"></path>
+                                <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
+                            </svg>
+                            Send Files
+                        </span>
 
-                    <button id="sendBtn" class="primary-btn" onclick="sendFiles()">Send Files</button>
+                        <svg class="btn-ring" width="50" height="50" viewBox="0 0 50 50"
+                            style="transform-origin: center;">
+                            <circle cx="25" cy="25" r="20" fill="none" stroke-width="4" stroke-linecap="round"></circle>
+                        </svg>
+
+                        <svg class="btn-check" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="3"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </button>
 
                     <div class="secure-badge">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -1083,7 +1166,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 <path
                     d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
                 </path>
-            </svg></a>&nbsp;&nbsp;&nbsp;<a href="5ynt4x.3rr0r.ss@gmail.com"
+            </svg></a>&nbsp;&nbsp;&nbsp;<a href="mailto:5ynt4x.3rr0r.ss@gmail.com"
             style="color: inherit; text-decoration: none; opacity: 0.8; transition: opacity 0.2s;"
             onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8" title="Email Us"><svg
                 viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"
@@ -1341,28 +1424,25 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 return;
             }
 
-            const sendBtn = document.getElementById("sendBtn");
-            const progressContainer = document.getElementById("uploadProgress");
-            const progressFill = document.getElementById("progressFill");
-            const progressPercent = document.getElementById("progressPercent");
-            const progressStatusText = document.getElementById("progressStatusText");
-
             function executeXHR(formData) {
-                sendBtn.style.display = "none";
-                progressContainer.style.display = "block";
-                progressFill.style.width = "0%";
-                progressPercent.innerText = "0%";
-                progressStatusText.innerText = "Uploading...";
+                const sendBtn = document.getElementById("sendBtn");
+                const btnRing = sendBtn.querySelector(".btn-ring circle");
+
+                // 1. Trigger the morph into a loading circle
+                sendBtn.classList.add("is-loading");
 
                 let xhr = new XMLHttpRequest();
                 xhr.open("POST", "https://sendlyapi.onrender.com/upload", true);
 
+                // 2. Update the SVG ring as the file uploads
                 xhr.upload.onprogress = function (event) {
                     if (event.lengthComputable) {
-                        let percentComplete = Math.round((event.loaded / event.total) * 100);
-                        progressFill.style.width = percentComplete + "%";
-                        progressPercent.innerText = percentComplete + "%";
-                        if (percentComplete === 100) progressStatusText.innerText = "Processing on server...";
+                        let percentComplete = event.loaded / event.total;
+
+                        // The SVG circle has a circumference of roughly 125.6 (2 * PI * 20)
+                        let circumference = 125.6;
+                        btnRing.style.strokeDasharray = circumference;
+                        btnRing.style.strokeDashoffset = circumference - (percentComplete * circumference);
                     }
                 };
 
@@ -1371,34 +1451,40 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                         let data = JSON.parse(xhr.responseText);
                         currentKey = data.key;
                         saveToHistory('Sent', currentKey);
-                        showWaiting(data.key, data.qr);
-                        checkDownloadStatus();
+
+                        // 3. Morph to the green success checkmark
+                        sendBtn.classList.remove("is-loading");
+                        sendBtn.classList.add("is-success");
+
                         showToast("Files ready to send!", "success");
 
+                        // 4. Wait for the animation to finish, then show the next screen
                         setTimeout(() => {
-                            sendBtn.style.display = "block";
-                            progressContainer.style.display = "none";
-                        }, 500);
+                            showWaiting(data.key, data.qr);
+                            checkDownloadStatus();
+
+                            // Reset button back to default for next time
+                            sendBtn.classList.remove("is-success");
+                            btnRing.style.strokeDashoffset = "125.6";
+                        }, 1200);
+
                     } else {
                         showToast("Server error. Please try again.", "error");
-                        sendBtn.style.display = "block";
-                        progressContainer.style.display = "none";
+                        sendBtn.classList.remove("is-loading");
                     }
                 };
 
                 xhr.onerror = function () {
                     showToast("Network error. Make sure the backend is running.", "error");
-                    sendBtn.style.display = "block";
-                    progressContainer.style.display = "none";
+                    sendBtn.classList.remove("is-loading");
                 };
 
                 xhr.send(formData);
             }
 
             if (encryptPass) {
-                progressContainer.style.display = "block";
-                sendBtn.style.display = "none";
-                progressStatusText.innerText = "Encrypting file in browser...";
+                const sendBtn = document.getElementById("sendBtn");
+                sendBtn.classList.add("is-loading");
 
                 let file = selectedFiles[0];
                 let reader = new FileReader();
