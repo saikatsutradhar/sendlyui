@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-PMZFLK55');</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Diff Checker — Compare Text Online | Sendly</title>
+    <link rel="canonical" href="https://sendlyui.vercel.app/diff-checker">
+
+    <meta name="description"
+        content="Compare two texts side-by-side and instantly see the differences highlighted. Sendly's zero-knowledge diff checker runs 100% in your browser — your data never leaves your device.">
+
+    <meta property="og:title" content="Diff Checker — Compare Text Online | Sendly">
+    <meta property="og:description"
+        content="Find differences between two texts instantly. Highlights added, removed, and changed lines. Runs entirely in your browser — zero data sent to servers.">
+    <meta property="og:image" content="https://sendlyui.vercel.app/logo.png">
+    <meta property="og:url" content="https://sendlyui.vercel.app/diff-checker">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Sendly">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Diff Checker — Compare Text Online | Sendly">
+    <meta name="twitter:description"
+        content="Zero-knowledge text diff tool. Compare code, documents, or any text privately. No server, no tracking.">
+    <meta name="twitter:image" content="https://sendlyui.vercel.app/logo.png">
+
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --secondary: #F43F5E;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+            --add-bg: rgba(34, 197, 94, 0.18);
+            --add-border: rgba(34, 197, 94, 0.5);
+            --add-char: rgba(34, 197, 94, 0.35);
+            --del-bg: rgba(239, 68, 68, 0.18);
+            --del-border: rgba(239, 68, 68, 0.5);
+            --del-char: rgba(239, 68, 68, 0.35);
+            --eq-bg: transparent;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(168, 85, 247, 0.5);
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(168, 85, 247, 0.8);
+        }
+
+        html,
+        body {
+            background-color: #0b1120;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            color: var(--text-main);
+        }
+
+        .bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            filter: brightness(80%);
+            pointer-events: none;
+        }
+
+        /* ── HEADER ── */
+        .header {
+            width: 100%;
+            padding: 5px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-sizing: border-box;
+        }
+
+        .header-logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .header-links a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            margin-left: 20px;
+            transition: color 0.3s;
+        }
+
+        .header-links a:hover,
+        .header-links a.active {
+            color: white;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 5px;
+            user-select: none;
+            transition: transform 0.3s ease;
+        }
+
+        /* ── FOOTER ── */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 5px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(12px);
+            z-index: 100;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* ── PAGE WRAPPER ── */
+        .page-wrapper {
+            flex: 1;
+            padding: 88px 2% 60px;
+            max-width: 1700px;
+            margin: 0 auto;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            font-size: 48px;
+            font-weight: 800;
+            margin: 0 0 6px 0;
+            letter-spacing: -1px;
+            color: #ffffff;
+        }
+
+        .hero-title img {
+            height: 70px;
+            width: auto;
+        }
+
+        .page-subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            margin: 0 auto 18px auto;
+            max-width: 700px;
+            line-height: 1.6;
+        }
+
+        /* ── MODE / OPTIONS BAR ── */
+        .options-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .seg-group {
+            display: flex;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .seg-btn {
+            padding: 8px 18px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.65);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .seg-btn.active {
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            color: white;
+        }
+
+        .seg-btn:not(.active):hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .opt-check {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.75);
+            cursor: pointer;
+            user-select: none;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 8px 14px;
+            transition: background 0.2s;
+        }
+
+        .opt-check:hover {
+            background: rgba(255, 255, 255, 0.14);
+        }
+
+        .opt-check input {
+            accent-color: #a855f7;
+            width: 15px;
+            height: 15px;
+            cursor: pointer;
+        }
+
+        /* ── SPLIT INPUT AREA ── */
+        .split-input {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .input-panel {
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-panel-header {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #e879f9;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .input-panel-header .hdr-btns {
+            display: flex;
+            gap: 6px;
+        }
+
+        .mini-btn {
+            padding: 4px 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mini-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        textarea.diff-input {
+            flex: 1;
+            min-height: 200px;
+            resize: vertical;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: rgba(255, 255, 255, 0.9);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13.5px;
+            line-height: 1.7;
+            padding: 14px 16px;
+            tab-size: 4;
+        }
+
+        textarea.diff-input::placeholder {
+            color: rgba(255, 255, 255, 0.25);
+        }
+
+        /* ── ACTION ROW ── */
+        .action-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .tool-btn {
+            padding: 11px 26px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.85);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tool-btn:hover {
+            background: rgba(255, 255, 255, 0.18);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .tool-btn.btn-primary {
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            border: none;
+            color: white;
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+        }
+
+        .tool-btn.btn-primary:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+        }
+
+        .tool-btn.btn-danger {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.35);
+            color: #fca5a5;
+        }
+
+        .tool-btn.btn-danger:hover {
+            background: rgba(239, 68, 68, 0.25);
+            color: white;
+        }
+
+        /* ── STATS BAR ── */
+        .stats-bar {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+            padding: 10px 18px;
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.65);
+            display: none;
+        }
+
+        .stats-bar.visible {
+            display: flex;
+        }
+
+        .stat-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .stat-added {
+            background: rgba(34, 197, 94, 0.18);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.35);
+        }
+
+        .stat-removed {
+            background: rgba(239, 68, 68, 0.18);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.35);
+        }
+
+        .stat-changed {
+            background: rgba(251, 191, 36, 0.18);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.35);
+        }
+
+        .stat-equal {
+            background: rgba(148, 163, 184, 0.1);
+            color: #94a3b8;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .stat-label {
+            margin-left: auto;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* ── FULLPAGE DIFF VIEW ── */
+        .diff-fullpage {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: #0b1120;
+            flex-direction: column;
+            animation: slideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .diff-fullpage.visible {
+            display: flex;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* top bar inside fullpage */
+        .fp-topbar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 18px;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+
+        .fp-back-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 16px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .fp-back-btn:hover {
+            background: rgba(255, 255, 255, 0.18);
+            color: white;
+        }
+
+        .fp-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #e879f9;
+            flex: 1;
+        }
+
+        .fp-stats {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* ── DIFF OUTPUT (legacy, kept for compat) ── */
+        .diff-output-wrap {
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            display: none;
+            margin-bottom: 20px;
+        }
+
+        .diff-output-wrap.visible {
+            display: block;
+        }
+
+        .diff-output-header {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 10px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #e879f9;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .diff-output-header .tab-group {
+            display: flex;
+            gap: 6px;
+        }
+
+        .view-tab {
+            padding: 4px 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .view-tab.active {
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* ── SIDE-BY-SIDE VIEW ── */
+        .diff-side-by-side {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            flex: 1;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        .diff-col {
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .diff-col:first-child {
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .diff-col-header {
+            padding: 8px 14px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.45);
+            background: rgba(0, 0, 0, 0.35);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            flex-shrink: 0;
+            z-index: 5;
+        }
+
+        .diff-col-scroll {
+            flex: 1;
+            overflow: auto;
+            min-height: 0;
+        }
+
+        #fpDiffInner {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        #fpDiffInner .diff-unified {
+            flex: 1;
+            overflow: auto;
+            min-height: 0;
+        }
+
+        /* ── UNIFIED VIEW ── */
+        .diff-unified {
+            overflow-x: auto;
+            background: #f8fafc;
+        }
+
+        .diff-col:first-child {
+            border-right: 1px solid #e2e8f0;
+        }
+
+        /* ── FULLPAGE INNER BACKGROUND — light so text is always readable ── */
+        #fpDiffInner {
+            background: #f8fafc;
+        }
+
+        .diff-col-scroll {
+            background: #f8fafc;
+        }
+
+        .diff-side-by-side {
+            background: #f8fafc;
+        }
+
+        .diff-col-header {
+            background: #e2e8f0 !important;
+            color: #475569 !important;
+            border-bottom: 1px solid #cbd5e1 !important;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        /* ── DIFF LINES (shared) ── */
+        .diff-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .diff-table td {
+            padding: 1px 0;
+            white-space: pre-wrap;
+            word-break: break-all;
+            vertical-align: top;
+            color: #1e293b;
+        }
+
+        .line-num {
+            width: 48px;
+            min-width: 48px;
+            text-align: right;
+            padding: 1px 10px 1px 6px !important;
+            color: #94a3b8;
+            font-size: 11px;
+            user-select: none;
+            background: #f1f5f9;
+            border-right: 1px solid #e2e8f0;
+        }
+
+        .line-sign {
+            width: 20px;
+            min-width: 20px;
+            text-align: center;
+            padding: 1px 2px !important;
+            font-weight: 800;
+            font-size: 14px;
+        }
+
+        .line-content {
+            padding: 1px 12px !important;
+            color: #1e293b;
+        }
+
+        /* ADDED lines — green tint, dark green text */
+        tr.line-add td {
+            background: #dcfce7;
+        }
+
+        tr.line-add .line-content {
+            color: #14532d;
+        }
+
+        tr.line-add .line-num {
+            background: #bbf7d0;
+            color: #166534;
+            border-right-color: #86efac;
+        }
+
+        tr.line-add .line-sign {
+            color: #16a34a;
+            background: #dcfce7;
+        }
+
+        /* DELETED lines — red tint, dark red text */
+        tr.line-del td {
+            background: #fee2e2;
+        }
+
+        tr.line-del .line-content {
+            color: #7f1d1d;
+        }
+
+        tr.line-del .line-num {
+            background: #fecaca;
+            color: #991b1b;
+            border-right-color: #fca5a5;
+        }
+
+        tr.line-del .line-sign {
+            color: #dc2626;
+            background: #fee2e2;
+        }
+
+        /* EQUAL lines — clean white */
+        tr.line-eq td {
+            background: #ffffff;
+        }
+
+        tr.line-eq .line-content {
+            color: #334155;
+        }
+
+        tr.line-eq .line-sign {
+            color: #cbd5e1;
+            background: #ffffff;
+        }
+
+        /* SKIP rows */
+        tr.line-skip td {
+            background: #f1f5f9;
+            color: #94a3b8;
+            font-size: 11px;
+            text-align: center;
+            padding: 6px 10px !important;
+            border-top: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        /* inline char-level highlight */
+        .char-add {
+            background: #86efac;
+            border-radius: 2px;
+            color: #14532d;
+        }
+
+        .char-del {
+            background: #fca5a5;
+            border-radius: 2px;
+            color: #7f1d1d;
+            text-decoration: line-through;
+            text-decoration-color: #dc2626;
+        }
+
+        /* ── LEGEND ── */
+        .legend {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.45);
+        }
+
+        .legend-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            margin-right: 4px;
+        }
+
+        /* ── EMPTY STATE ── */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 15px;
+            gap: 12px;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            opacity: 0.4;
+        }
+
+        /* ── MOBILE RESPONSIVE ── */
+        @media (max-width: 850px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .header-links {
+                position: absolute;
+                top: 55px;
+                left: 0;
+                width: 100%;
+                background: rgba(15, 23, 42, 0.98);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                flex-direction: column;
+                text-align: center;
+                gap: 25px;
+                padding: 30px 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+                display: flex;
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(-15px);
+                transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                pointer-events: none;
+            }
+
+            .header-links.show {
+                visibility: visible;
+                opacity: 1;
+                transform: translateY(0);
+                pointer-events: auto;
+            }
+
+            .header-links a {
+                margin: 0;
+                font-size: 18px;
+                font-weight: 600;
+            }
+
+            .split-input {
+                grid-template-columns: 1fr;
+            }
+
+            .diff-side-by-side {
+                grid-template-columns: 1fr;
+            }
+
+            .diff-col:first-child {
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            }
+
+            .hero-title {
+                font-size: 32px;
+            }
+
+            .hero-title img {
+                height: 48px;
+            }
+
+            .page-wrapper {
+                padding: 88px 3% 80px;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .action-row {
+                gap: 8px;
+            }
+
+            .tool-btn {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PMZFLK55" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
+
+    <img class="bg-video" src="background.png" alt="Background">
+
+    <!-- HEADER -->
+    <header class="header">
+        <a href="/" class="header-logo"><img src="logo.png" alt="Sendly Logo" style="height: 40px;"></a>
+        <div class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</div>
+        <div class="header-links">
+            <a href="/how-it-works">How it works</a>
+            <a href="/screen">Screen Share</a>
+            <a href="/notepad">Live Notepad</a>
+            <a href="/diff-checker" class="active">Diff Checker</a>
+            <a href="/json-formatter">JSON Formatter</a>
+
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <div class="page-wrapper">
+        <h1 class="hero-title">
+            <img src="logo.png" alt="Sendly Icon"> Diff Checker
+        </h1>
+        <p class="page-subtitle">Compare two texts and instantly see every difference. Runs 100% in your browser — your
+            data never leaves your device.</p>
+
+        <!-- OPTIONS BAR -->
+        <div class="options-bar">
+            <div class="seg-group" id="modeGroup">
+                <button class="seg-btn active" onclick="setMode('line')" id="modeLineBtn">Line Mode</button>
+                <button class="seg-btn" onclick="setMode('word')" id="modeWordBtn">Word Mode</button>
+                <button class="seg-btn" onclick="setMode('char')" id="modeCharBtn">Char Mode</button>
+            </div>
+
+            <label class="opt-check">
+                <input type="checkbox" id="ignoreCase"> Ignore Case
+            </label>
+            <label class="opt-check">
+                <input type="checkbox" id="ignoreWhitespace"> Ignore Whitespace
+            </label>
+            <label class="opt-check">
+                <input type="checkbox" id="showContext" checked> Show Context (3 lines)
+            </label>
+            <label class="opt-check">
+                <input type="checkbox" id="inlineChars" checked> Inline Highlights
+            </label>
+        </div>
+
+        <!-- TEXT INPUTS -->
+        <div class="split-input">
+            <div class="input-panel">
+                <div class="input-panel-header">
+                    <span>Original Text</span>
+                    <div class="hdr-btns">
+                        <button class="mini-btn" onclick="pasteLeft()">📋 Paste</button>
+                        <button class="mini-btn" onclick="loadSampleLeft()">Sample</button>
+                        <button class="mini-btn" onclick="clearLeft()">✕ Clear</button>
+                    </div>
+                </div>
+                <textarea class="diff-input" id="leftText" placeholder="Paste your original text here…"
+                    spellcheck="false"></textarea>
+            </div>
+
+            <div class="input-panel">
+                <div class="input-panel-header">
+                    <span>Changed Text</span>
+                    <div class="hdr-btns">
+                        <button class="mini-btn" onclick="pasteRight()">📋 Paste</button>
+                        <button class="mini-btn" onclick="loadSampleRight()">Sample</button>
+                        <button class="mini-btn" onclick="clearRight()">✕ Clear</button>
+                    </div>
+                </div>
+                <textarea class="diff-input" id="rightText" placeholder="Paste your modified text here…"
+                    spellcheck="false"></textarea>
+            </div>
+        </div>
+
+        <!-- ACTION ROW -->
+        <div class="action-row">
+            <button class="tool-btn btn-primary" onclick="runDiff()">⚡ Compare</button>
+            <button class="tool-btn" onclick="swapTexts()">⇄ Swap</button>
+            <button class="tool-btn" onclick="copyDiff()">📋 Copy Result</button>
+            <button class="tool-btn" onclick="downloadDiff()">💾 Download</button>
+            <button class="tool-btn btn-danger" onclick="clearAll()">🗑 Clear All</button>
+        </div>
+
+        <!-- STATS BAR -->
+        <div class="stats-bar" id="statsBar">
+            <span class="stat-pill stat-added" id="statAdded">+0 added</span>
+            <span class="stat-pill stat-removed" id="statRemoved">−0 removed</span>
+            <span class="stat-pill stat-changed" id="statChanged">~ 0 changed</span>
+            <span class="stat-pill stat-equal" id="statEqual">= 0 unchanged</span>
+            <span class="stat-label" id="statLabel"></span>
+        </div>
+
+        <!-- DIFF OUTPUT -->
+        <div class="diff-output-wrap" id="diffOutputWrap">
+            <div class="diff-output-header">
+                <div class="legend">
+                    <span><span class="legend-dot" style="background:rgba(34,197,94,0.5)"></span>Added</span>
+                    <span><span class="legend-dot" style="background:rgba(239,68,68,0.5)"></span>Removed</span>
+                    <span><span class="legend-dot" style="background:rgba(148,163,184,0.2)"></span>Unchanged</span>
+                </div>
+                <div class="tab-group">
+                    <button class="view-tab active" id="tabSplit" onclick="setView('split')">Split</button>
+                    <button class="view-tab" id="tabUnified" onclick="setView('unified')">Unified</button>
+                </div>
+            </div>
+            <div id="diffOutput"></div>
+        </div>
+    </div>
+
+    <!-- FULLPAGE DIFF OVERLAY -->
+    <div class="diff-fullpage" id="diffFullpage">
+        <!-- Top bar -->
+        <div class="fp-topbar">
+            <button class="fp-back-btn" onclick="closeDiffView()">
+                ← Edit
+            </button>
+            <div class="fp-title" id="fpTitle">Diff Result</div>
+            <div class="fp-stats" id="fpStats"></div>
+            <div style="display:flex;gap:8px;margin-left:auto;">
+                <button class="view-tab active" id="fpTabSplit" onclick="fpSetView('split')">Split</button>
+                <button class="view-tab" id="fpTabUnified" onclick="fpSetView('unified')">Unified</button>
+                <button class="view-tab" onclick="copyDiff()" style="margin-left:6px;">📋 Copy</button>
+                <button class="view-tab" onclick="downloadDiff()">💾 Download</button>
+            </div>
+        </div>
+        <!-- Dynamic diff content fills here -->
+        <div id="fpDiffInner"></div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">© 2026 Sendly Secure Tools.&nbsp;&nbsp;&nbsp;<a href="https://github.com/saikatsutradhar"
+            target="_blank" style="color: inherit; text-decoration: none; opacity: 0.8; transition: opacity 0.2s;"
+            onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8" title="GitHub Profile">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"
+                stroke-linecap="round" stroke-linejoin="round" style="vertical-align: text-bottom; margin-right: 4px;">
+                <path
+                    d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+                </path>
+            </svg></a>&nbsp;&nbsp;&nbsp;<a href="mailto:5ynt4x.3rr0r.ss@gmail.com"
+            style="color: inherit; text-decoration: none; opacity: 0.8; transition: opacity 0.2s;"
+            onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8" title="Email Us">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"
+                stroke-linecap="round" stroke-linejoin="round" style="vertical-align: text-bottom; margin-right: 4px;">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+            </svg></a>
+    </footer>
+
+    <script>
+        /* ═══════════════════════════════════════════════
+           STATE
+        ═══════════════════════════════════════════════ */
+        let currentMode = 'line';
+        let currentView = 'split';   // inside fullpage
+        let lastDiffResult = null;
+        let syncScrollLock = false;  // prevent scroll feedback loop
+
+        /* ═══════════════════════════════════════════════
+           MOBILE MENU
+        ═══════════════════════════════════════════════ */
+        function toggleMobileMenu() {
+            const menu = document.querySelector('.header-links');
+            const btn = document.querySelector('.mobile-menu-btn');
+            menu.classList.toggle('show');
+            btn.innerHTML = menu.classList.contains('show') ? '✕' : '☰';
+            btn.style.transform = menu.classList.contains('show') ? 'rotate(90deg)' : 'rotate(0deg)';
+        }
+
+        /* ═══════════════════════════════════════════════
+           MODE / VIEW TOGGLES
+        ═══════════════════════════════════════════════ */
+        function setMode(m) {
+            currentMode = m;
+            ['line', 'word', 'char'].forEach(x => {
+                document.getElementById('mode' + x.charAt(0).toUpperCase() + x.slice(1) + 'Btn')
+                    .classList.toggle('active', x === m);
+            });
+        }
+
+        /* Fullpage view toggle */
+        function fpSetView(v) {
+            currentView = v;
+            document.getElementById('fpTabSplit').classList.toggle('active', v === 'split');
+            document.getElementById('fpTabUnified').classList.toggle('active', v === 'unified');
+            if (lastDiffResult) renderIntoFullpage(lastDiffResult);
+        }
+
+        /* compat shim for old inline setView calls */
+        function setView(v) { fpSetView(v); }
+
+        /* ═══════════════════════════════════════════════
+           TEXTAREA HELPERS
+        ═══════════════════════════════════════════════ */
+        async function pasteLeft() {
+            try { document.getElementById('leftText').value = await navigator.clipboard.readText(); } catch (e) { }
+        }
+        async function pasteRight() {
+            try { document.getElementById('rightText').value = await navigator.clipboard.readText(); } catch (e) { }
+        }
+        function clearLeft() { document.getElementById('leftText').value = ''; }
+        function clearRight() { document.getElementById('rightText').value = ''; }
+        function clearAll() {
+            clearLeft(); clearRight();
+            document.getElementById('diffOutputWrap').classList.remove('visible');
+            document.getElementById('statsBar').classList.remove('visible');
+            lastDiffResult = null;
+        }
+
+        function swapTexts() {
+            const l = document.getElementById('leftText');
+            const r = document.getElementById('rightText');
+            [l.value, r.value] = [r.value, l.value];
+        }
+
+        const SAMPLE_LEFT = `function greet(name) {
+    console.log("Hello, " + name);
+    return true;
+}
+
+const users = ["Alice", "Bob", "Charlie"];
+users.forEach(u => greet(u));
+
+// End of file`;
+
+        const SAMPLE_RIGHT = `function greet(name, greeting = "Hello") {
+    console.log(greeting + ", " + name + "!");
+    return name.length > 0;
+}
+
+const users = ["Alice", "Bob", "Diana", "Eve"];
+users.forEach(u => greet(u, "Hi"));
+
+// Updated: v2.0`;
+
+        function loadSampleLeft() { document.getElementById('leftText').value = SAMPLE_LEFT; }
+        function loadSampleRight() { document.getElementById('rightText').value = SAMPLE_RIGHT; }
+
+        /* ═══════════════════════════════════════════════
+           CORE DIFF ALGORITHMS
+        ═══════════════════════════════════════════════ */
+
+        /** Myers LCS-based diff — returns array of {type:'eq'|'add'|'del', value} */
+        function computeLineDiff(a, b) {
+            // Split into token arrays
+            const tokA = a;   // already arrays
+            const tokB = b;
+
+            const n = tokA.length, m = tokB.length;
+            const max = n + m;
+            const v = new Array(2 * max + 2).fill(0);
+            const trace = [];
+
+            outer: for (let d = 0; d <= max; d++) {
+                trace.push(v.slice());
+                for (let k = -d; k <= d; k += 2) {
+                    const ki = k + max;
+                    let x;
+                    if (k === -d || (k !== d && v[ki - 1] < v[ki + 1])) {
+                        x = v[ki + 1];
+                    } else {
+                        x = v[ki - 1] + 1;
+                    }
+                    let y = x - k;
+                    while (x < n && y < m && tokA[x] === tokB[y]) { x++; y++; }
+                    v[ki] = x;
+                    if (x >= n && y >= m) break outer;
+                }
+            }
+
+            // Backtrack
+            const ops = [];
+            let x = n, y = m;
+            for (let d = trace.length - 1; d >= 0; d--) {
+                const vd = trace[d];
+                const k = x - y;
+                const ki = k + max;
+                let prevK;
+                if (k === -d || (k !== d && vd[ki - 1] < vd[ki + 1])) {
+                    prevK = k + 1;
+                } else {
+                    prevK = k - 1;
+                }
+                const prevX = vd[prevK + max];
+                const prevY = prevX - prevK;
+                while (x > prevX && y > prevY) { x--; y--; ops.push({ type: 'eq', a: x, b: y }); }
+                if (d > 0) {
+                    if (x === prevX) { y--; ops.push({ type: 'add', b: y }); }
+                    else { x--; ops.push({ type: 'del', a: x }); }
+                }
+            }
+
+            ops.reverse();
+            return ops;
+        }
+
+        /** Tokenize by mode */
+        function tokenize(text, mode) {
+            if (mode === 'line') return text.split('\n');
+            if (mode === 'word') return text.match(/(\s+|\S+)/g) || [];
+            return text.split('');
+        }
+
+        /** Apply options (case / whitespace) */
+        function normalize(tokens, ignoreCase, ignoreWS) {
+            return tokens.map(t => {
+                let s = t;
+                if (ignoreWS) s = s.replace(/\s+/g, ' ').trim();
+                if (ignoreCase) s = s.toLowerCase();
+                return s;
+            });
+        }
+
+        /* ═══════════════════════════════════════════════
+           INLINE CHAR HIGHLIGHT (for line/word mode)
+        ═══════════════════════════════════════════════ */
+        function charDiff(aStr, bStr) {
+            const aChars = aStr.split('');
+            const bChars = bStr.split('');
+            const ops = computeLineDiff(aChars, bChars);
+
+            const aOut = [];
+            const bOut = [];
+            ops.forEach(op => {
+                if (op.type === 'eq') {
+                    aOut.push({ text: aChars[op.a], cls: '' });
+                    bOut.push({ text: bChars[op.b], cls: '' });
+                } else if (op.type === 'del') {
+                    aOut.push({ text: aChars[op.a], cls: 'char-del' });
+                } else {
+                    bOut.push({ text: bChars[op.b], cls: 'char-add' });
+                }
+            });
+            return { aOut, bOut };
+        }
+
+        function spansToHtml(spans) {
+            return spans.map(s => {
+                const esc = escapeHtml(s.text);
+                return s.cls ? `<span class="${s.cls}">${esc}</span>` : esc;
+            }).join('');
+        }
+
+        function escapeHtml(t) {
+            return t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        /* ═══════════════════════════════════════════════
+           OPEN / CLOSE FULLPAGE
+        ═══════════════════════════════════════════════ */
+        function openDiffView() {
+            document.getElementById('diffFullpage').classList.add('visible');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDiffView() {
+            document.getElementById('diffFullpage').classList.remove('visible');
+            document.body.style.overflow = '';
+        }
+
+        /* ═══════════════════════════════════════════════
+           RUN DIFF (main entry point)
+        ═══════════════════════════════════════════════ */
+        function runDiff() {
+            const rawA = document.getElementById('leftText').value;
+            const rawB = document.getElementById('rightText').value;
+            const ignoreCase = document.getElementById('ignoreCase').checked;
+            const ignoreWS = document.getElementById('ignoreWhitespace').checked;
+            const mode = currentMode;
+
+            const tokA = tokenize(rawA, mode);
+            const tokB = tokenize(rawB, mode);
+            const normA = normalize(tokA, ignoreCase, ignoreWS);
+            const normB = normalize(tokB, ignoreCase, ignoreWS);
+
+            const ops = computeLineDiff(normA, normB);
+
+            // Build structured diff rows
+            const rows = ops.map(op => {
+                if (op.type === 'eq') return { type: 'eq', aVal: tokA[op.a], bVal: tokB[op.b], aIdx: op.a, bIdx: op.b };
+                if (op.type === 'del') return { type: 'del', aVal: tokA[op.a], bVal: null, aIdx: op.a, bIdx: null };
+                return { type: 'add', aVal: null, bVal: tokB[op.b], aIdx: null, bIdx: op.b };
+            });
+
+            // Pair adjacent del+add for change detection (for stats)
+            let added = 0, removed = 0, changed = 0, equal = 0;
+            const paired = [];
+            let i = 0;
+            while (i < rows.length) {
+                if (rows[i].type === 'del' && i + 1 < rows.length && rows[i + 1].type === 'add') {
+                    paired.push({ type: 'change', aVal: rows[i].aVal, bVal: rows[i + 1].bVal, aIdx: rows[i].aIdx, bIdx: rows[i + 1].bIdx });
+                    changed++;
+                    i += 2;
+                } else {
+                    paired.push(rows[i]);
+                    if (rows[i].type === 'add') added++;
+                    else if (rows[i].type === 'del') removed++;
+                    else equal++;
+                    i++;
+                }
+            }
+
+            // Update stats
+            const sep = mode === 'line' ? 'lines' : mode === 'word' ? 'words' : 'chars';
+            document.getElementById('statAdded').textContent = `+${added} added`;
+            document.getElementById('statRemoved').textContent = `−${removed} removed`;
+            document.getElementById('statChanged').textContent = `~${changed} changed`;
+            document.getElementById('statEqual').textContent = `=${equal} unchanged`;
+            document.getElementById('statLabel').textContent = sep;
+            document.getElementById('statsBar').classList.add('visible');
+
+            // Fullpage stats
+            document.getElementById('fpStats').innerHTML = `
+                <span class="stat-pill stat-added">+${added}</span>
+                <span class="stat-pill stat-removed">−${removed}</span>
+                <span class="stat-pill stat-changed">~${changed}</span>
+                <span class="stat-pill stat-equal">=${equal}</span>
+                <span style="font-size:11px;color:rgba(255,255,255,0.3);margin-left:4px;">${sep}</span>
+            `;
+
+            lastDiffResult = { paired, tokA, tokB, mode };
+            renderIntoFullpage(lastDiffResult);
+            openDiffView();
+        }
+
+        /* ═══════════════════════════════════════════════
+           RENDER INTO FULLPAGE
+        ═══════════════════════════════════════════════ */
+        function renderIntoFullpage({ paired, mode }) {
+            const container = document.getElementById('fpDiffInner');
+            const showCtx = document.getElementById('showContext').checked;
+            const inlineChars = document.getElementById('inlineChars').checked;
+            const CTX = 3;
+
+            if (currentView === 'split') {
+                renderSplit(container, paired, mode, showCtx, inlineChars, CTX);
+            } else {
+                renderUnified(container, paired, mode, showCtx, inlineChars, CTX);
+            }
+        }
+
+        /* legacy compat */
+        function renderDiff(d) { renderIntoFullpage(d); }
+
+        function shouldShow(paired, i, showCtx, CTX) {
+            if (!showCtx) return true;
+            if (paired[i].type !== 'eq') return true;
+            for (let j = Math.max(0, i - CTX); j <= Math.min(paired.length - 1, i + CTX); j++) {
+                if (paired[j].type !== 'eq') return true;
+            }
+            return false;
+        }
+
+        function renderSplit(container, paired, mode, showCtx, inlineChars, CTX) {
+            const isLine = mode === 'line';
+
+            let leftHtml = '', rightHtml = '';
+            let aLineNum = 1, bLineNum = 1;
+            let prevShown = true;
+
+            paired.forEach((row, i) => {
+                const show = shouldShow(paired, i, showCtx, CTX);
+
+                if (!show) {
+                    if (prevShown) {
+                        const skip = `<tr class="line-skip"><td colspan="3">···</td></tr>`;
+                        leftHtml += skip;
+                        rightHtml += skip;
+                    }
+                    prevShown = false;
+                    if (row.aVal !== null) aLineNum++;
+                    if (row.bVal !== null) bLineNum++;
+                    return;
+                }
+                prevShown = true;
+
+                if (row.type === 'eq') {
+                    const txt = escapeHtml(row.aVal ?? '');
+                    leftHtml += `<tr class="line-eq"><td class="line-num">${aLineNum++}</td><td class="line-sign"> </td><td class="line-content">${txt}</td></tr>`;
+                    rightHtml += `<tr class="line-eq"><td class="line-num">${bLineNum++}</td><td class="line-sign"> </td><td class="line-content">${txt}</td></tr>`;
+                } else if (row.type === 'del') {
+                    const txt = escapeHtml(row.aVal ?? '');
+                    leftHtml += `<tr class="line-del"><td class="line-num">${aLineNum++}</td><td class="line-sign">−</td><td class="line-content">${txt}</td></tr>`;
+                    rightHtml += `<tr class="line-eq"><td class="line-num"></td><td class="line-sign"></td><td class="line-content"></td></tr>`;
+                } else if (row.type === 'add') {
+                    leftHtml += `<tr class="line-eq"><td class="line-num"></td><td class="line-sign"></td><td class="line-content"></td></tr>`;
+                    const txt = escapeHtml(row.bVal ?? '');
+                    rightHtml += `<tr class="line-add"><td class="line-num">${bLineNum++}</td><td class="line-sign">+</td><td class="line-content">${txt}</td></tr>`;
+                } else {
+                    let aContent, bContent;
+                    if (inlineChars && isLine) {
+                        const { aOut, bOut } = charDiff(row.aVal ?? '', row.bVal ?? '');
+                        aContent = spansToHtml(aOut);
+                        bContent = spansToHtml(bOut);
+                    } else {
+                        aContent = escapeHtml(row.aVal ?? '');
+                        bContent = escapeHtml(row.bVal ?? '');
+                    }
+                    leftHtml += `<tr class="line-del"><td class="line-num">${aLineNum++}</td><td class="line-sign">−</td><td class="line-content">${aContent}</td></tr>`;
+                    rightHtml += `<tr class="line-add"><td class="line-num">${bLineNum++}</td><td class="line-sign">+</td><td class="line-content">${bContent}</td></tr>`;
+                }
+            });
+
+            container.innerHTML = `
+                <div class="diff-side-by-side" id="splitGrid">
+                    <div class="diff-col">
+                        <div class="diff-col-header">Original</div>
+                        <div class="diff-col-scroll" id="leftScroll">
+                            <table class="diff-table"><tbody>${leftHtml}</tbody></table>
+                        </div>
+                    </div>
+                    <div class="diff-col">
+                        <div class="diff-col-header">Changed</div>
+                        <div class="diff-col-scroll" id="rightScroll">
+                            <table class="diff-table"><tbody>${rightHtml}</tbody></table>
+                        </div>
+                    </div>
+                </div>`;
+
+            // Wire synchronized scrolling
+            attachSyncScroll('leftScroll', 'rightScroll');
+        }
+
+        /* ═══════════════════════════════════════════════
+           SYNCHRONIZED SCROLLING
+        ═══════════════════════════════════════════════ */
+        function attachSyncScroll(idA, idB) {
+            // Wait for DOM to paint before attaching
+            requestAnimationFrame(() => {
+                const a = document.getElementById(idA);
+                const b = document.getElementById(idB);
+                if (!a || !b) return;
+
+                a.addEventListener('scroll', () => {
+                    if (syncScrollLock) return;
+                    syncScrollLock = true;
+                    b.scrollTop = a.scrollTop;
+                    b.scrollLeft = a.scrollLeft;
+                    syncScrollLock = false;
+                }, { passive: true });
+
+                b.addEventListener('scroll', () => {
+                    if (syncScrollLock) return;
+                    syncScrollLock = true;
+                    a.scrollTop = b.scrollTop;
+                    a.scrollLeft = b.scrollLeft;
+                    syncScrollLock = false;
+                }, { passive: true });
+            });
+        }
+
+        function renderUnified(container, paired, mode, showCtx, inlineChars, CTX) {
+            const isLine = mode === 'line';
+            let html = '';
+            let aLineNum = 1, bLineNum = 1;
+            let prevShown = true;
+
+            paired.forEach((row, i) => {
+                const show = shouldShow(paired, i, showCtx, CTX);
+
+                if (!show) {
+                    if (prevShown) html += `<tr class="line-skip"><td colspan="4">···</td></tr>`;
+                    prevShown = false;
+                    if (row.aVal !== null) aLineNum++;
+                    if (row.bVal !== null) bLineNum++;
+                    return;
+                }
+                prevShown = true;
+
+                if (row.type === 'eq') {
+                    const txt = escapeHtml(row.aVal ?? '');
+                    html += `<tr class="line-eq"><td class="line-num">${aLineNum++}</td><td class="line-num">${bLineNum++}</td><td class="line-sign"> </td><td class="line-content">${txt}</td></tr>`;
+                } else if (row.type === 'del') {
+                    html += `<tr class="line-del"><td class="line-num">${aLineNum++}</td><td class="line-num"></td><td class="line-sign">−</td><td class="line-content">${escapeHtml(row.aVal ?? '')}</td></tr>`;
+                } else if (row.type === 'add') {
+                    html += `<tr class="line-add"><td class="line-num"></td><td class="line-num">${bLineNum++}</td><td class="line-sign">+</td><td class="line-content">${escapeHtml(row.bVal ?? '')}</td></tr>`;
+                } else {
+                    let aContent, bContent;
+                    if (inlineChars && isLine) {
+                        const { aOut, bOut } = charDiff(row.aVal ?? '', row.bVal ?? '');
+                        aContent = spansToHtml(aOut);
+                        bContent = spansToHtml(bOut);
+                    } else {
+                        aContent = escapeHtml(row.aVal ?? '');
+                        bContent = escapeHtml(row.bVal ?? '');
+                    }
+                    html += `<tr class="line-del"><td class="line-num">${aLineNum++}</td><td class="line-num"></td><td class="line-sign">−</td><td class="line-content">${aContent}</td></tr>`;
+                    html += `<tr class="line-add"><td class="line-num"></td><td class="line-num">${bLineNum++}</td><td class="line-sign">+</td><td class="line-content">${bContent}</td></tr>`;
+                }
+            });
+
+            container.innerHTML = `
+                <div class="diff-unified">
+                    <table class="diff-table"><tbody>${html}</tbody></table>
+                </div>`;
+        }
+
+        /* ═══════════════════════════════════════════════
+           COPY / DOWNLOAD
+        ═══════════════════════════════════════════════ */
+        function copyDiff() {
+            const lv = document.getElementById('leftText').value;
+            const rv = document.getElementById('rightText').value;
+            if (!lv && !rv) return;
+
+            const lines = [];
+            if (lastDiffResult) {
+                lastDiffResult.paired.forEach(row => {
+                    if (row.type === 'eq') lines.push('  ' + (row.aVal ?? ''));
+                    else if (row.type === 'del') lines.push('- ' + (row.aVal ?? ''));
+                    else if (row.type === 'add') lines.push('+ ' + (row.bVal ?? ''));
+                    else { lines.push('- ' + (row.aVal ?? '')); lines.push('+ ' + (row.bVal ?? '')); }
+                });
+            }
+            navigator.clipboard.writeText(lines.join('\n'));
+        }
+
+        function downloadDiff() {
+            if (!lastDiffResult) return;
+            const lines = [];
+            lastDiffResult.paired.forEach(row => {
+                if (row.type === 'eq') lines.push('  ' + (row.aVal ?? ''));
+                else if (row.type === 'del') lines.push('- ' + (row.aVal ?? ''));
+                else if (row.type === 'add') lines.push('+ ' + (row.bVal ?? ''));
+                else { lines.push('- ' + (row.aVal ?? '')); lines.push('+ ' + (row.bVal ?? '')); }
+            });
+            const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = 'sendly_diff.txt'; a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        /* ═══════════════════════════════════════════════
+           AUTO-DIFF ON CTRL+ENTER
+        ═══════════════════════════════════════════════ */
+        document.addEventListener('keydown', e => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                runDiff();
+            }
+            if (e.key === 'Escape') {
+                closeDiffView();
+            }
+        });
+    </script>
+</body>
+
+</html>

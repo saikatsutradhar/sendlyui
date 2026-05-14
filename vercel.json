@@ -35,6 +35,10 @@
     {
       "source": "/json-formatter",
       "destination": "/json-formatter.html"
+    },
+    {
+      "source": "/diff",
+      "destination": "/Diff.html"
     }
   ]
 }

@@ -29,6 +29,10 @@
     <loc>https://sendlyui.vercel.app/terms-privacy</loc>
   </url>
 
+  <url>
+    <loc>https://sendlyui.vercel.app/diff</loc>
+  </url>
+
 </urlset>
 
 <!-- https://sendly.pages.dev -->
