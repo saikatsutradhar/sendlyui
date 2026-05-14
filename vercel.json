@@ -37,8 +37,8 @@
       "destination": "/json-formatter.html"
     },
     {
-      "source": "/diff",
-      "destination": "/diff.html"
+      "source": "/Diff",
+      "destination": "/Diff.html"
     }
   ]
 }
