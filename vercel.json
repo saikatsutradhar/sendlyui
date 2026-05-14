@@ -38,7 +38,7 @@
     },
     {
       "source": "/diff",
-      "destination": "/Diff.html"
+      "destination": "/diff.html"
     }
   ]
 }
