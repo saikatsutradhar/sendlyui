@@ -1,0 +1,27 @@
+{
+  "name": "sendlyui",
+  "version": "1.0.0",
+  "description": "Sendly - Secure File Sharing & Fast File Transfer",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saikatsutradhar/sendlyui.git"
+  },
+  "keywords": [
+    "file-sharing",
+    "secure-transfer",
+    "vercel"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/saikatsutradhar/sendlyui/issues"
+  },
+  "homepage": "https://github.com/saikatsutradhar/sendlyui#readme",
+  "dependencies": {
+    "@vercel/speed-insights": "^2.0.0"
+  }
+}
