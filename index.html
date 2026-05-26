@@ -70,6 +70,7 @@
             background-color: rgba(168, 85, 247, 0.8);
         }
 
+        /* --- CUSTOM CURSOR UPDATE --- */
         body {
             font-family: 'Poppins', sans-serif;
             margin: 0;
@@ -78,6 +79,60 @@
             min-height: 100vh;
             color: var(--text-main);
             overflow-x: hidden;
+            cursor: url('cursor-logo.png') 16 0, auto; 
+        }
+
+        a, button, label, .tab-btn, .glass-card, .digit-box, .crypto-input, .close-btn {
+            cursor: url('cursor-logo.png') 16 0, pointer;
+        }
+
+/* --- GLOBAL DROP OVERLAY --- */
+        .global-drop-overlay {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            /* Changed from solid white to a transparent dark glass effect */
+            background: rgba(0, 0, 0, 0.4); 
+            /* Changed the dashed border to semi-transparent white */
+            border: 4px dashed rgba(255, 255, 255, 0.5); 
+            border-radius: 24px;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+            pointer-events: none; 
+            /* Increased the blur slightly for a premium frosted look */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .global-drop-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            border-color: var(--secondary); /* Turns pink when active */
+        }
+
+        .overlay-content {
+            text-align: center;
+            color: #ffffff; /* Changed text to white for readability */
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .global-drop-overlay.active .overlay-content {
+            transform: scale(1);
+        }
+
+        .overlay-content h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-top: 20px;
+            letter-spacing: -1px;
         }
 
         .bg-video {
@@ -267,7 +322,6 @@
             border-radius: 16px;
             margin-bottom: 15px;
             background: rgba(248, 250, 252, 0.6);
-            cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
@@ -353,7 +407,6 @@
             gap: 8px;
             font-size: 13px;
             color: var(--primary);
-            cursor: pointer;
             margin-bottom: 15px;
             font-weight: 600;
             transition: opacity 0.2s;
@@ -368,7 +421,6 @@
             font-family: inherit;
             font-weight: 600;
             transition: all 0.3s ease;
-            cursor: pointer;
             border: none;
             display: flex;
             justify-content: center;
@@ -393,7 +445,6 @@
             font-size: 15px;
             font-weight: 600;
             font-family: inherit;
-            cursor: pointer;
             overflow: hidden;
             transition: all 0.4s cubic-bezier(0.65, 0, 0.35, 1);
             box-shadow: 0 4px 15px rgba(244, 63, 94, 0.3);
@@ -455,7 +506,6 @@
             stroke-dashoffset: 125.6;
             transition: stroke-dashoffset 0.1s linear, opacity 0.3s;
             transform: translate(-50%, -50%) rotate(-90deg);
-            /* Start at top */
         }
 
         .animated-send-btn.is-loading .btn-ring {
@@ -467,7 +517,6 @@
             width: 50px;
             border-radius: 50%;
             background: #10B981;
-            /* Success Green */
             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
             pointer-events: none;
         }
@@ -784,7 +833,6 @@
             border: none;
             font-size: 20px;
             color: var(--text-muted);
-            cursor: pointer;
             padding: 0;
             width: auto;
             box-shadow: none;
@@ -878,7 +926,6 @@
             display: none;
             font-size: 24px;
             color: white;
-            cursor: pointer;
             background: none;
             border: none;
             padding: 5px;
@@ -988,16 +1035,22 @@
 
         gtag('config', 'G-TVXFJP7LLL');
     </script>
-    <!-- Vercel Speed Insights -->
-    <script>
-        window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
-    </script>
-    <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
 
 <body>
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PMZFLK55" height="0" width="0"
             style="display:none;visibility:hidden"></iframe></noscript>
+            
+    <div id="globalDropOverlay" class="global-drop-overlay">
+        <div class="overlay-content">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <h2>Drop files or folders here</h2>
+        </div>
+    </div>
+
     <img class="bg-video" src="background.png" alt="Background">
 
     <header class="header">
@@ -1181,7 +1234,8 @@
                 stroke-linecap="round" stroke-linejoin="round" style="vertical-align: text-bottom; margin-right: 4px;">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                 <polyline points="22,6 12,13 2,6"></polyline>
-            </svg></a></footer>
+            </svg></a>
+    </footer>
 
     <div id="toast" class="toast">
         <div class="toast-icon" id="toastIcon"></div>
@@ -1373,13 +1427,44 @@
         const fileInput = document.getElementById("fileInput");
         const fileList = document.getElementById("fileList");
 
-        dropArea.addEventListener("dragover", (e) => { e.preventDefault(); dropArea.classList.add("dragover"); });
-        dropArea.addEventListener("dragleave", () => { dropArea.classList.remove("dragover"); });
-        dropArea.addEventListener("drop", (e) => {
-            e.preventDefault(); dropArea.classList.remove("dragover");
-            selectedFiles = Array.from(e.dataTransfer.files);
-            showFiles();
+        // --- GLOBAL DRAG AND DROP HANDLERS WITH VISUAL OVERLAY ---
+        const globalOverlay = document.getElementById("globalDropOverlay");
+        let dragCounter = 0;
+
+        window.addEventListener("dragenter", (e) => {
+            e.preventDefault();
+            dragCounter++;
+            globalOverlay.classList.add("active");
         });
+
+        window.addEventListener("dragover", (e) => { 
+            e.preventDefault(); 
+        });
+
+        window.addEventListener("dragleave", (e) => { 
+            e.preventDefault();
+            dragCounter--;
+            if (dragCounter === 0) {
+                globalOverlay.classList.remove("active");
+            }
+        });
+
+        window.addEventListener("drop", (e) => {
+            e.preventDefault(); 
+            dragCounter = 0;
+            globalOverlay.classList.remove("active");
+
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                // Auto switch to Send tab if dropped while on Receive tab
+                if (!document.getElementById('tab-send').classList.contains('active')) {
+                    switchTab('send');
+                }
+                
+                selectedFiles = Array.from(e.dataTransfer.files);
+                showFiles();
+            }
+        });
+
         fileInput.addEventListener("change", (e) => {
             selectedFiles = Array.from(e.target.files);
             showFiles();
