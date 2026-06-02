@@ -46,7 +46,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
-    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+    <script src="socket.io.min.js"></script>
+    <script>
+        if (typeof io === 'undefined') {
+            // Local file missing — try CDN as fallback
+            document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.4/socket.io.min.js"><\/script>');
+        }
+    </script>
     <style>
         :root {
             --primary: #4F46E5;
@@ -505,11 +511,6 @@
 
         gtag('config', 'G-TVXFJP7LLL');
     </script>
-    <!-- Vercel Speed Insights -->
-    <script>
-        window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
-    </script>
-    <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
 
 <body>
@@ -689,9 +690,18 @@
             }
         }
 
-        const socket = io("https://sendlyapi.onrender.com");
+        let socketReady = false;
+        let socket;
 
-        let roomKey;
+        if (typeof io === 'undefined') {
+            alert("Real-time connection failed. Please check your network or disable ad-blockers and refresh the page.");
+            socket = { emit() {}, on() {} }; // stub so calls don't crash
+        } else {
+            socket = io("https://sendlyapi.onrender.com");
+            socketReady = true;
+        }
+
+        let roomKey = null;
         const controlsPanel = document.getElementById('controlsPanel');
         const editorContainer = document.getElementById('editorContainer');
         const notepadArea = document.getElementById('notepadArea');
