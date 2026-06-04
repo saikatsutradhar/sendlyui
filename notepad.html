@@ -690,7 +690,7 @@
 
         if (typeof io === 'undefined') {
             alert("Real-time connection failed. Please check your network or disable ad-blockers and refresh the page.");
-            socket = { emit() {}, on() {} }; // stub so calls don't crash
+            socket = { emit() { }, on() { } }; // stub so calls don't crash
         } else {
             socket = io("https://sendlyapi.onrender.com");
             socketReady = true;
