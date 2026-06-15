@@ -23,7 +23,7 @@
     <meta property="og:title" content="Diff Checker — Compare Text Online | Sendly">
     <meta property="og:description"
         content="Find differences between two texts instantly. Highlights added, removed, and changed lines. Runs entirely in your browser — zero data sent to servers.">
-    <meta property="og:image" content="https://sendlyui.vercel.app/logo.png">
+    <meta property="og:image" content="https://sendlyui.vercel.app/thumbnail.png">
     <meta property="og:url" content="https://sendlyui.vercel.app/diff-checker">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Sendly">
@@ -32,7 +32,7 @@
     <meta name="twitter:title" content="Diff Checker — Compare Text Online | Sendly">
     <meta name="twitter:description"
         content="Zero-knowledge text diff tool. Compare code, documents, or any text privately. No server, no tracking.">
-    <meta name="twitter:image" content="https://sendlyui.vercel.app/logo.png">
+    <meta name="twitter:image" content="https://sendlyui.vercel.app/thumbnail.png">
 
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -935,11 +935,21 @@
         <a href="/" class="header-logo"><img src="logo.png" alt="Sendly Logo" style="height: 40px;"></a>
         <div class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</div>
         <div class="header-links">
-            <a href="/how-it-works">How it works</a>
-            <a href="/screen">Screen Share</a>
-            <a href="/notepad">Live Notepad</a>
-            <a href="/diff-checker" class="active">Diff Checker</a>
-            <a href="/json-formatter">JSON Formatter</a>
+            <select id="langSelector" onchange="changeLanguage(this.value)" style="background: transparent; color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; padding: 2px 5px; cursor: pointer; outline: none; margin-left: 30px; font-weight: 500; font-size: 14px;">
+                <option value="en" style="color: black;">English</option>
+                <option value="es" style="color: black;">Español</option>
+                <option value="fr" style="color: black;">Français</option>
+                <option value="hi" style="color: black;">हिन्दी (Hindi)</option>
+                <option value="tr" style="color: black;">Türkçe (Turkish)</option>
+                <option value="de" style="color: black;">Deutsch (German)</option>
+                <option value="id" style="color: black;">Bahasa Indonesia</option>
+                <option value="da" style="color: black;">Dansk (Danish)</option>
+            </select>
+            <a href="/how-it-works" data-i18n="nav.howItWorks">How it works</a>
+            <a href="/screen" data-i18n="nav.screenShare">Screen Share</a>
+            <a href="/notepad" data-i18n="nav.liveNotepad">Live Notepad</a>
+            <a href="/diff-checker" class="active">Diff Checker" data-i18n="diff.title"</a>
+            <a href="/json-formatter" data-i18n="nav.jsonFormatter">JSON Formatter</a>
 
         </div>
     </header>
@@ -947,8 +957,7 @@
     <!-- MAIN -->
     <div class="page-wrapper">
         <h1 class="hero-title">
-            <img src="logo.png" alt="Sendly Icon"> Diff Checker
-        </h1>
+            <img src="logo.png" alt="Sendly Icon">Diff Checker" data-i18n="diff.title"</h1>
         <p class="page-subtitle">Compare two texts and instantly see every difference. Runs 100% in your browser — your
             data never leaves your device.</p>
 
@@ -978,7 +987,7 @@
         <div class="split-input">
             <div class="input-panel">
                 <div class="input-panel-header">
-                    <span>Original Text</span>
+                    <span>Original Text" data-i18n="diff.leftTitle"</span>
                     <div class="hdr-btns">
                         <button class="mini-btn" onclick="pasteLeft()">📋 Paste</button>
                         <button class="mini-btn" onclick="loadSampleLeft()">Sample</button>
@@ -991,7 +1000,7 @@
 
             <div class="input-panel">
                 <div class="input-panel-header">
-                    <span>Changed Text</span>
+                    <span>Changed Text" data-i18n="diff.rightTitle"</span>
                     <div class="hdr-btns">
                         <button class="mini-btn" onclick="pasteRight()">📋 Paste</button>
                         <button class="mini-btn" onclick="loadSampleRight()">Sample</button>
@@ -1599,6 +1608,8 @@ users.forEach(u => greet(u, "Hi"));
             });
         });
     </script>
+    <script src="translations.js"></script>
+    <script src="i18n.js"></script>
 </body>
 
 </html>

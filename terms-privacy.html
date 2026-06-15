@@ -15,6 +15,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Terms & Privacy - Sendly</title>
+    <meta property="og:title" content="Terms & Privacy - Sendly">
+    <meta property="og:description" content="Sendly privacy policy and terms of service.">
+    <meta property="og:image" content="https://sendlyui.vercel.app/thumbnail.png">
+    <meta property="og:url" content="https://sendlyui.vercel.app/terms-privacy">
+    <meta property="og:type" content="website">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -375,19 +380,29 @@
         </a>
         <div class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</div>
         <div class="header-links">
-            <a href="/how-it-works">How it works</a>
-            <a href="/screen">Screen Share</a>
-            <a href="/notepad">Live Notepad</a>
+            <select id="langSelector" onchange="changeLanguage(this.value)" style="background: transparent; color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; padding: 2px 5px; cursor: pointer; outline: none; margin-left: 30px; font-weight: 500; font-size: 14px;">
+                <option value="en" style="color: black;">English</option>
+                <option value="es" style="color: black;">Español</option>
+                <option value="fr" style="color: black;">Français</option>
+                <option value="hi" style="color: black;">हिन्दी (Hindi)</option>
+                <option value="tr" style="color: black;">Türkçe (Turkish)</option>
+                <option value="de" style="color: black;">Deutsch (German)</option>
+                <option value="id" style="color: black;">Bahasa Indonesia</option>
+                <option value="da" style="color: black;">Dansk (Danish)</option>
+            </select>
+            <a href="/how-it-works" data-i18n="nav.howItWorks">How it works</a>
+            <a href="/screen" data-i18n="nav.screenShare">Screen Share</a>
+            <a href="/notepad" data-i18n="nav.liveNotepad">Live Notepad</a>
             <a href="/diff">Diff Checker</a>
-            <a href="/json-formatter">JSON Formatter</a>
+            <a href="/json-formatter" data-i18n="nav.jsonFormatter">JSON Formatter</a>
         </div>
     </header>
 
     <div class="page-wrapper">
         <div class="glass-panel">
-            <h1 class="page-title">Terms & Privacy</h1>
+            <h1 class="page-title">Terms & Privacy" data-i18n="terms.title"</h1>
             <div class="badge-container">
-                <span class="last-updated">Last Updated: March 2026</span>
+                <span class="last-updated">Last Updated: March 2026" data-i18n="terms.lastUpdated"</span>
             </div>
 
             <div class="legal-content">
@@ -395,15 +410,15 @@
                     and securely as possible, without hoarding your personal information or keeping your files longer
                     than necessary.</p>
 
-                <h2>Privacy Policy</h2>
+                <h2 data-i18n="terms.privacyTitle">Privacy Policy</h2>
 
-                <h3>1. Zero-Account Architecture</h3>
+                <h3 data-i18n="terms.p1Title">1. Zero-Account Architecture</h3>
                 <p>We do not require you to create an account, log in, or provide an email address to use Sendly.
                     Because we do not collect personal profiles, we have nothing to sell to advertisers or third-party
                     data brokers.</p>
 
-                <h3>2. Ephemeral File Storage</h3>
-                <p>Sendly acts solely as a temporary bridge between two devices. Here is how we handle your files:</p>
+                <h3 data-i18n="terms.p2Title">2. Ephemeral File Storage</h3>
+                <p>Sendly acts solely as a temporary bridge between two devices. Here is how we handle your files:" data-i18n="terms.p2Desc"</p>
                 <ul>
                     <li><strong>Instant Deletion:</strong> The moment a file is successfully downloaded by the receiver,
                         it is permanently and irreversibly deleted from our servers.</li>
@@ -411,31 +426,31 @@
                         our automated systems scrub it entirely from our servers.</li>
                 </ul>
 
-                <h3>3. Zero-Knowledge Encryption</h3>
+                <h3 data-i18n="terms.p3Title">3. Zero-Knowledge Encryption</h3>
                 <p>Sendly offers optional Client-Side AES Encryption. When you choose to set a password, your file is
                     mathematically locked inside your web browser before it is ever uploaded. We have zero knowledge of
                     your file contents, do not store your passwords, and cannot decrypt your files even if requested.
                 </p>
 
-                <h2>Terms of Service</h2>
+                <h2 data-i18n="terms.tosTitle">Terms of Service</h2>
 
-                <h3>1. Acceptable Use</h3>
+                <h3 data-i18n="terms.t1Title">1. Acceptable Use</h3>
                 <p>Sendly is designed for personal and professional file sharing. By using Sendly, you agree that you
                     will not use our service to transfer:</p>
                 <ul>
-                    <li>Illegal, pirated, or copyrighted material you do not own the rights to.</li>
-                    <li>Malware, viruses, or destructive code.</li>
-                    <li>Child exploitation material or illegal pornography.</li>
+                    <li>Illegal, pirated, or copyrighted material you do not own the rights to." data-i18n="terms.t1Li1"</li>
+                    <li>Malware, viruses, or destructive code." data-i18n="terms.t1Li2"</li>
+                    <li>Child exploitation material or illegal pornography." data-i18n="terms.t1Li3"</li>
                 </ul>
                 <p>While we do not actively monitor file contents due to encryption, any reports of abuse will result in
                     the immediate blocking of the offending IP addresses.</p>
 
-                <h3>2. Service Availability</h3>
-                <p>Sendly is provided on an "as-is" and "as-available" basis. While we strive for 99.9% uptime, we do
+                <h3 data-i18n="terms.t2Title">2. Service Availability</h3>
+                <p>Sendly is provided on an \'as-is\' and \'as-available\' basis. While we strive for 99.9% uptime, we do
                     not guarantee that the service will be uninterrupted or error-free. We are not liable for any lost
                     data or files that fail to transfer. We recommend always keeping a backup of important files.</p>
 
-                <h3>3. Rate Limiting and File Size</h3>
+                <h3 data-i18n="terms.t3Title">3. Rate Limiting and File Size</h3>
                 <p>To ensure fair use and server stability, users are permitted to upload files up to a maximum size of
                     <strong>500MB</strong> per standard transfer. For Client-Side Encrypted transfers, the limit is
                     <strong>50MB</strong> to prevent browser memory exhaustion on mobile devices. We reserve the right
@@ -505,6 +520,8 @@
             });
         });
     </script>
+    <script src="translations.js"></script>
+    <script src="i18n.js"></script>
 </body>
 
 </html>

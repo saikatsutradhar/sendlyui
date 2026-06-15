@@ -29,7 +29,7 @@
     <meta property="og:title" content="Zero-Knowledge JSON Formatter & Validator — Sendly">
     <meta property="og:description"
         content="Format and validate JSON privately in your browser. No data ever leaves your device. Free, instant, and zero-knowledge by design.">
-    <meta property="og:image" content="https://sendlyui.vercel.app/logo.png">
+    <meta property="og:image" content="https://sendlyui.vercel.app/thumbnail.png">
     <meta property="og:url" content="https://sendlyui.vercel.app/json-formatter">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Sendly">
@@ -39,7 +39,7 @@
     <meta name="twitter:title" content="Zero-Knowledge JSON Formatter & Validator — Sendly">
     <meta name="twitter:description"
         content="The JSON formatter that never phones home. Everything runs in your browser — format, validate, and fold JSON with complete privacy.">
-    <meta name="twitter:image" content="https://sendlyui.vercel.app/logo.png">
+    <meta name="twitter:image" content="https://sendlyui.vercel.app/thumbnail.png">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -584,18 +584,27 @@
         <a href="/" class="header-logo"><img src="logo.png" alt="Sendly Logo" style="height: 40px;"></a>
         <div class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</div>
         <div class="header-links">
-            <a href="/how-it-works">How it works</a>
-            <a href="/screen">Screen Share</a>
-            <a href="/notepad">Live Notepad</a>
-            <a href="/Diff">Diff Checker</a>
-            <a href="/json-formatter" class="active">JSON Formatter</a>
+            <select id="langSelector" onchange="changeLanguage(this.value)" style="background: transparent; color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; padding: 2px 5px; cursor: pointer; outline: none; margin-left: 30px; font-weight: 500; font-size: 14px;">
+                <option value="en" style="color: black;">English</option>
+                <option value="es" style="color: black;">Español</option>
+                <option value="fr" style="color: black;">Français</option>
+                <option value="hi" style="color: black;">हिन्दी (Hindi)</option>
+                <option value="tr" style="color: black;">Türkçe (Turkish)</option>
+                <option value="de" style="color: black;">Deutsch (German)</option>
+                <option value="id" style="color: black;">Bahasa Indonesia</option>
+                <option value="da" style="color: black;">Dansk (Danish)</option>
+            </select>
+            <a href="/how-it-works" data-i18n="nav.howItWorks">How it works</a>
+            <a href="/screen" data-i18n="nav.screenShare">Screen Share</a>
+            <a href="/notepad" data-i18n="nav.liveNotepad">Live Notepad</a>
+            <a href="/Diff" data-i18n="nav.diffChecker">Diff Checker</a>
+            <a href="/json-formatter" class="active" data-i18n="nav.jsonFormatter">JSON Formatter" data-i18n="json.title"</a>
         </div>
     </header>
 
     <div class="page-wrapper">
         <h1 class="hero-title">
-            <img src="logo.png" alt="Sendly Icon"> JSON Formatter
-        </h1>
+            <img src="logo.png" alt="Sendly Icon">JSON Formatter" data-i18n="json.title"</h1>
         <p class="page-subtitle">Format, validate, and minify JSON offline. Your data never leaves your browser.</p>
 
         <div class="split-layout light-theme" id="mainWorkspace">
@@ -651,8 +660,7 @@
 
     <footer class="footer">
         © 2026 <img src="logo.png" alt="Sendly" class="footer-logo"
-            style="height: 22px; vertical-align: middle; margin: 0 4px; position: relative; top: -1px;"> Secure File
-        Transfer. <a href="/terms-privacy">Terms</a> & <a href="/terms-privacy">Privacy</a>.
+            style="height: 22px; vertical-align: middle; margin: 0 4px; position: relative; top: -1px;"> <span data-i18n="footer.secure">Secure File Transfer.</span> <a href="/terms-privacy" data-i18n="footer.terms">Terms</a> & <a href="/terms-privacy" data-i18n="footer.privacy">Privacy</a>.
         &nbsp;&nbsp;&nbsp;<a href="https://github.com/saikatsutradhar" target="_blank"
             style="color: inherit; text-decoration: none; opacity: 0.8; transition: opacity 0.2s;"
             onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8" title="GitHub Profile"><svg
@@ -794,6 +802,8 @@
             });
         });
     </script>
+    <script src="translations.js"></script>
+    <script src="i18n.js"></script>
 </body>
 
 </html>
