@@ -459,16 +459,7 @@
         <a href="/" class="header-logo"><img src="logo.png" alt="Sendly Logo" style="height: 40px; width: auto;"></a>
         <div class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</div>
         <div class="header-links">
-            <select id="langSelector" onchange="changeLanguage(this.value)" style="background: transparent; color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; padding: 2px 5px; cursor: pointer; outline: none; margin-left: 30px; font-weight: 500; font-size: 14px;">
-                <option value="en" style="color: black;">English</option>
-                <option value="es" style="color: black;">Español</option>
-                <option value="fr" style="color: black;">Français</option>
-                <option value="hi" style="color: black;">हिन्दी (Hindi)</option>
-                <option value="tr" style="color: black;">Türkçe (Turkish)</option>
-                <option value="de" style="color: black;">Deutsch (German)</option>
-                <option value="id" style="color: black;">Bahasa Indonesia</option>
-                <option value="da" style="color: black;">Dansk (Danish)</option>
-            </select>
+            
             <a href="/how-it-works" data-i18n="nav.howItWorks">How it works</a>
             <a href="/screen" class="active" data-i18n="nav.screenShare">Screen Share</a>
             <a href="/notepad" data-i18n="nav.liveNotepad">Live Notepad</a>
@@ -479,25 +470,25 @@
 
     <div class="page-wrapper">
         <h1 class="hero-title">
-            <img src="logo.png" alt="Sendly Icon">Live Mirror" data-i18n="screen.title"</h1>
+            <img src="logo.png" alt="Sendly Icon" data-i18n="screen.title">Live Mirror</h1>
         <p class="page-subtitle">Instantly beam your screen to another device using secure, peer-to-peer WebRTC
             signaling. No downloads required.</p>
 
         <div class="controls-container" id="controlsPanel">
             <div class="glass-card">
                 <h2 data-i18n="screen.shareTitle">Share Your Screen</h2>
-                <p>Broadcast your screen or a specific app window in real-time." data-i18n="screen.shareDesc"</p>
-                <button class="btn" onclick="startSharing()" id="shareBtn">Start Broadcast" data-i18n="screen.startBtn"</button>
+                <p data-i18n="screen.shareDesc">Broadcast your screen or a specific app window in real-time.</p>
+                <button class="btn" onclick="startSharing()" id="shareBtn" data-i18n="screen.startBtn">Start Broadcast</button>
                 <div class="key-display" id="generatedKey"></div>
-                <p id="waitingText" style="display:none; color: var(--primary); font-weight: 600; margin-top: 15px;">Waiting for viewer to connect..." data-i18n="screen.waiting"</p>
+                <p id="waitingText" style="display:none; color: var(--primary); font-weight: 600; margin-top: 15px;" data-i18n="screen.waiting">Waiting for viewer to connect...</p>
             </div>
 
             <div class="glass-card">
                 <h2 data-i18n="screen.viewTitle">View a Screen</h2>
-                <p>Enter the 6-digit access code provided by the sender." data-i18n="screen.viewDesc"</p>
+                <p data-i18n="screen.viewDesc">Enter the 6-digit access code provided by the sender.</p>
                 <input type="text" id="joinCode" class="input-field" placeholder="Enter 6-Digit Code" data-i18n="screen.codeInput" maxlength="6">
                 <button class="btn" onclick="joinStream()"
-                    style="background: linear-gradient(135deg, var(--secondary), #f43f5e);">Connect to Stream" data-i18n="screen.connectBtn"</button>
+                    style="background: linear-gradient(135deg, var(--secondary), #f43f5e);" data-i18n="screen.connectBtn">Connect to Stream</button>
             </div>
         </div>
 

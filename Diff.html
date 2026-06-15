@@ -935,20 +935,11 @@
         <a href="/" class="header-logo"><img src="logo.png" alt="Sendly Logo" style="height: 40px;"></a>
         <div class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</div>
         <div class="header-links">
-            <select id="langSelector" onchange="changeLanguage(this.value)" style="background: transparent; color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; padding: 2px 5px; cursor: pointer; outline: none; margin-left: 30px; font-weight: 500; font-size: 14px;">
-                <option value="en" style="color: black;">English</option>
-                <option value="es" style="color: black;">Español</option>
-                <option value="fr" style="color: black;">Français</option>
-                <option value="hi" style="color: black;">हिन्दी (Hindi)</option>
-                <option value="tr" style="color: black;">Türkçe (Turkish)</option>
-                <option value="de" style="color: black;">Deutsch (German)</option>
-                <option value="id" style="color: black;">Bahasa Indonesia</option>
-                <option value="da" style="color: black;">Dansk (Danish)</option>
-            </select>
+            
             <a href="/how-it-works" data-i18n="nav.howItWorks">How it works</a>
             <a href="/screen" data-i18n="nav.screenShare">Screen Share</a>
             <a href="/notepad" data-i18n="nav.liveNotepad">Live Notepad</a>
-            <a href="/diff-checker" class="active">Diff Checker" data-i18n="diff.title"</a>
+            <a href="/diff-checker" class="active" data-i18n="diff.title">Diff Checker</a>
             <a href="/json-formatter" data-i18n="nav.jsonFormatter">JSON Formatter</a>
 
         </div>
@@ -957,7 +948,7 @@
     <!-- MAIN -->
     <div class="page-wrapper">
         <h1 class="hero-title">
-            <img src="logo.png" alt="Sendly Icon">Diff Checker" data-i18n="diff.title"</h1>
+            <img src="logo.png" alt="Sendly Icon" data-i18n="diff.title">Diff Checker</h1>
         <p class="page-subtitle">Compare two texts and instantly see every difference. Runs 100% in your browser — your
             data never leaves your device.</p>
 
@@ -987,7 +978,7 @@
         <div class="split-input">
             <div class="input-panel">
                 <div class="input-panel-header">
-                    <span>Original Text" data-i18n="diff.leftTitle"</span>
+                    <span data-i18n="diff.leftTitle">Original Text</span>
                     <div class="hdr-btns">
                         <button class="mini-btn" onclick="pasteLeft()">📋 Paste</button>
                         <button class="mini-btn" onclick="loadSampleLeft()">Sample</button>
@@ -1000,7 +991,7 @@
 
             <div class="input-panel">
                 <div class="input-panel-header">
-                    <span>Changed Text" data-i18n="diff.rightTitle"</span>
+                    <span data-i18n="diff.rightTitle">Changed Text</span>
                     <div class="hdr-btns">
                         <button class="mini-btn" onclick="pasteRight()">📋 Paste</button>
                         <button class="mini-btn" onclick="loadSampleRight()">Sample</button>

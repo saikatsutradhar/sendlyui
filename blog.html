@@ -421,34 +421,25 @@
             <img src="logo.png" alt="Sendly Logo" style="height: 35px; width: auto;">
         </a>
         <div class="header-links">
-            <select id="langSelector" onchange="changeLanguage(this.value)" style="background: transparent; color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; padding: 2px 5px; cursor: pointer; outline: none; margin-left: 30px; font-weight: 500; font-size: 14px;">
-                <option value="en" style="color: black;">English</option>
-                <option value="es" style="color: black;">Español</option>
-                <option value="fr" style="color: black;">Français</option>
-                <option value="hi" style="color: black;">हिन्दी (Hindi)</option>
-                <option value="tr" style="color: black;">Türkçe (Turkish)</option>
-                <option value="de" style="color: black;">Deutsch (German)</option>
-                <option value="id" style="color: black;">Bahasa Indonesia</option>
-                <option value="da" style="color: black;">Dansk (Danish)</option>
-            </select>
+            
             <a href="/how-it-works" data-i18n="nav.howItWorks">How it works</a>
             <a href="/screen" data-i18n="nav.screenShare">Screen Share</a>
             <a href="/notepad" data-i18n="nav.liveNotepad">Live Notepad</a>
             <a href="/Diff" data-i18n="nav.diffChecker">Diff Checker</a>
             <a href="/json-formatter" data-i18n="nav.jsonFormatter">JSON Formatter</a>
-            <a href="/blog" class="active">Articles" data-i18n="blog.title"</a>
+            <a href="/blog" class="active" data-i18n="blog.title">Articles</a>
         </div>
     </header>
 
     <div class="page-wrapper">
         <div class="hero-container">
             <h1 class="hero-title">
-                <img src="logo.png" alt="Sendly Icon">Articles" data-i18n="blog.title"</h1>
+                <img src="logo.png" alt="Sendly Icon" data-i18n="blog.title">Articles</h1>
             <p class="hero-subtitle">The latest news in cybersecurity, data privacy, and safe file sharing, curated
                 daily by AI.</p>
         </div>
 
-        <div id="loader" class="loader">Fetching latest articles..." data-i18n="blog.loading"</div>
+        <div id="loader" class="loader" data-i18n="blog.loading">Fetching latest articles...</div>
 
         <div class="articles-grid" id="articlesGrid">
         </div>
@@ -502,7 +493,7 @@
                 const grid = document.getElementById("articlesGrid");
 
                 if (data.length === 0) {
-                    grid.innerHTML = "<p style='color:rgba(255,255,255,0.7); text-align:center; width:100%;'>The AI is currently writing our first post. Check back soon!" data-i18n="blog.empty"</p>";
+                    grid.innerHTML = "<p style='color:rgba(255,255,255,0.7); text-align:center; width:100%;' data-i18n="blog.empty">The AI is currently writing our first post. Check back soon!</p>";
                     return;
                 }
 
@@ -524,7 +515,7 @@
                             <div class="article-content">
                                 <h2 class="article-title">${blog.title}</h2>
                                 <p class="article-summary">${seoOptimizedSummary}</p>
-                                <span class="read-link">Read full article &rarr;" data-i18n="blog.readMore"</span>
+                                <span class="read-link" data-i18n="blog.readMore">Read full article &rarr;</span>
                                 
                                 <div class="article-meta">
                                     <div class="author-info">
