@@ -1041,6 +1041,121 @@
                 font-size: 34px;
             }
         }
+
+        /* Side Popup Banner */
+        .side-popup {
+            position: fixed;
+            right: 20px;
+            bottom: 80px;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 16px;
+            width: 250px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            z-index: 999;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            transform: translateX(150%);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease;
+        }
+
+        .side-popup.show {
+            transform: translateX(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .close-popup {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+            padding: 4px;
+            cursor: pointer;
+            transition: color 0.2s;
+            box-shadow: none;
+        }
+
+        .close-popup:hover {
+            color: white;
+            background: none;
+            box-shadow: none;
+        }
+
+        .popup-icon {
+            background: rgba(79, 70, 229, 0.2);
+            color: var(--primary);
+            padding: 8px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .popup-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .popup-content {
+            flex: 1;
+        }
+
+        .popup-content h4 {
+            margin: 0 0 4px 0;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .popup-content p {
+            margin: 0 0 10px 0;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 11px;
+            line-height: 1.4;
+            text-align: left;
+        }
+
+        .popup-content strong {
+            color: white;
+        }
+
+        .popup-btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .popup-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 850px) {
+            .side-popup {
+                width: calc(100% - 40px);
+                max-width: 320px;
+                bottom: 20px;
+                right: 20px;
+            }
+        }
     </style>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-TVXFJP7LLL"></script>
     <script>
@@ -1051,7 +1166,7 @@
         gtag('config', 'G-TVXFJP7LLL');
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.birds.min.js"></script>
+
 </head>
 
 <body>
@@ -1069,7 +1184,7 @@
         </div>
     </div>
 
-    <div id="vanta-bg" class="bg-video"></div>
+    <img id="vanta-bg" class="bg-video" src="background.jpg" alt="Background">
 
     <header class="header">
         <a href="/" class="header-logo">
@@ -1254,6 +1369,21 @@
                 <polyline points="22,6 12,13 2,6"></polyline>
             </svg></a>
     </footer>
+
+    <div id="side-popup" class="side-popup">
+        <button class="close-popup" onclick="closeSidePopup()">✕</button>
+        <div class="popup-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+            </svg>
+        </div>
+        <div class="popup-content">
+            <h4 id="popup-title">Try other tools!</h4>
+            <p id="popup-desc">Did you know? Sendly also has a JSON Formatter.</p>
+            <a href="/json-formatter" id="popup-btn" class="popup-btn">Explore Now</a>
+        </div>
+    </div>
 
     <div id="toast" class="toast">
         <div class="toast-icon" id="toastIcon"></div>
@@ -1727,6 +1857,56 @@
             showToast("History cleared", "success");
         }
 
+        let popupTimeout, popupHideTimeout;
+        const toolsList = [
+            { title: "Live Notepad", desc: "Collaborate on text in real-time with others.", link: "/notepad" },
+            { title: "Try JSON Formatter!", desc: "Format, validate, and minify JSON instantly.", link: "/json-formatter" },
+            { title: "Diff Checker", desc: "Compare text and code to see differences easily.", link: "/Diff" },
+            { title: "Screen Share", desc: "Share your screen directly through your browser.", link: "/screen" }
+        ];
+        let currentToolIndex = 0;
+
+        function closeSidePopup() {
+            const popup = document.getElementById('side-popup');
+            if (popup) {
+                popup.classList.remove('show');
+                clearTimeout(popupTimeout);
+                clearTimeout(popupHideTimeout);
+                localStorage.setItem('sendly_popup_closed', 'true');
+            }
+        }
+
+        function cyclePopup() {
+            if (localStorage.getItem('sendly_popup_closed') === 'true') return;
+
+            const popup = document.getElementById('side-popup');
+            if (!popup) return;
+
+            const tool = toolsList[currentToolIndex];
+            document.getElementById('popup-title').innerText = tool.title;
+            document.getElementById('popup-desc').innerText = tool.desc;
+            document.getElementById('popup-btn').href = tool.link;
+
+            popup.classList.add('show');
+
+            // Hide after 5 seconds
+            popupHideTimeout = setTimeout(() => {
+                popup.classList.remove('show');
+
+                currentToolIndex = (currentToolIndex + 1) % toolsList.length;
+
+                // Show next popup after 1 minute (60000 ms)
+                popupTimeout = setTimeout(cyclePopup, 60000);
+            }, 5000);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            if (localStorage.getItem('sendly_popup_closed') !== 'true') {
+                // Initial show after 2 seconds
+                popupTimeout = setTimeout(cyclePopup, 2000);
+            }
+        });
+
         function toggleMobileMenu() {
             const menu = document.querySelector('.header-links');
             const btn = document.querySelector('.mobile-menu-btn');
@@ -1755,31 +1935,7 @@
             }
         });
     </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            VANTA.BIRDS({
-                el: "#vanta-bg",
-                mouseControls: true,
-                touchControls: true,
-                gyroControls: false,
-                minHeight: 200.00,
-                minWidth: 200.00,
-                scale: 1.00,
-                scaleMobile: 1.00,
-                backgroundColor: 0x070b13,
-                color1: 0x4f46e5,
-                color2: 0xf43f5e,
-                colorMode: "variance",
-                birdSize: 1,
-                wingSpan: 30.00,
-                speedLimit: 5.00,
-                separation: 20.00,
-                alignment: 20.00,
-                cohesion: 20.00,
-                quantity: 2.00
-            });
-        });
-    </script>
+
     <script defer src="/_vercel/speed-insights/script.js"></script>
 </body>
 
