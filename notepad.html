@@ -715,6 +715,7 @@
             editorContainer.style.display = 'flex';
             displayKey.innerText = roomKey;
             notepadArea.focus();
+            editorContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
         function joinNote() {
@@ -730,6 +731,7 @@
             editorContainer.style.display = 'flex';
             displayKey.innerText = roomKey;
             notepadArea.focus();
+            editorContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
         socket.on("connect", () => {
@@ -796,8 +798,8 @@
                 alert("Only images are supported.");
                 return;
             }
-            if (file.size > 2 * 1024 * 1024) {
-                alert("Please keep images under 2MB to ensure fast real-time syncing.");
+            if (file.size > 5 * 1024 * 1024) {
+                alert("Please keep images under 5MB to ensure fast real-time syncing.");
                 return;
             }
             const reader = new FileReader();
