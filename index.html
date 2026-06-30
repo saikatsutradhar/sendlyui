@@ -41,41 +41,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
     <style>
-        .hero-content {
-            position: relative;
-        }
-        .paper-plane-container {
-            position: absolute;
-            top: -30px;
-            left: -50px;
-            width: 32px;
-            height: 32px;
-            color: white;
-            offset-path: path("M -100 200 C 100 -50, 400 -50, 600 50 C 800 150, 200 250, 100 100 C 0 -50, 400 -150, 1200 -300");
-            offset-rotate: auto 45deg;
-            animation: flyPlaneSmooth 7s linear infinite;
-            z-index: 10;
-        }
-        @keyframes flyPlaneSmooth {
-            0% {
-                offset-distance: 0%;
-                opacity: 0;
-                transform: scale(0.5);
-            }
-            10% {
-                opacity: 1;
-                transform: scale(0.8);
-            }
-            80% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            100% {
-                offset-distance: 100%;
-                opacity: 0;
-                transform: scale(0.5);
-            }
-        }
+
         h1, h2, h3, .logo-text, .header-logo, .hero-title, .page-title, .panel-title {
             font-family: 'Plus Jakarta Sans', sans-serif;
             font-weight: 700;
@@ -1245,12 +1211,6 @@
         <div class="landing-grid">
 
             <div class="hero-content">
-                <div class="paper-plane-container">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="22" y1="2" x2="11" y2="13"></line>
-                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                    </svg>
-                </div>
                 <h1 class="hero-title">Share files securely, <br>in seconds.</h1>
                 <p class="hero-subtitle">Sendly is the fastest way to send large files directly between devices. No
                     accounts required, completely secure.</p>
