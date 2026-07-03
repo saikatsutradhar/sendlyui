@@ -86,6 +86,7 @@
         body {
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
         }
 
         body {
@@ -208,6 +209,18 @@
             padding: 40px;
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
             text-align: center;
+        }
+
+        /* Scroll Reveal Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .glass-card h2 {
@@ -483,7 +496,7 @@
             signaling. No downloads required.</p>
 
         <div class="controls-container" id="controlsPanel">
-            <div class="glass-card">
+            <div class="glass-card reveal" style="transition-delay: 0.1s;">
                 <h2 data-i18n="screen.shareTitle">Share Your Screen</h2>
                 <p data-i18n="screen.shareDesc">Broadcast your screen or a specific app window in real-time.</p>
                 <button class="btn" onclick="startSharing()" id="shareBtn" data-i18n="screen.startBtn">Start
@@ -493,7 +506,7 @@
                     data-i18n="screen.waiting">Waiting for viewer to connect...</p>
             </div>
 
-            <div class="glass-card">
+            <div class="glass-card reveal" style="transition-delay: 0.3s;">
                 <h2 data-i18n="screen.viewTitle">View a Screen</h2>
                 <p data-i18n="screen.viewDesc">Enter the 6-digit access code provided by the sender.</p>
                 <input type="text" id="joinCode" class="input-field" placeholder="Enter 6-Digit Code"
@@ -625,6 +638,24 @@
         socket.on("answer", async (answer) => { await peerConnection.setRemoteDescription(new RTCSessionDescription(answer)); });
         socket.on("ice_candidate", async (candidate) => {
             if (peerConnection) { await peerConnection.addIceCandidate(new RTCIceCandidate(candidate)); }
+        });
+
+        // Apply scroll reveal animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.reveal').forEach((el) => {
+            observer.observe(el);
         });
     </script>
     <script src="translations.js"></script>

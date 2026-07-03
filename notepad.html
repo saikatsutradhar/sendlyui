@@ -91,6 +91,7 @@
         body {
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
         }
 
         body {
@@ -213,6 +214,18 @@
             padding: 40px;
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
             text-align: center;
+        }
+
+        /* Scroll Reveal Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .glass-card h2 {
@@ -543,14 +556,17 @@
         </p>
 
         <div class="controls-container" id="controlsPanel">
-            <div class="glass-card">
-                <h2>Create a Note</h2>
-                <p>Start a new collaborative document and invite others to type with you.</p>
-                <button class="btn" onclick="createNote()">Create Workspace</button>
+            <!-- Create Room -->
+            <div class="glass-card reveal" style="transition-delay: 0.1s;">
+                <h2 data-i18n="notepad.createRoomTitle">Start a Session</h2>
+                <p data-i18n="notepad.createRoomDesc">Create a secure, real-time notepad.</p>
+                <button class="btn" onclick="createNote()" data-i18n="notepad.createRoomBtn">Create New Notepad</button>
             </div>
-            <div class="glass-card">
-                <h2>Join a Note</h2>
-                <p>Enter the 6-digit access code provided by your collaborator.</p>
+
+            <!-- Join Room -->
+            <div class="glass-card reveal" style="transition-delay: 0.3s;">
+                <h2 data-i18n="notepad.joinRoomTitle">Join a Session</h2>
+                <p data-i18n="notepad.joinRoomDesc">Enter a 6-digit code to collaborate.</p>
                 <input type="text" id="joinCode" class="input-field" placeholder="Enter 6-Digit Code"
                     data-i18n="notepad.joinCode" maxlength="6">
                 <button class="btn" onclick="joinNote()"
@@ -876,6 +892,24 @@
             selection.removeAllRanges();
             selection.addRange(range);
         }
+
+        // Apply scroll reveal animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.reveal').forEach((el) => {
+            observer.observe(el);
+        });
     </script>
     <script src="translations.js"></script>
     <script src="i18n.js"></script>

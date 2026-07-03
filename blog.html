@@ -93,6 +93,7 @@
         body {
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
         }
 
         body {
@@ -205,6 +206,18 @@
             font-weight: 600;
             font-size: 18px;
             margin-top: 50px;
+        }
+
+        /* Scroll Reveal Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         /* --- ARTICLES GRID --- */
@@ -518,7 +531,7 @@
 
                     let imageUrl = blog.image_url || 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80';
                     grid.innerHTML += `
-                        <a href="${blog.source_url}" target="_blank" class="article-card">
+                        <a href="${blog.source_url}" target="_blank" class="article-card reveal">
                             <div class="article-image-wrapper">
                                 <img src="${imageUrl}" alt="Article Image" class="article-image">
                             </div>
@@ -537,6 +550,25 @@
                             </div>
                         </a>
                     `;
+                });
+
+                // Apply scroll reveal animations
+                const observerOptions = {
+                    threshold: 0.1,
+                    rootMargin: "0px 0px -50px 0px"
+                };
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('active');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, observerOptions);
+                
+                document.querySelectorAll('.reveal').forEach((el, index) => {
+                    el.style.transitionDelay = `${(index % 3) * 0.15}s`;
+                    observer.observe(el);
                 });
             })
             .catch(err => {

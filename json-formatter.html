@@ -80,6 +80,7 @@
         body {
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
         }
 
         body {
@@ -213,6 +214,18 @@
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
             width: 0;
             transition: all 0.3s ease;
+        }
+
+        /* Scroll Reveal Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .panel-header {
@@ -607,7 +620,7 @@
         <p class="page-subtitle">Format, validate, and minify JSON offline. Your data never leaves your browser.</p>
 
         <div class="split-layout light-theme" id="mainWorkspace">
-            <div class="panel" id="inputPanel">
+            <div class="panel reveal" style="transition-delay: 0.1s;" id="inputPanel">
                 <div class="panel-header">
                     <span>Input Data</span>
                     <div class="action-row">
@@ -619,7 +632,7 @@
                 <textarea id="inputEditor"></textarea>
             </div>
 
-            <div class="action-column" id="actionColumn">
+            <div class="action-column reveal" style="transition-delay: 0.2s;" id="actionColumn">
                 <button class="tool-btn" onclick="toggleTheme()" id="themeToggle">🌙 Dark Editor</button>
                 <div style="display: flex; gap: 10px;">
                     <select id="fontSize" class="tab-select" style="flex: 1; padding: 12px 5px;"
@@ -643,7 +656,7 @@
                 <button class="tool-btn btn-clear" onclick="clearEditors()">Clear All</button>
             </div>
 
-            <div class="panel" id="outputPanel">
+            <div class="panel reveal" style="transition-delay: 0.3s;" id="outputPanel">
                 <div class="panel-header">
                     <span>Output</span>
                     <div class="action-row">
@@ -777,6 +790,24 @@
             a.download = "sendly_formatted.json";
             a.click();
         }
+
+        // Apply scroll reveal animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.reveal').forEach((el) => {
+            observer.observe(el);
+        });
     </script>
 
     <script src="translations.js"></script>
