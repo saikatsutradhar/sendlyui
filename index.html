@@ -35,7 +35,7 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playwrite+NZ&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
         rel="stylesheet">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
@@ -1162,6 +1162,19 @@
                 right: 20px;
             }
         }
+
+        /* Changing Text Animation */
+        .changing-text-style {
+            color: #FFFFFF;
+            font-family: 'Playwrite NZ', cursive;
+            display: inline-block;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+        
+        .changing-text-style.fade-out {
+            opacity: 0;
+            transform: translateY(10px);
+        }
     </style>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-TVXFJP7LLL"></script>
     <script>
@@ -1211,9 +1224,9 @@
         <div class="landing-grid">
 
             <div class="hero-content">
-                <h1 class="hero-title">Share files securely, <br>in seconds.</h1>
-                <p class="hero-subtitle">Sendly is the fastest way to send large files directly between devices. No
-                    accounts required, completely secure.</p>
+                <h1 class="hero-title">Share <span id="changing-text" class="changing-text-style">files</span><br>securely,<br>in seconds.</h1>
+                <p class="hero-subtitle">Instantly transfer files, code snippets, and text directly between devices. No
+                    accounts, zero setup, and completely end-to-end encrypted.</p>
                 <ul class="features-list">
                     <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
@@ -1398,6 +1411,23 @@
     </div>
 
     <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const words = ["files", "text", "code", "everything"];
+            let wordIndex = 0;
+            const changingText = document.getElementById("changing-text");
+            
+            if (changingText) {
+                setInterval(() => {
+                    changingText.classList.add("fade-out");
+                    setTimeout(() => {
+                        wordIndex = (wordIndex + 1) % words.length;
+                        changingText.textContent = words[wordIndex];
+                        changingText.classList.remove("fade-out");
+                    }, 300);
+                }, 3000);
+            }
+        });
+
         function showToast(message, type = 'error') {
             const toast = document.getElementById('toast');
             const msgEl = document.getElementById('toastMessage');
