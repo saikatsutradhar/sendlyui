@@ -1175,12 +1175,21 @@
             color: #FFFFFF;
             font-family: 'Playwrite NZ', cursive;
             display: inline-block;
-            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            border-right: 2px solid #FFFFFF;
+            padding-right: 4px;
+            animation: blink 0.75s step-end infinite;
         }
 
-        .changing-text-style.fade-out {
-            opacity: 0;
-            transform: translateY(10px);
+        @keyframes blink {
+
+            from,
+            to {
+                border-color: transparent;
+            }
+
+            50% {
+                border-color: #FFFFFF;
+            }
         }
     </style>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-TVXFJP7LLL"></script>
@@ -1426,19 +1435,39 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const words = ["files", "text", "code", "everything"];
+            const words = ["files", "text", "code", "images", "everything"];
             let wordIndex = 0;
             const changingText = document.getElementById("changing-text");
 
             if (changingText) {
-                setInterval(() => {
-                    changingText.classList.add("fade-out");
-                    setTimeout(() => {
+                let charIndex = 0;
+                let isDeleting = false;
+
+                function type() {
+                    const currentWord = words[wordIndex];
+                    if (isDeleting) {
+                        changingText.textContent = currentWord.substring(0, charIndex - 1);
+                        charIndex--;
+                    } else {
+                        changingText.textContent = currentWord.substring(0, charIndex + 1);
+                        charIndex++;
+                    }
+
+                    let typeSpeed = isDeleting ? 50 : 100;
+
+                    if (!isDeleting && charIndex === currentWord.length) {
+                        typeSpeed = 2000;
+                        isDeleting = true;
+                    } else if (isDeleting && charIndex === 0) {
+                        isDeleting = false;
                         wordIndex = (wordIndex + 1) % words.length;
-                        changingText.textContent = words[wordIndex];
-                        changingText.classList.remove("fade-out");
-                    }, 300);
-                }, 3000);
+                        typeSpeed = 500;
+                    }
+
+                    setTimeout(type, typeSpeed);
+                }
+
+                type();
             }
         });
 
