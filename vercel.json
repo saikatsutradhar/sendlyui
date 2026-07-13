@@ -39,6 +39,10 @@
     {
       "source": "/Diff",
       "destination": "/Diff.html"
+    },
+    {
+      "source": "/json-cracker",
+      "destination": "/json-cracker.html"
     }
   ]
 }

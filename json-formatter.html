@@ -274,6 +274,14 @@
             border-left: 2px solid #a855f7 !important;
         }
 
+        .CodeMirror-selected {
+            background-color: rgba(79, 70, 229, 0.4) !important;
+        }
+        
+        .CodeMirror-focused .CodeMirror-selected {
+            background-color: rgba(79, 70, 229, 0.4) !important;
+        }
+
         /* Custom Folding Icons from image_ac1340.png */
         .CodeMirror-foldgutter-open:after {
             content: "⊟";
@@ -610,6 +618,7 @@
             <a href="/notepad" data-i18n="nav.liveNotepad">Live Notepad</a>
             <a href="/Diff" data-i18n="nav.diffChecker">Diff Checker</a>
             <a href="/json-formatter" class="active" data-i18n="nav.jsonFormatter">JSON Formatter</a>
+            <a href="/json-cracker" data-i18n="nav.jsonCracker">JSON Cracker</a>
         </div>
     </header>
 

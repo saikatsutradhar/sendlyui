@@ -33,6 +33,10 @@
     <loc>https://sendlyui.vercel.app/diff</loc>
   </url>
 
+  <url>
+    <loc>https://sendlyui.vercel.app/json-cracker</loc>
+  </url>
+
 </urlset>
 
 <!-- https://sendly.pages.dev -->

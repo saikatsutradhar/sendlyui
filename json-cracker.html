@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>JSON Cracker — Sendly</title>
+
+    <meta name="description" content="Visualize your JSON data instantly as interactive graphs using JSON Crack.">
+
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/material-darker.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
+
+    <style>
+        h1, h2, h3, .logo-text, .header-logo, .hero-title, .page-title, .panel-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+        }
+
+        :root {
+            --primary: #4F46E5;
+            --text-main: #1F2937;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            color: var(--text-main);
+        }
+
+        .bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(80%);
+            pointer-events: none;
+        }
+
+        .header {
+            width: 100%;
+            padding: 5px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        .header-logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-links a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            margin-left: 20px;
+            transition: color 0.3s;
+        }
+
+        .header-links a:hover,
+        .header-links a.active {
+            color: white;
+        }
+
+        .page-wrapper {
+            flex: 1;
+            padding: 100px 2% 100px;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            font-size: 48px;
+            font-weight: 800;
+            margin: 0 0 15px 0;
+            color: #ffffff;
+        }
+
+        .page-subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            margin: 5px auto 30px auto;
+            max-width: 700px;
+            line-height: 1.6;
+        }
+
+        .split-layout {
+            display: flex;
+            gap: 20px;
+            height: 70vh;
+            min-height: 550px;
+        }
+
+        .panel {
+            flex: 1;
+            background: rgba(30, 30, 30, 0.9);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .panel-header {
+            background: #252526;
+            color: #d4d4d4;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            border-bottom: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .CodeMirror {
+            flex: 1;
+            height: auto;
+            background: transparent !important;
+            font-family: monospace;
+            font-size: 14px;
+            padding: 10px 0;
+        }
+
+        .CodeMirror-gutters {
+            background: #1e1e1e !important;
+            border-right: 1px solid #333 !important;
+        }
+
+        .CodeMirror-selected {
+            background-color: rgba(79, 70, 229, 0.4) !important; /* var(--primary) with opacity */
+        }
+        
+        .CodeMirror-focused .CodeMirror-selected {
+            background-color: rgba(79, 70, 229, 0.4) !important;
+        }
+
+        .btn-visualize {
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-visualize:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 5px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(12px);
+            z-index: 100;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .footer a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .jc-toolbar {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #232323; /* Matching exact dark gray from screenshot */
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            gap: 4px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            z-index: 10;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .jc-toolbar-btn {
+            background: transparent;
+            border: none;
+            color: #E0E0E0;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            padding: 0;
+        }
+        
+        .jc-toolbar-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        
+        .jc-toolbar-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke-width: 1.75;
+        }
+        
+        .jc-divider {
+            width: 1px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 0 8px;
+        }
+
+        @media (max-width: 1024px) {
+            .split-layout {
+                flex-direction: column;
+                height: auto;
+            }
+            .panel {
+                min-height: 400px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <img id="vanta-bg" class="bg-video" src="background1.jpg" alt="Background">
+
+    <header class="header">
+        <a href="/" class="header-logo"><img src="logo.png" alt="Sendly Logo" style="height: 40px;"></a>
+        <div class="header-links">
+            <a href="/">Home</a>
+            <a href="/how-it-works">How it works</a>
+            <a href="/screen">Screen Share</a>
+            <a href="/notepad">Live Notepad</a>
+            <a href="/Diff">Diff Checker</a>
+            <a href="/json-formatter">JSON Formatter</a>
+            <a href="/json-cracker" class="active">JSON Cracker</a>
+        </div>
+    </header>
+
+    <div class="page-wrapper">
+        <h1 class="hero-title">
+            <img src="logo.png" alt="Sendly Icon" style="height: 70px;">JSON Cracker
+        </h1>
+        <p class="page-subtitle">Visualize your JSON data instantly as interactive graphs.</p>
+
+        <div class="split-layout">
+            <div class="panel">
+                <div class="panel-header">
+                    <span>Input JSON</span>
+                    <button class="btn-visualize" onclick="updateWidget()">Visualize</button>
+                </div>
+                <textarea id="inputEditor">{"hello": "world", "status": "active"}</textarea>
+            </div>
+
+            <div class="panel" style="padding: 0; position: relative;" id="rightPanel">
+                <iframe id="jsoncrackEmbed" src="https://jsoncrack.com/widget" width="100%" height="100%" style="border:none;" onload="setTimeout(updateWidget, 500)"></iframe>
+                <div class="jc-toolbar">
+                    <button class="jc-toolbar-btn" onclick="jcAction('CENTER')" title="Center">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 9V5h4M19 9V5h-4M5 15v4h4M19 15v4h-4M12 12v.01"/></svg>
+                    </button>
+                    <button class="jc-toolbar-btn" onclick="jcFullscreen()" title="Fullscreen">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+                    </button>
+                    <button class="jc-toolbar-btn" onclick="jcAction('ZOOM_OUT')" title="Zoom Out">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    </button>
+                    <button class="jc-toolbar-btn" onclick="jcAction('ZOOM_IN')" title="Zoom In">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    </button>
+                    <div class="jc-divider"></div>
+                    <button class="jc-toolbar-btn" onclick="jcAction('DOWNLOAD')" title="Download Image">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                    </button>
+                    <button class="jc-toolbar-btn" onclick="jcAction('SEARCH')" title="Search">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </button>
+                    <button class="jc-toolbar-btn" onclick="jcToggleDirection()" title="Layout Direction">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7 16V4M7 4L3 8M7 4l4 4M17 8v12M17 20l4-4M17 20l-4-4"/></svg>
+                    </button>
+                    <button class="jc-toolbar-btn" onclick="jcAction('EXPAND_COLLAPSE')" title="Expand / Collapse">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="12" x2="15" y2="12"></line></svg>
+                    </button>
+                    <div class="jc-divider"></div>
+                    <button class="jc-toolbar-btn" onclick="jcToggleTheme()" title="Settings / Theme">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    </button>
+                </div>
+                <div id="jcToast" style="position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); color: white; padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; opacity: 0; transition: opacity 0.3s; z-index: 1000; pointer-events: none; border: 1px solid rgba(255,255,255,0.1); white-space: nowrap;"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        © 2026 <img src="logo.png" alt="Sendly" style="height: 22px; vertical-align: middle; margin: 0 4px; position: relative; top: -1px;"> <span>Secure File Transfer.</span> <a href="/terms-privacy">Terms</a> & <a href="/terms-privacy">Privacy</a>.
+    </footer>
+
+    <script>
+        const inputEditor = CodeMirror.fromTextArea(document.getElementById("inputEditor"), {
+            mode: "application/json",
+            theme: "material-darker",
+            lineNumbers: true,
+            matchBrackets: true
+        });
+
+        const jsonCrackEmbed = document.getElementById("jsoncrackEmbed");
+
+        // Change default theme to dark to match the screenshots
+        let currentTheme = "dark";
+        const directions = ["RIGHT", "DOWN", "LEFT", "UP"];
+        let currentDirIndex = 0;
+        let toastTimeout;
+
+        function showToast(message) {
+            const toast = document.getElementById('jcToast');
+            toast.innerText = message;
+            toast.style.opacity = 1;
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => { toast.style.opacity = 0; }, 3000);
+        }
+
+        function jcAction(action) {
+            if (action === 'ZOOM_IN' || action === 'ZOOM_OUT' || action === 'CENTER') {
+                showToast("Use your mouse wheel to zoom and pan the graph natively!");
+            } else if (action === 'DOWNLOAD') {
+                showToast("Download restricted in widget mode. Please take a screenshot.");
+            } else if (action === 'SEARCH') {
+                showToast("Use the JSON text editor on the left to search your data (Ctrl+F).");
+            } else if (action === 'EXPAND_COLLAPSE') {
+                showToast("Expand/Collapse is restricted in embed mode.");
+            } else {
+                jsonCrackEmbed.contentWindow.postMessage({ action }, "*");
+            }
+        }
+        
+        function jcFullscreen() {
+            const panel = document.getElementById('rightPanel');
+            if (!document.fullscreenElement) {
+                panel.requestFullscreen().catch(err => {
+                    console.warn(`Error attempting to enable fullscreen mode: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        function jcToggleDirection() {
+            currentDirIndex = (currentDirIndex + 1) % directions.length;
+            updateWidget();
+        }
+
+        function jcToggleTheme() {
+            currentTheme = currentTheme === "light" ? "dark" : "light";
+            updateWidget();
+        }
+
+        function updateWidget() {
+            try {
+                const jsonValue = inputEditor.getValue();
+                JSON.parse(jsonValue); // Validate JSON
+                jsonCrackEmbed.contentWindow.postMessage({
+                    json: jsonValue,
+                    options: {
+                        theme: currentTheme,
+                        direction: directions[currentDirIndex]
+                    }
+                }, "*");
+            } catch (e) {
+                console.warn("Invalid JSON: " + e.message);
+            }
+        }
+
+        // Add auto-update on typing
+        let typingTimer;
+        inputEditor.on('change', () => {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(updateWidget, 1000);
+        });
+    </script>
+</body>
+
+</html>
