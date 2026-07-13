@@ -728,7 +728,8 @@
             lineNumbers: true,
             matchBrackets: true,
             foldGutter: true,
-            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            lineWrapping: true
         };
 
         const inputEditor = CodeMirror.fromTextArea(document.getElementById("inputEditor"), editorConfig);
