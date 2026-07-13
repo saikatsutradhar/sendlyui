@@ -19,6 +19,7 @@
   ========================================================= -->
 
     <title>Real-Time Collaborative Notepad — Share Text Instantly — Sendly</title>
+    <link rel="preload" href="background1.jpg" as="image">
 
     <link rel="canonical" href="https://sendlyui.vercel.app/notepad">
 
@@ -47,7 +48,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
         rel="stylesheet">
-    <script src="socket.io.min.js"></script>
+    <script defer src="socket.io.min.js"></script>
     <style>
         h1,
         h2,
@@ -539,7 +540,7 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PMZFLK55" height="0" width="0"
             style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
-    <img id="vanta-bg" class="bg-image" src="background1.jpg" alt="Background">
+    <img id="vanta-bg" class="bg-image" src="background1.jpg" fetchpriority="high" alt="Background">
 
     <header class="header">
         <a href="/" class="header-logo"><img src="logo.png" alt="Sendly Logo" style="height: 40px; width: auto;"></a>
