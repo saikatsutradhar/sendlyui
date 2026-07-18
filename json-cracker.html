@@ -385,6 +385,10 @@
                     <button class="jc-toolbar-btn" onclick="jcToggleTheme()" title="Settings / Theme">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                     </button>
+                    <div class="jc-divider"></div>
+                    <button class="jc-toolbar-btn" onclick="jcDownloadImage()" title="Download Image">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                    </button>
                 </div>
                 <div id="jcToast" style="position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); color: white; padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; opacity: 0; transition: opacity 0.3s; z-index: 1000; pointer-events: none; border: 1px solid rgba(255,255,255,0.1); white-space: nowrap;"></div>
             </div>
@@ -641,6 +645,108 @@
                 networkContainer.classList.add('network-container-dark');
             }
             updateWidget();
+        }
+
+        function jcDownloadImage() {
+            if (!network) return;
+            showToast("Generating full high-res image... Please wait.");
+            
+            try {
+                // Calculate global bounding box
+                const nodeIds = Object.keys(network.body.nodes);
+                if (nodeIds.length === 0) {
+                    showToast("No graph available to download.");
+                    return;
+                }
+                
+                let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+                for (let id of nodeIds) {
+                    // _options.hidden nodes shouldn't be included but in our case they are all visible
+                    const box = network.getBoundingBox(id);
+                    if (box) {
+                        minX = Math.min(minX, box.left);
+                        minY = Math.min(minY, box.top);
+                        maxX = Math.max(maxX, box.right);
+                        maxY = Math.max(maxY, box.bottom);
+                    }
+                }
+                
+                // Calculate required width and height with some padding
+                const padding = 100;
+                const w = Math.ceil(maxX - minX) + padding * 2;
+                const h = Math.ceil(maxY - minY) + padding * 2;
+                
+                // Save original state
+                const origWidth = networkContainer.style.width;
+                const origHeight = networkContainer.style.height;
+                const origPos = network.getViewPosition();
+                const origScale = network.getScale();
+                
+                // Temporarily hide the container to prevent layout jumping while we resize it
+                const origPosition = networkContainer.style.position;
+                const origVisibility = networkContainer.style.visibility;
+                networkContainer.style.position = 'fixed';
+                networkContainer.style.visibility = 'hidden';
+                networkContainer.style.zIndex = '-9999';
+                
+                // Resize container and network
+                networkContainer.style.width = w + 'px';
+                networkContainer.style.height = h + 'px';
+                network.setSize(w + 'px', h + 'px');
+                
+                // Center the graph in the new huge canvas
+                network.moveTo({
+                    position: { x: (minX + maxX) / 2, y: (minY + maxY) / 2 },
+                    scale: 1
+                });
+                
+                // Wait for vis-network to finish drawing the new large canvas
+                setTimeout(() => {
+                    try {
+                        const canvas = networkContainer.querySelector('canvas');
+                        if (canvas) {
+                            // Create a temporary canvas to draw the background
+                            const tempCanvas = document.createElement('canvas');
+                            tempCanvas.width = canvas.width;
+                            tempCanvas.height = canvas.height;
+                            const ctx = tempCanvas.getContext('2d');
+                            
+                            // Fill background based on theme
+                            ctx.fillStyle = currentTheme === 'light' ? '#f8fafc' : '#0f172a';
+                            ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+                            
+                            // Draw the network canvas on top
+                            ctx.drawImage(canvas, 0, 0);
+                            
+                            // Trigger download
+                            const link = document.createElement('a');
+                            link.download = 'json-cracker-full-graph.png';
+                            link.href = tempCanvas.toDataURL('image/png');
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        }
+                    } catch(err) {
+                        console.error("Canvas export error:", err);
+                        showToast("Error generating image.");
+                    }
+                    
+                    // Restore original state
+                    networkContainer.style.width = origWidth;
+                    networkContainer.style.height = origHeight;
+                    networkContainer.style.position = origPosition;
+                    networkContainer.style.visibility = origVisibility;
+                    networkContainer.style.zIndex = '';
+                    network.setSize(origWidth || '100%', origHeight || '100%');
+                    network.moveTo({ position: origPos, scale: origScale });
+                    
+                    showToast("Full graph downloaded successfully!");
+                }, 800); // Wait 800ms to ensure large graphs render fully
+                
+            } catch (err) {
+                console.error("Download error:", err);
+                showToast("An error occurred during download.");
+            }
         }
 
         let typingTimer;
