@@ -251,26 +251,26 @@
 
         .jc-toolbar {
             position: absolute;
-            bottom: 24px;
+            bottom: 32px;
             left: 50%;
             transform: translateX(-50%);
-            background: #232323; /* Matching exact dark gray from screenshot */
-            border-radius: 16px;
+            background: #232323;
+            border-radius: 999px;
             display: flex;
             align-items: center;
-            padding: 8px 12px;
-            gap: 4px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            padding: 8px 16px;
+            gap: 8px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
             z-index: 10;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
         
         .jc-toolbar-btn {
             background: transparent;
             border: none;
-            color: #E0E0E0;
-            width: 36px;
-            height: 36px;
+            color: #D4D4D4;
+            width: 34px;
+            height: 34px;
             border-radius: 8px;
             display: flex;
             justify-content: center;
@@ -282,20 +282,38 @@
         
         .jc-toolbar-btn:hover {
             background: rgba(255, 255, 255, 0.1);
-            color: #fff;
+            color: #FFFFFF;
         }
         
         .jc-toolbar-btn svg {
             width: 20px;
             height: 20px;
-            stroke-width: 1.75;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
         
         .jc-divider {
             width: 1px;
-            height: 24px;
-            background: rgba(255, 255, 255, 0.1);
-            margin: 0 8px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            margin: 0 4px;
+        }
+
+        .network-container-dark {
+            background-color: #0f172a;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 25px 25px;
+        }
+        
+        .network-container-light {
+            background-color: #f8fafc;
+            background-image:
+                linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+            background-size: 25px 25px;
         }
 
         @media (max-width: 1024px) {
@@ -308,6 +326,8 @@
             }
         }
     </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/standalone/umd/vis-network.min.js"></script>
 </head>
 
 <body>
@@ -342,32 +362,23 @@
             </div>
 
             <div class="panel" style="padding: 0; position: relative;" id="rightPanel">
-                <iframe id="jsoncrackEmbed" src="https://jsoncrack.com/widget" width="100%" height="100%" style="border:none;" onload="setTimeout(updateWidget, 500)"></iframe>
+                <div id="networkContainer" class="network-container-dark" style="width: 100%; height: 100%; min-height: 400px; border-radius: 24px;"></div>
                 <div class="jc-toolbar">
                     <button class="jc-toolbar-btn" onclick="jcAction('CENTER')" title="Center">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 9V5h4M19 9V5h-4M5 15v4h4M19 15v4h-4M12 12v.01"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 7H7v2M15 7h2v2M9 17H7v-2M15 17h2v-2"/></svg>
                     </button>
                     <button class="jc-toolbar-btn" onclick="jcFullscreen()" title="Fullscreen">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 4H4v4M16 4h4v4M8 20H4v-4M16 20h4v-4"/></svg>
                     </button>
                     <button class="jc-toolbar-btn" onclick="jcAction('ZOOM_OUT')" title="Zoom Out">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 12h12"/></svg>
                     </button>
                     <button class="jc-toolbar-btn" onclick="jcAction('ZOOM_IN')" title="Zoom In">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 6v12M6 12h12"/></svg>
                     </button>
                     <div class="jc-divider"></div>
-                    <button class="jc-toolbar-btn" onclick="jcAction('DOWNLOAD')" title="Download Image">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-                    </button>
-                    <button class="jc-toolbar-btn" onclick="jcAction('SEARCH')" title="Search">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    </button>
                     <button class="jc-toolbar-btn" onclick="jcToggleDirection()" title="Layout Direction">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M7 16V4M7 4L3 8M7 4l4 4M17 8v12M17 20l4-4M17 20l-4-4"/></svg>
-                    </button>
-                    <button class="jc-toolbar-btn" onclick="jcAction('EXPAND_COLLAPSE')" title="Expand / Collapse">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="12" x2="15" y2="12"></line></svg>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 20V4M4 8l4-4 4 4M16 4v16M12 16l4 4 4-4"/></svg>
                     </button>
                     <div class="jc-divider"></div>
                     <button class="jc-toolbar-btn" onclick="jcToggleTheme()" title="Settings / Theme">
@@ -392,11 +403,10 @@
             lineWrapping: true
         });
 
-        const jsonCrackEmbed = document.getElementById("jsoncrackEmbed");
-
-        // Change default theme to dark to match the screenshots
+        const networkContainer = document.getElementById("networkContainer");
+        let network = null;
         let currentTheme = "dark";
-        const directions = ["RIGHT", "DOWN", "LEFT", "UP"];
+        const directions = ["LR", "UD", "RL", "DU"]; // Left-Right, Up-Down, Right-Left, Down-Up
         let currentDirIndex = 0;
         let toastTimeout;
 
@@ -408,17 +418,199 @@
             toastTimeout = setTimeout(() => { toast.style.opacity = 0; }, 3000);
         }
 
+        function buildGraphData(jsonObj) {
+            const nodes = [];
+            const edges = [];
+            let idCounter = 1;
+            const MAX_TOTAL_NODES = 1000;
+            const MAX_CHILDREN = 50;
+
+            function traverse(key, value, parentId = null, edgeLabel = '') {
+                if (nodes.length >= MAX_TOTAL_NODES) return;
+                
+                let currentId = idCounter++;
+
+                if (Array.isArray(value)) {
+                    // ARRAY NODE
+                    let label = `<b>${key}</b>\n<i>[ ${value.length} items ]</i>`;
+                    nodes.push({ id: currentId, label: label });
+                    if (parentId) edges.push({ from: parentId, to: currentId, label: edgeLabel });
+
+                    let children = value;
+                    let truncated = false;
+                    if (children.length > MAX_CHILDREN) {
+                        children = children.slice(0, MAX_CHILDREN);
+                        truncated = true;
+                    }
+
+                    children.forEach((item, index) => {
+                        traverse(`Item ${index}`, item, currentId, `[${index}]`);
+                    });
+
+                    if (truncated && nodes.length < MAX_TOTAL_NODES) {
+                        const moreId = idCounter++;
+                        nodes.push({ id: moreId, label: `<i>... (${value.length - MAX_CHILDREN} more omitted)</i>` });
+                        edges.push({ from: currentId, to: moreId, dashes: true });
+                    }
+
+                } else if (value !== null && typeof value === 'object') {
+                    // OBJECT NODE
+                    let primitives = [];
+                    let complexKeys = [];
+
+                    for (let k in value) {
+                        if (value[k] === null || typeof value[k] !== 'object') {
+                            let formattedValue = typeof value[k] === 'string' ? `"${value[k]}"` : value[k];
+                            // Truncate long strings
+                            if (typeof formattedValue === 'string' && formattedValue.length > 50) {
+                                formattedValue = formattedValue.substring(0, 50) + '..."';
+                            }
+                            primitives.push(`<b>${k}:</b> ${formattedValue}`);
+                        } else {
+                            complexKeys.push(k);
+                        }
+                    }
+
+                    let labelLines = [];
+                    
+                    if (key !== 'Root' && !key.startsWith('Item ')) {
+                        labelLines.push(`<b>${key}</b>`);
+                        if (primitives.length > 0 || complexKeys.length > 0) labelLines.push("─────────────");
+                    }
+                    
+                    if (primitives.length > 0) labelLines.push(primitives.join('\n'));
+                    
+                    if (complexKeys.length > 0) {
+                        if (primitives.length > 0) labelLines.push("");
+                        labelLines.push(`<i>{ ${complexKeys.length} nested objects }</i>`);
+                    }
+
+                    let finalLabel = labelLines.join('\n');
+                    if(finalLabel === '') finalLabel = "{ }";
+
+                    nodes.push({ id: currentId, label: finalLabel });
+                    if (parentId) edges.push({ from: parentId, to: currentId, label: edgeLabel });
+
+                    let truncated = false;
+                    if (complexKeys.length > MAX_CHILDREN) {
+                        complexKeys = complexKeys.slice(0, MAX_CHILDREN);
+                        truncated = true;
+                    }
+
+                    complexKeys.forEach(k => {
+                        traverse(k, value[k], currentId, k);
+                    });
+
+                    if (truncated && nodes.length < MAX_TOTAL_NODES) {
+                        const moreId = idCounter++;
+                        nodes.push({ id: moreId, label: `<i>... (${Object.keys(value).length - primitives.length - MAX_CHILDREN} more omitted)</i>` });
+                        edges.push({ from: currentId, to: moreId, dashes: true });
+                    }
+
+                } else {
+                    // FALLBACK: Root primitive
+                    let displayValue = typeof value === 'string' ? `"${value}"` : value;
+                    if (typeof displayValue === 'string' && displayValue.length > 50) {
+                        displayValue = displayValue.substring(0, 50) + '..."';
+                    }
+                    nodes.push({ id: currentId, label: `<b>${key}:</b> ${displayValue}` });
+                    if (parentId) edges.push({ from: parentId, to: currentId, label: edgeLabel });
+                }
+            }
+
+            traverse('Root', jsonObj);
+            return { nodes, edges };
+        }
+
+        function updateWidget() {
+            try {
+                const jsonValue = inputEditor.getValue();
+                if (!jsonValue.trim()) return;
+                const parsedJson = JSON.parse(jsonValue);
+                
+                showToast("Rendering graph...");
+
+                setTimeout(() => {
+                    const graphData = buildGraphData(parsedJson);
+
+                    const options = {
+                        layout: {
+                            hierarchical: {
+                                direction: directions[currentDirIndex],
+                                sortMethod: 'directed',
+                                nodeSpacing: 120,
+                                levelSeparation: 300,
+                                treeSpacing: 200,
+                                blockShifting: true,
+                                edgeMinimization: true,
+                                parentCentralization: true
+                            }
+                        },
+                        physics: false,
+                        interaction: {
+                            dragNodes: true,
+                            dragView: true,
+                            zoomView: true,
+                            hideEdgesOnDrag: true
+                        },
+                        edges: {
+                            smooth: { type: 'cubicBezier', forceDirection: (directions[currentDirIndex] === 'UD' || directions[currentDirIndex] === 'DU') ? 'vertical' : 'horizontal', roundness: 0.5 },
+                            color: { color: currentTheme === 'light' ? '#CBD5E1' : '#475569', highlight: '#818cf8' },
+                            width: 2,
+                            font: { size: 12, color: currentTheme === 'light' ? '#64748b' : '#9ca3af', align: 'horizontal', background: currentTheme === 'light' ? '#f8fafc' : '#0f172a', strokeWidth: 0 }
+                        },
+                        nodes: {
+                            shape: 'box',
+                            borderWidth: 1,
+                            margin: { top: 12, bottom: 12, left: 16, right: 16 },
+                            color: {
+                                border: currentTheme === 'light' ? '#e2e8f0' : '#334155',
+                                background: currentTheme === 'light' ? '#ffffff' : '#1e1e1e',
+                                highlight: { border: '#4F46E5', background: currentTheme === 'light' ? '#f8fafc' : '#2d2d30' }
+                            },
+                            font: {
+                                face: 'monospace',
+                                size: 13,
+                                color: currentTheme === 'light' ? '#334155' : '#d4d4d4',
+                                multi: 'html',
+                                align: 'left',
+                                bold: { color: currentTheme === 'light' ? '#2563eb' : '#569cd6', face: 'monospace' },
+                                italic: { color: currentTheme === 'light' ? '#ea580c' : '#ce9178', face: 'monospace' }
+                            },
+                            shadow: true
+                        }
+                    };
+
+                    if (network) {
+                        network.setData(graphData);
+                        network.setOptions(options);
+                    } else {
+                        network = new vis.Network(networkContainer, graphData, options);
+                    }
+                }, 100);
+
+            } catch (e) {
+                console.warn("Error rendering graph: " + e.message);
+                showToast("Error: Invalid JSON or data too complex.");
+            }
+        }
+
         function jcAction(action) {
-            if (action === 'ZOOM_IN' || action === 'ZOOM_OUT' || action === 'CENTER') {
-                showToast("Use your mouse wheel to zoom and pan the graph natively!");
+            if (!network) return;
+            if (action === 'ZOOM_IN') {
+                const scale = network.getScale() * 1.5;
+                network.moveTo({ scale: scale });
+            } else if (action === 'ZOOM_OUT') {
+                const scale = network.getScale() / 1.5;
+                network.moveTo({ scale: scale });
+            } else if (action === 'CENTER') {
+                network.fit({ animation: { duration: 500, easingFunction: 'easeInOutQuad' } });
             } else if (action === 'DOWNLOAD') {
-                showToast("Download restricted in widget mode. Please take a screenshot.");
+                showToast("Download is not supported in the web view. Please take a screenshot.");
             } else if (action === 'SEARCH') {
-                showToast("Use the JSON text editor on the left to search your data (Ctrl+F).");
+                showToast("Search is not supported in the graph yet. Use the JSON editor.");
             } else if (action === 'EXPAND_COLLAPSE') {
-                showToast("Expand/Collapse is restricted in embed mode.");
-            } else {
-                jsonCrackEmbed.contentWindow.postMessage({ action }, "*");
+                showToast("Expand/Collapse is currently unsupported in this custom visualizer.");
             }
         }
         
@@ -440,31 +632,23 @@
 
         function jcToggleTheme() {
             currentTheme = currentTheme === "light" ? "dark" : "light";
+            if (currentTheme === 'light') {
+                networkContainer.classList.remove('network-container-dark');
+                networkContainer.classList.add('network-container-light');
+            } else {
+                networkContainer.classList.remove('network-container-light');
+                networkContainer.classList.add('network-container-dark');
+            }
             updateWidget();
         }
 
-        function updateWidget() {
-            try {
-                const jsonValue = inputEditor.getValue();
-                JSON.parse(jsonValue); // Validate JSON
-                jsonCrackEmbed.contentWindow.postMessage({
-                    json: jsonValue,
-                    options: {
-                        theme: currentTheme,
-                        direction: directions[currentDirIndex]
-                    }
-                }, "*");
-            } catch (e) {
-                console.warn("Invalid JSON: " + e.message);
-            }
-        }
-
-        // Add auto-update on typing
         let typingTimer;
         inputEditor.on('change', () => {
             clearTimeout(typingTimer);
             typingTimer = setTimeout(updateWidget, 1000);
         });
+
+        setTimeout(updateWidget, 500);
     </script>
 </body>
 

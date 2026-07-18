@@ -288,6 +288,61 @@
             border-color: var(--primary);
         }
 
+        .code-input-container {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .digit-box {
+            width: 48px;
+            height: 56px;
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            border-radius: 12px;
+            border: 2px solid #CBD5E1;
+            background: white;
+            color: var(--text-main);
+            outline: none;
+            transition: all 0.2s;
+            font-family: monospace;
+        }
+
+        .digit-box:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .digit-box.error {
+            border-color: var(--secondary);
+            animation: shake 0.4s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @media (max-width: 768px) {
+            .digit-box {
+                width: 40px;
+                height: 48px;
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .digit-box {
+                width: 34px;
+                height: 44px;
+                font-size: 18px;
+            }
+        }
+
         /* NOTEPAD EDITOR */
         .editor-container {
             width: 100%;
@@ -329,6 +384,28 @@
             background: #10b981;
             border-radius: 50%;
             box-shadow: 0 0 10px #10b981;
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .user-count-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .room-key-badge {
@@ -577,8 +654,14 @@
             <div class="glass-card reveal" style="transition-delay: 0.3s;">
                 <h2 data-i18n="notepad.joinRoomTitle">Join a Session</h2>
                 <p data-i18n="notepad.joinRoomDesc">Enter a 6-digit code to collaborate.</p>
-                <input type="text" id="joinCode" class="input-field" placeholder="Enter 6-Digit Code"
-                    data-i18n="notepad.joinCode" maxlength="6">
+                <div class="code-input-container" id="joinCodeInputs">
+                    <input type="text" maxlength="1" class="digit-box" pattern="[0-9]*" inputmode="numeric">
+                    <input type="text" maxlength="1" class="digit-box" pattern="[0-9]*" inputmode="numeric">
+                    <input type="text" maxlength="1" class="digit-box" pattern="[0-9]*" inputmode="numeric">
+                    <input type="text" maxlength="1" class="digit-box" pattern="[0-9]*" inputmode="numeric">
+                    <input type="text" maxlength="1" class="digit-box" pattern="[0-9]*" inputmode="numeric">
+                    <input type="text" maxlength="1" class="digit-box" pattern="[0-9]*" inputmode="numeric">
+                </div>
                 <button class="btn" onclick="joinNote()"
                     style="background: linear-gradient(135deg, var(--secondary), #f43f5e);"
                     data-i18n="notepad.joinBtn">Join Workspace</button>
@@ -587,7 +670,18 @@
 
         <div class="editor-container" id="editorContainer">
             <div class="editor-header">
-                <div class="status-indicator">Connected & Live</div>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div class="status-indicator">LIVE</div>
+                    <div class="user-count-badge">
+                        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        <span id="userCount">1 CONNECTED</span>
+                    </div>
+                </div>
                 <div class="room-key-badge">Room Code: <span id="displayKey">------</span></div>
             </div>
 
@@ -757,8 +851,42 @@
             editorContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputs = document.querySelectorAll('#joinCodeInputs .digit-box');
+            inputs.forEach((input, index) => {
+                input.addEventListener('input', (e) => {
+                    input.value = input.value.replace(/[^0-9]/g, '');
+                    if (input.value && index < inputs.length - 1) {
+                        inputs[index + 1].focus();
+                    }
+                });
+
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !input.value && index > 0) {
+                        inputs[index - 1].focus();
+                    }
+                });
+
+                input.addEventListener('paste', (e) => {
+                    e.preventDefault();
+                    const pastedData = e.clipboardData.getData('text').replace(/[^0-9]/g, '').slice(0, inputs.length - index);
+                    for (let i = 0; i < pastedData.length; i++) {
+                        inputs[index + i].value = pastedData[i];
+                    }
+                    if (pastedData.length > 0) {
+                        const nextIndex = Math.min(index + pastedData.length, inputs.length - 1);
+                        inputs[nextIndex].focus();
+                    }
+                });
+            });
+        });
+
         function joinNote() {
-            const inputKey = document.getElementById('joinCode').value.trim();
+            const digitBoxes = document.querySelectorAll('#joinCodeInputs .digit-box');
+            let inputKey = '';
+            digitBoxes.forEach(box => inputKey += box.value);
+            inputKey = inputKey.trim();
+            
             if (inputKey.length !== 6) {
                 alert("Please enter a valid 6-digit code.");
                 return;
@@ -775,6 +903,15 @@
 
         socket.on("connect", () => {
             if (roomKey) socket.emit("join_notepad", { key: roomKey });
+        });
+
+        socket.on('user_count', (data) => {
+            const count = data.count;
+            const text = count === 1 ? '1 CONNECTED' : `${count} CONNECTED`;
+            const userCountEl = document.getElementById('userCount');
+            if (userCountEl) {
+                userCountEl.innerText = text;
+            }
         });
 
         // Improved formatting to handle both standard and value-based commands
