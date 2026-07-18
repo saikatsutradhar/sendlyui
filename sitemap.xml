@@ -37,6 +37,14 @@
     <loc>https://sendlyui.vercel.app/json-cracker</loc>
   </url>
 
+  <url>
+    <loc>https://sendlyui.vercel.app/secure-code-sharing</loc>
+  </url>
+
+  <url>
+    <loc>https://sendlyui.vercel.app/image-transfer</loc>
+  </url>
+
 </urlset>
 
 <!-- https://sendly.pages.dev -->

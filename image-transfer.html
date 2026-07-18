@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Google Tag Manager -->
+    <script>(function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.defer = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-PMZFLK55');</script>
+    <!-- End Google Tag Manager -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>High-Speed Image Transfer & Photo Sharing</title>
+    <link rel="preload" href="background1.jpg" as="image">
+
+    <link rel="canonical" href="https://sendlyui.vercel.app/image-transfer">
+
+    <meta name="description" content="Transfer large uncompressed images directly between devices over local networks and WebRTC. No size limits, no compression.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="High-Speed Image Transfer & Photo Sharing">
+    <meta property="og:description" content="Transfer large uncompressed images directly between devices over local networks and WebRTC. No size limits, no compression.">
+    <meta property="og:image" content="https://sendlyui.vercel.app/thumbnail.png">
+    <meta property="og:url" content="https://sendlyui.vercel.app/image-transfer">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Sendly">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="High-Speed Image Transfer & Photo Sharing">
+    <meta name="twitter:description" content="Transfer large uncompressed images directly between devices over local networks and WebRTC. No size limits, no compression.">
+    <meta name="twitter:image" content="https://sendlyui.vercel.app/thumbnail.png">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
+        rel="stylesheet" media="print" onload="this.media='all'">
+    <style>
+        h1,
+        h2,
+        h3,
+        .logo-text,
+        .header-logo,
+        .hero-title,
+        .page-title,
+        .panel-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+        }
+
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --secondary: #F43F5E;
+            --secondary-hover: #E11D48;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            margin: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(168, 85, 247, 0.5);
+            border-radius: 8px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(168, 85, 247, 0.8);
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            color: var(--text-main);
+        }
+
+        .bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(80%);
+            pointer-events: none;
+        }
+
+        .header-logo,
+        .footer-logo {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* --- HEADER --- */
+        .header {
+            width: 100%;
+            padding: 5px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-sizing: border-box;
+        }
+
+        .header-logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .header-links a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            margin-left: 30px;
+            transition: color 0.3s;
+        }
+
+        .header-links a:hover,
+        .header-links a.active {
+            color: white;
+        }
+
+        /* --- PAGE LAYOUT --- */
+        .page-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 100px 5% 100px;
+            position: relative;
+            z-index: 1;
+            gap: 60px;
+        }
+
+        .page-main-title {
+            text-align: center;
+            font-size: 48px;
+            font-weight: 800;
+            margin: 20px 0 0 0;
+            letter-spacing: -1px;
+            color: white;
+        }
+
+        .page-main-subtitle {
+            text-align: center;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 600px;
+            margin: 10px auto 20px auto;
+            line-height: 1.6;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
+            padding: 60px 50px;
+            max-width: 1000px;
+            width: 100%;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .panel-title {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 800;
+            margin: 0 0 10px 0;
+            letter-spacing: -1px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .panel-subtitle {
+            text-align: center;
+            font-size: 15px;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto 50px auto;
+            line-height: 1.6;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .step-card {
+            text-align: center;
+            padding: 30px 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .step-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(79, 70, 229, 0.15);
+        }
+
+        .step-icon {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            width: 65px;
+            height: 65px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px auto;
+            color: white;
+            box-shadow: 0 10px 20px rgba(244, 63, 94, 0.3);
+            transform: rotate(-5deg);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+        }
+
+        .step-card:hover .step-icon {
+            transform: rotate(0deg) scale(1.1);
+            box-shadow: 0 15px 30px rgba(244, 63, 94, 0.5);
+        }
+
+        @keyframes iconPulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .step-icon svg {
+            width: 30px;
+            height: 30px;
+            animation: iconPulse 3s ease-in-out infinite;
+        }
+
+        .step-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            color: var(--text-main);
+        }
+
+        .step-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .cta-container {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .btn-start {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--primary);
+            color: white;
+            padding: 14px 35px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .btn-start:hover {
+            background: var(--primary-hover);
+            box-shadow: 0 15px 35px rgba(79, 70, 229, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 5px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(12px);
+            z-index: 100;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-logo {
+            height: 22px;
+            width: auto;
+            vertical-align: middle;
+            margin: 0 4px;
+            position: relative;
+            top: -1px;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 5px;
+            user-select: none;
+            transition: transform 0.3s ease;
+        }
+
+        .hero-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            font-size: 48px;
+            font-weight: 800;
+            margin: 0 0 15px 0;
+            letter-spacing: -1px;
+            color: #ffffff;
+        }
+
+        .hero-title img {
+            height: 70px;
+            width: auto;
+        }
+
+        /* Scroll Reveal Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .steps-grid .step-card.reveal:nth-child(1) {
+            transition-delay: 0.1s;
+        }
+
+        .steps-grid .step-card.reveal:nth-child(2) {
+            transition-delay: 0.3s;
+        }
+
+        .steps-grid .step-card.reveal:nth-child(3) {
+            transition-delay: 0.5s;
+        }
+
+        @media (max-width: 900px) {
+            .page-wrapper {
+                padding-bottom: 200px;
+            }
+
+            .steps-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .glass-panel {
+                padding: 40px 20px;
+            }
+
+            .panel-title {
+                font-size: 32px;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .header-links {
+                position: absolute;
+                top: 55px;
+                left: 0;
+                width: 100%;
+                background: rgba(15, 23, 42, 0.98);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                flex-direction: column;
+                text-align: center;
+                gap: 25px;
+                padding: 30px 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+
+                display: flex;
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(-15px);
+                transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                pointer-events: none;
+            }
+
+            .header-links.show {
+                visibility: visible;
+                opacity: 1;
+                transform: translateY(0);
+                pointer-events: auto;
+            }
+
+            .header-links a {
+                margin: 0;
+                font-size: 18px;
+                font-weight: 600;
+                letter-spacing: 1px;
+                color: rgba(255, 255, 255, 0.8);
+                transition: color 0.3s, transform 0.3s;
+            }
+
+            .header-links a:hover {
+                color: white;
+                transform: scale(1.05);
+            }
+        }
+
+        /* Ambient Background Orbs */
+        .ambient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            opacity: 0.5;
+            animation: orbFloat 15s infinite alternate ease-in-out;
+            pointer-events: none;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: rgba(79, 70, 229, 0.3);
+            top: 10%;
+            left: -10%;
+        }
+
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            background: rgba(244, 63, 94, 0.2);
+            top: 40%;
+            right: -5%;
+            animation-delay: -5s;
+        }
+
+        .orb-3 {
+            width: 350px;
+            height: 350px;
+            background: rgba(168, 85, 247, 0.25);
+            bottom: 10%;
+            left: 20%;
+            animation-delay: -10s;
+        }
+
+        @keyframes orbFloat {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(50px, -50px) scale(1.1);
+            }
+
+            100% {
+                transform: translate(-50px, 50px) scale(0.9);
+            }
+        }
+    </style>
+    <!-- Google tag (gtag.js) -->
+    <script defer src="https://www.googletagmanager.com/gtag/js?id=G-TVXFJP7LLL"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-TVXFJP7LLL');
+    </script>
+    <!-- Vercel Speed Insights -->
+    <script>
+        window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
+    </script>
+    
+
+</head>
+
+<body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PMZFLK55" height="0" width="0"
+            style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <img id="vanta-bg" class="bg-video" src="background1.jpg" fetchpriority="high" alt="Background">
+
+    <header class="header">
+        <a href="/" class="header-logo">
+            <img src="logo.png" alt="Sendly Logo"  width="102" height="40">
+        </a>
+        <div class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</div>
+        <div class="header-links">
+            <a href="/">Home</a>
+            <a href="/how-it-works" class="active">How it works</a>
+            <a href="/screen">Screen Share</a>
+            <a href="/notepad">Live Notepad</a>
+            <a href="/Diff">Diff Checker</a>
+            <a href="/json-formatter">JSON Formatter</a>
+            <a href="/json-cracker">JSON Cracker</a>
+        </div>
+    </header>
+
+    <div class="page-wrapper">
+        <!-- Background Ambient Orbs -->
+        <div class="ambient-orb orb-1"></div>
+        <div class="ambient-orb orb-2"></div>
+        <div class="ambient-orb orb-3"></div>
+
+        <div>
+            <h1 class="hero-title reveal">
+                <img src="logo.png" alt="Sendly Icon" width="102" height="40"> Platform Engine
+            </h1>
+            <p class="page-main-subtitle reveal" style="transition-delay: 0.2s">Discover the Zero-Knowledge and
+                Peer-to-Peer architecture powering our suite
+                of developer and productivity tools.</p>
+        </div>
+
+        <div class="glass-panel reveal">
+            <h2 class="panel-title">Secure File Transfer</h2>
+            <p class="panel-subtitle">Using military-grade AES encryption directly in your browser. We never see your
+                files, and they are instantly deleted the moment they are downloaded.</p>
+
+            <div class="steps-grid">
+                <div class="step-card reveal">
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                    </div>
+                    <h3 class="step-title">1. Upload & Encrypt</h3>
+                    <p class="step-desc">Select files up to 500MB. Add a password to mathematically lock your file
+                        before it ever leaves your device.</p>
+                </div>
+                <div class="step-card reveal">
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="step-title">2. Get Your Key</h3>
+                    <p class="step-desc">We generate a single-use 6-digit key. Your scrambled file waits on our server,
+                        unreadable to us.</p>
+                </div>
+                <div class="step-card reveal">
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </div>
+                    <h3 class="step-title">3. Decrypt Locally</h3>
+                    <p class="step-desc">The receiver enters the key and password. The file unlocks directly in their
+                        browser.</p>
+                </div>
+            </div>
+            <div class="cta-container">
+                <a href="/" class="btn-start">Try File Transfer</a>
+            </div>
+        </div>
+
+        <div class="glass-panel reveal">
+            <h2 class="panel-title">Live Screen Mirror</h2>
+            <p class="panel-subtitle">Zero-latency, peer-to-peer screen sharing using raw WebRTC protocols. No software
+                downloads or browser extensions required.</p>
+
+            <div class="steps-grid">
+                <div class="step-card reveal">
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
+                    </div>
+                    <h3 class="step-title">1. Capture Screen</h3>
+                    <p class="step-desc">Your browser securely accesses your system's Display Media API to capture a
+                        window or entire monitor.</p>
+                </div>
+                <div class="step-card reveal">
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                            <polyline points="16 6 12 2 8 6"></polyline>
+                            <line x1="12" y1="2" x2="12" y2="15"></line>
+                        </svg>
+                    </div>
+                    <h3 class="step-title">2. P2P Handshake</h3>
+                    <p class="step-desc">We use Socket.io to exchange ICE candidates and establish a direct route
+                        between the two computers.</p>
+                </div>
+                <div class="step-card reveal">
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                    </div>
+                    <h3 class="step-title">3. Direct Stream</h3>
+                    <p class="step-desc">The video feed bypasses our servers completely, streaming directly from your
+                        computer to the viewer.</p>
+                </div>
+            </div>
+            <div class="cta-container">
+                <a href="/screen" class="btn-start">Try Screen Share</a>
+            </div>
+        </div>
+
+        <div class="glass-panel reveal">
+            <h2 class="panel-title">Collaborative Notepad</h2>
+            <p class="panel-subtitle">Real-time multiplayer text editing. We use sub-millisecond WebSocket events to
+                sync cursors and HTML elements across multiple devices instantly.</p>
+
+            <div class="steps-grid">
+                <div class="step-card reveal">
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 20h9"></path>
+                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="step-title">1. Open Workspace</h3>
+                    <p class="step-desc">Instantly spin up a rich-text content editable environment attached to a secure
+                        WebSockets room.</p>
+                </div>
+                <div class="step-card reveal">
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <h3 class="step-title">2. Invite Peers</h3>
+                    <p class="step-desc">Share your access key. Colleagues instantly join your exact session without
+                        needing accounts.</p>
+                </div>
+                <div class="step-card reveal">
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                    </div>
+                    <h3 class="step-title">3. Instant Sync</h3>
+                    <p class="step-desc">Every keystroke emits a tiny data packet, calculating exact cursor offsets to
+                        prevent layout jumping.</p>
+                </div>
+            </div>
+            <div class="cta-container">
+                <a href="/notepad" class="btn-start">Try Live Notepad</a>
+            </div>
+        </div>
+
+        <div class="glass-panel reveal">
+            <h2 class="panel-title">Zero-Knowledge JSON Formatter</h2>
+            <p class="panel-subtitle">Offline CodeMirror data processing. You can safely paste massive, sensitive
+                database payloads without fear of data leakage.</p>
+
+            <div class="steps-grid">
+                <div class="step-card reveal">
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                    </div>
+                    <h3 class="step-title">1. Local Import</h3>
+                    <p class="step-desc">Paste messy or minified JSON code directly into the browser. The data never
+                        hits a backend network.</p>
+                </div>
+                <div class="step-card reveal">
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="step-title">2. Offline Formatting</h3>
+                    <p class="step-desc">Our integrated CodeMirror engine uses pure client-side Javascript to instantly
+                        beautify the code.</p>
+                </div>
+                <div class="step-card reveal">
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </div>
+                    <h3 class="step-title">3. Export Safely</h3>
+                    <p class="step-desc">Copy the formatted string or generate an instant local .json file download from
+                        the browser memory.</p>
+                </div>
+            </div>
+            <div class="cta-container">
+                <a href="/json-formatter" class="btn-start">Try JSON Formatter</a>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        © 2026 <img src="logo.png" alt="Sendly" class="footer-logo"
+             width="56" height="22"> Secure File
+        Transfer. <a href="/terms-privacy">Terms</a> & <a href="/terms-privacy">Privacy</a>.
+        &nbsp;&nbsp;&nbsp;<a href="https://github.com/saikatsutradhar" target="_blank"
+            style="color: inherit; text-decoration: none; opacity: 0.8; transition: opacity 0.2s;"
+            onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8" title="GitHub Profile"><svg
+                viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"
+                stroke-linecap="round" stroke-linejoin="round" style="vertical-align: text-bottom; margin-right: 4px;">
+                <path
+                    d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+                </path>
+            </svg></a>&nbsp;&nbsp;&nbsp;<a href="mailto:5ynt4x.3rr0r.ss@gmail.com"
+            style="color: inherit; text-decoration: none; opacity: 0.8; transition: opacity 0.2s;"
+            onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8" title="Email Us"><svg
+                viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"
+                stroke-linecap="round" stroke-linejoin="round" style="vertical-align: text-bottom; margin-right: 4px;">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+            </svg></a>&nbsp;&nbsp;&nbsp;<a href="https://stats.uptimerobot.com/Vpyi3XzTXh" target="_blank"
+            style="color: inherit; text-decoration: none; opacity: 0.8; transition: opacity 0.2s;"
+            onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8" title="System Status"><svg
+                viewBox="0 0 24 24" width="16" height="16" stroke="#10b981" stroke-width="2" fill="none"
+                stroke-linecap="round" stroke-linejoin="round" style="vertical-align: text-bottom; margin-right: 4px;">
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+            </svg>Status</a></footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const reveals = document.querySelectorAll('.reveal');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        // Optional: uncomment below to only animate once
+                        // observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: "0px 0px -50px 0px"
+            });
+
+            reveals.forEach((element) => {
+                observer.observe(element);
+            });
+        });
+
+        function toggleMobileMenu() {
+            const menu = document.querySelector('.header-links');
+            const btn = document.querySelector('.mobile-menu-btn');
+            menu.classList.toggle('show');
+            if (menu.classList.contains('show')) {
+                btn.innerHTML = '✕';
+                btn.style.transform = 'rotate(90deg)';
+            } else {
+                btn.innerHTML = '☰';
+                btn.style.transform = 'rotate(0deg)';
+            }
+        }
+    </script>
+
+</body>
+
+</html>
