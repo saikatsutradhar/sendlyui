@@ -8,7 +8,7 @@
                 'gtm.start':
                     new Date().getTime(), event: 'gtm.js'
             }); var f = d.getElementsByTagName(s)[0],
-                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.defer = true; j.src =
                     'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
         })(window, document, 'script', 'dataLayer', 'GTM-PMZFLK55');</script>
     <!-- End Google Tag Manager -->
@@ -64,7 +64,8 @@
 
         :root {
             --primary: #4F46E5;
-            --secondary: #F43F5E;
+            --secondary: #E11D48;
+            --secondary-hover: #BE123C;
             --text-main: #1F2937;
             --text-muted: #6B7280;
         }
@@ -600,7 +601,7 @@
         }
     </style>
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TVXFJP7LLL"></script>
+    <script defer src="https://www.googletagmanager.com/gtag/js?id=G-TVXFJP7LLL"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
@@ -868,15 +869,16 @@
                 });
 
                 input.addEventListener('paste', (e) => {
-                    e.preventDefault();
                     const pastedData = e.clipboardData.getData('text').replace(/[^0-9]/g, '').slice(0, inputs.length - index);
-                    for (let i = 0; i < pastedData.length; i++) {
-                        inputs[index + i].value = pastedData[i];
-                    }
-                    if (pastedData.length > 0) {
-                        const nextIndex = Math.min(index + pastedData.length, inputs.length - 1);
-                        inputs[nextIndex].focus();
-                    }
+                    setTimeout(() => {
+                        for (let i = 0; i < pastedData.length; i++) {
+                            inputs[index + i].value = pastedData[i];
+                        }
+                        if (pastedData.length > 0) {
+                            const nextIndex = Math.min(index + pastedData.length, inputs.length - 1);
+                            inputs[nextIndex].focus();
+                        }
+                    }, 10);
                 });
             });
         });

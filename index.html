@@ -7,7 +7,7 @@
                 'gtm.start':
                     new Date().getTime(), event: 'gtm.js'
             }); var f = d.getElementsByTagName(s)[0],
-                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.defer = true; j.src =
                     'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
         })(window, document, 'script', 'dataLayer', 'GTM-PMZFLK55');</script>
     <meta charset="UTF-8">
@@ -59,8 +59,8 @@
         :root {
             --primary: #4F46E5;
             --primary-hover: #4338CA;
-            --secondary: #F43F5E;
-            --secondary-hover: #E11D48;
+            --secondary: #E11D48;
+            --secondary-hover: #BE123C;
             --text-main: #1F2937;
             --text-muted: #6B7280;
         }
@@ -1194,7 +1194,7 @@
             }
         }
     </style>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TVXFJP7LLL"></script>
+    <script defer src="https://www.googletagmanager.com/gtag/js?id=G-TVXFJP7LLL"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
@@ -1530,15 +1530,16 @@
                 if (e.key === 'Backspace' && box.value === '' && index > 0) { digitBoxes[index - 1].focus(); }
             });
             box.addEventListener('paste', (e) => {
-                e.preventDefault();
                 const pastedData = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '').slice(0, 6);
-                for (let i = 0; i < pastedData.length; i++) {
-                    if (digitBoxes[i]) {
-                        digitBoxes[i].value = pastedData[i];
-                        if (i < digitBoxes.length - 1) digitBoxes[i + 1].focus();
+                setTimeout(() => {
+                    for (let i = 0; i < pastedData.length; i++) {
+                        if (digitBoxes[i]) {
+                            digitBoxes[i].value = pastedData[i];
+                            if (i < digitBoxes.length - 1) digitBoxes[i + 1].focus();
+                        }
                     }
-                }
-                checkAutoSubmit();
+                    checkAutoSubmit();
+                }, 10);
             });
         });
 
