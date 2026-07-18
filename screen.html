@@ -42,7 +42,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
-        rel="stylesheet">
+        rel="stylesheet" media="print" onload="this.media='all'">
     <script src="socket.io.min.js"></script>
     <style>
         h1,
@@ -483,7 +483,7 @@
     <img id="vanta-bg" class="bg-video" src="background1.jpg" fetchpriority="high" alt="Background">
 
     <header class="header">
-        <a href="/" class="header-logo"><img src="logo.png" alt="Sendly Logo" style="height: 40px; width: auto;"></a>
+        <a href="/" class="header-logo"><img src="logo.png" alt="Sendly Logo"  width="102" height="40"></a>
         <div class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</div>
         <div class="header-links">
             <a href="/">Home</a>
@@ -500,7 +500,7 @@
 
     <div class="page-wrapper">
         <h1 class="hero-title">
-            <img src="logo.png" alt="Sendly Icon" data-i18n="screen.title">Live Mirror
+            <img src="logo.png" alt="Sendly Icon" data-i18n="screen.title" width="102" height="40">Live Mirror
         </h1>
         <p class="page-subtitle">Instantly beam your screen to another device using secure, peer-to-peer WebRTC
             signaling. No downloads required.</p>
@@ -535,7 +535,7 @@
 
     <footer class="footer">
         © 2026 <img src="logo.png" alt="Sendly" class="footer-logo"
-            style="height: 22px; vertical-align: middle; margin: 0 4px; position: relative; top: -1px;"> <span
+             width="56" height="22"> <span
             data-i18n="footer.secure">Secure File Transfer.</span> <a href="/terms-privacy"
             data-i18n="footer.terms">Terms</a> & <a href="/terms-privacy" data-i18n="footer.privacy">Privacy</a>.
         &nbsp;&nbsp;&nbsp;<a href="https://github.com/saikatsutradhar" target="_blank"
