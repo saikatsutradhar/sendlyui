@@ -100,7 +100,6 @@
             min-height: 100vh;
             color: var(--text-main);
             overflow-x: hidden;
-            cursor: url('cursor-logo.png') 16 0, auto;
         }
 
         a,
@@ -111,7 +110,7 @@
         .digit-box,
         .crypto-input,
         .close-btn {
-            cursor: url('cursor-logo.png') 16 0, pointer;
+            cursor: pointer;
         }
 
         /* --- GLOBAL DROP OVERLAY --- */
@@ -668,6 +667,15 @@
             margin-top: 15px;
             text-decoration: none;
             font-weight: 500;
+            background: none;
+            border: none;
+            padding: 0;
+            width: 100%;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .history-link:hover {
+            text-decoration: underline;
         }
 
         /* Waiting Screen */
@@ -1354,7 +1362,7 @@
                         <span id="dlText">Download Files</span>
                     </button>
 
-                    <a href="javascript:void(0)" class="history-link" onclick="showHistory()">View past downloads</a>
+                    <button type="button" class="history-link" onclick="showHistory()">View past downloads</button>
                 </div>
 
                 <div id="waitingScreen" style="display:none">
