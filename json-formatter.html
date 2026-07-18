@@ -606,7 +606,11 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PMZFLK55" height="0" width="0"
             style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
-    <img id="vanta-bg" class="bg-video" src="background1.webp" fetchpriority="high" alt="Background">
+    <picture id="vanta-bg" class="bg-video">
+        <source media="(max-width: 799px)" srcset="background1-mobile.webp">
+        <source media="(min-width: 800px)" srcset="background1.webp">
+        <img src="background1.webp" alt="Background" fetchpriority="high" style="width: 100vw; height: 100vh; object-fit: cover;">
+    </picture>
 
     <header class="header">
         <a href="/" class="header-logo"><img src="logo.webp" alt="Sendly Logo"  width="102" height="40"></a>

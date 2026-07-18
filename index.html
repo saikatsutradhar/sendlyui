@@ -1245,7 +1245,11 @@
         </div>
     </div>
 
-    <img id="vanta-bg" class="bg-video" src="background1.webp" fetchpriority="high" alt="Background">
+    <picture id="vanta-bg" class="bg-video">
+        <source media="(max-width: 799px)" srcset="background1-mobile.webp">
+        <source media="(min-width: 800px)" srcset="background1.webp">
+        <img src="background1.webp" alt="Background" fetchpriority="high" style="width: 100vw; height: 100vh; object-fit: cover;">
+    </picture>
 
     <header class="header">
         <a href="/" class="header-logo">
