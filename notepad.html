@@ -989,24 +989,35 @@
         }
 
         socket.on("text_update", (newHtml) => {
-
             if (notepadArea.innerHTML !== newHtml) {
-
-                const cursorOffset = saveCaretPosition(notepadArea);
+                let hasFocus = document.activeElement === notepadArea || notepadArea.contains(document.activeElement);
+                let cursorOffset = 0;
+                
+                if (hasFocus) {
+                    cursorOffset = saveCaretPosition(notepadArea);
+                }
+                
                 notepadArea.innerHTML = newHtml;
-                restoreCaretPosition(notepadArea, cursorOffset);
+                
+                if (hasFocus) {
+                    restoreCaretPosition(notepadArea, cursorOffset);
+                }
             }
         });
 
         function saveCaretPosition(context) {
-
             let selection = window.getSelection();
             if (selection.rangeCount === 0) return 0;
-            let range = selection.getRangeAt(0);
-            let preCaretRange = range.cloneRange();
-            preCaretRange.selectNodeContents(context);
-            preCaretRange.setEnd(range.endContainer, range.endOffset);
-            return preCaretRange.toString().length;
+            if (!context.contains(selection.anchorNode)) return 0;
+            try {
+                let range = selection.getRangeAt(0);
+                let preCaretRange = range.cloneRange();
+                preCaretRange.selectNodeContents(context);
+                preCaretRange.setEnd(range.endContainer, range.endOffset);
+                return preCaretRange.toString().length;
+            } catch (e) {
+                return 0;
+            }
         }
 
         function restoreCaretPosition(context, caretOffset) {
