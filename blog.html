@@ -15,8 +15,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- <title>Articles - Sendly</title>
-    <link rel="preload" href="background1-mobile.webp" as="image" media="(max-width: 799px)">
-    <link rel="preload" href="background1.webp" as="image" media="(min-width: 800px)">
+    <link rel="preload" href="background1.webp" as="image">
 
     <script>
         const currentArticleUrl = window.location.href.split('?')[0];
@@ -26,8 +25,7 @@
         document.head.appendChild(canonicalTag);
     </script> -->
     <title>Cybersecurity & File Sharing Articles — Sendly Blog</title>
-    <link rel="preload" href="background1-mobile.webp" as="image" media="(max-width: 799px)">
-    <link rel="preload" href="background1.webp" as="image" media="(min-width: 800px)">
+    <link rel="preload" href="background1.webp" as="image">
     <link rel="canonical" href="https://sendlyui.vercel.app/blog">
     <meta name="description"
         content="Explore Sendly's blog for the latest in cybersecurity, data privacy, and secure file sharing. AI-curated articles updated daily to keep you ahead of threats.">
@@ -444,11 +442,7 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PMZFLK55" height="0" width="0"
             style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
-    <picture id="vanta-bg" class="bg-image">
-        <source media="(max-width: 799px)" srcset="background1-mobile.webp">
-        <source media="(min-width: 800px)" srcset="background1.webp">
-        <img src="background1.webp" alt="Background" fetchpriority="high" style="width: 100vw; height: 100vh; object-fit: cover;">
-    </picture>
+    <img id="vanta-bg" class="bg-image" src="background1.webp" fetchpriority="high" alt="Background">
 
     <header class="header">
         <a href="/" class="header-logo">

@@ -15,8 +15,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>Diff Checker — Compare Text Online | Sendly</title>
-    <link rel="preload" href="background1-mobile.webp" as="image" media="(max-width: 799px)">
-    <link rel="preload" href="background1.webp" as="image" media="(min-width: 800px)">
+    <link rel="preload" href="background1.webp" as="image">
     <link rel="canonical" href="https://sendlyui.vercel.app/diff-checker">
 
     <meta name="description"
@@ -956,11 +955,7 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PMZFLK55" height="0" width="0"
             style="display:none;visibility:hidden"></iframe></noscript>
 
-    <picture id="vanta-bg" class="bg-video">
-        <source media="(max-width: 799px)" srcset="background1-mobile.webp">
-        <source media="(min-width: 800px)" srcset="background1.webp">
-        <img src="background1.webp" alt="Background" fetchpriority="high" style="width: 100vw; height: 100vh; object-fit: cover;">
-    </picture>
+    <img id="vanta-bg" class="bg-video" src="background1.webp" fetchpriority="high" alt="Background">
 
     <!-- HEADER -->
     <header class="header">
