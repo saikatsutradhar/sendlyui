@@ -737,13 +737,69 @@
             border-radius: 10px; transition: width 0.1s linear;
         }
 
+        @media (max-width: 1024px) {
+            .radar-stage { transform: scale(0.8); }
+            .hero-title { font-size: 36px; }
+            .device-dock { max-width: 95%; }
+            .peers-canvas { gap: 24px; max-width: 95%; }
+        }
+
         @media (max-width: 768px) {
+            html, body {
+                height: auto;
+                min-height: 100vh;
+                overflow-x: hidden;
+                overflow-y: auto;
+            }
+            .header { padding: 12px 20px; }
             .header-links { display: none; }
-            .hero-title { font-size: 32px; gap: 8px; }
-            .hero-title img { height: 42px; }
-            .device-dock { padding: 8px 16px; flex-direction: column; gap: 10px; border-radius: 20px; }
-            .dock-identity { border-right: none; padding-right: 0; }
-            .radar-stage { transform: scale(0.65); }
+            .viewport-body {
+                overflow: visible;
+                padding-top: 10px;
+                padding-bottom: 95px;
+                height: auto;
+                min-height: calc(100vh - 70px);
+                justify-content: flex-start;
+            }
+            .hero-title { font-size: 26px !important; gap: 8px !important; margin: 5px 0 4px 0 !important; }
+            .hero-title img { height: 32px !important; }
+            .page-subtitle { font-size: 13px !important; line-height: 1.4 !important; margin: 0 auto 14px auto !important; max-width: 92% !important; padding: 0 5px; }
+            
+            .device-dock { 
+                width: 92% !important; 
+                max-width: 380px !important; 
+                padding: 12px 16px !important; 
+                flex-direction: column !important; 
+                gap: 12px !important; 
+                border-radius: 24px !important; 
+                margin-bottom: 20px !important; 
+            }
+            .dock-identity { border-right: none !important; padding-right: 0 !important; width: 100%; }
+            .dock-buttons { width: 100%; }
+            .dock-buttons button { width: 100%; justify-content: center; padding: 10px 16px !important; font-size: 14px !important; }
+            
+            .radar-stage { transform: scale(0.55) !important; position: absolute; }
+            .peers-canvas { gap: 20px !important; padding: 10px !important; width: 100%; }
+            .peer-card { 
+                width: calc(100% - 30px) !important; 
+                max-width: 280px !important; 
+                padding: 18px 16px 16px !important; 
+                border-radius: 24px !important; 
+                margin: 0 auto; 
+            }
+            .peer-avatar { width: 64px !important; height: 64px !important; font-size: 30px !important; margin-bottom: 12px !important; }
+            .peer-name { font-size: 16px !important; margin-bottom: 6px !important; }
+            .peer-status { margin-bottom: 16px !important; }
+            .peer-actions button { padding: 9px 12px !important; font-size: 13px !important; }
+            
+            .empty-status-card { padding: 28px 20px !important; max-width: 92% !important; border-radius: 24px !important; margin: 0 auto; }
+            .empty-icon-ring { width: 56px !important; height: 56px !important; font-size: 24px !important; margin-bottom: 12px !important; }
+            .empty-status-card h2 { font-size: 18px !important; }
+            .empty-status-card p { font-size: 12px !important; margin-bottom: 18px !important; }
+            
+            .modal-card { max-width: 92% !important; padding: 22px !important; border-radius: 24px !important; }
+            .pin-text { font-size: 32px !important; letter-spacing: 6px !important; }
+            .transfer-toast { width: 92% !important; bottom: 70px !important; padding: 14px 18px !important; }
         }
     </style>
 </head>
