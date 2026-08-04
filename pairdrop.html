@@ -168,6 +168,16 @@
             overflow: hidden;
         }
 
+        .stage-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
         .hero-title {
             display: flex;
             align-items: center;
@@ -779,18 +789,45 @@
             .dock-buttons button { width: 100%; justify-content: center; padding: 10px 16px !important; font-size: 14px !important; }
             
             .radar-stage { transform: scale(0.55) !important; position: absolute; }
-            .peers-canvas { gap: 20px !important; padding: 10px !important; width: 100%; }
-            .peer-card { 
-                width: calc(100% - 30px) !important; 
-                max-width: 280px !important; 
-                padding: 18px 16px 16px !important; 
-                border-radius: 24px !important; 
-                margin: 0 auto; 
+            .stage-wrapper {
+                flex: none !important;
+                height: auto !important;
+                min-height: 340px;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: flex-start !important;
+                overflow: visible !important;
+                padding-top: 5px !important;
+                padding-bottom: 40px !important;
+                width: 100%;
+                position: relative;
             }
-            .peer-avatar { width: 64px !important; height: 64px !important; font-size: 30px !important; margin-bottom: 12px !important; }
-            .peer-name { font-size: 16px !important; margin-bottom: 6px !important; }
-            .peer-status { margin-bottom: 16px !important; }
-            .peer-actions button { padding: 9px 12px !important; font-size: 13px !important; }
+
+            .peers-canvas { 
+                display: flex !important; 
+                flex-wrap: wrap !important; 
+                flex-direction: row !important; 
+                justify-content: center !important; 
+                gap: 12px !important; 
+                padding: 5px !important; 
+                width: 100% !important; 
+                max-width: 440px !important; 
+                margin: 0 auto !important;
+            }
+            .peer-card { 
+                width: calc(50% - 6px) !important; 
+                min-width: 150px !important; 
+                max-width: 185px !important; 
+                padding: 14px 10px 12px !important; 
+                border-radius: 20px !important; 
+                margin: 0 !important;
+            }
+            .peer-avatar { width: 52px !important; height: 52px !important; font-size: 24px !important; margin: 0 auto 10px auto !important; }
+            .peer-name { font-size: 14px !important; margin-bottom: 4px !important; font-weight: 700 !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; max-width: 100%; }
+            .peer-status { margin-bottom: 12px !important; font-size: 10px !important; padding: 2px 8px !important; display: inline-block !important; }
+            .peer-actions { gap: 6px !important; }
+            .peer-actions button { padding: 7px 4px !important; font-size: 12px !important; border-radius: 12px !important; gap: 4px !important; flex: 1; justify-content: center; }
             
             .empty-status-card { padding: 28px 20px !important; max-width: 92% !important; border-radius: 24px !important; margin: 0 auto; }
             .empty-icon-ring { width: 56px !important; height: 56px !important; font-size: 24px !important; margin-bottom: 12px !important; }
@@ -860,7 +897,7 @@
         </section>
 
         <!-- INTERACTIVE RADAR & TARGETS AREA -->
-        <div style="flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; position: relative; overflow: hidden;">
+        <div class="stage-wrapper">
             <!-- SCI-FI ROTATING RADAR SYSTEM -->
             <div class="radar-stage">
                 <div class="ring ring-4"></div>
