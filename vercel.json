@@ -43,6 +43,10 @@
     {
       "source": "/json-cracker",
       "destination": "/json-cracker.html"
+    },
+    {
+      "source": "/pairdrop",
+      "destination": "/pairdrop.html"
     }
   ]
 }
