@@ -438,64 +438,57 @@
         <div class="glass-panel reveal" style="transition-delay: 0.1s;">
             <h1 class="page-title" data-i18n="terms.title">Terms & Privacy</h1>
             <div class="badge-container">
-                <span class="last-updated" data-i18n="terms.lastUpdated">Last Updated: March 2026</span>
+                <span class="last-updated" data-i18n="terms.lastUpdated">Last Updated: August 2026</span>
             </div>
 
             <div class="legal-content">
-                <p>At Sendly, we believe your data is your own. We designed this service to transfer files as quickly
-                    and securely as possible, without hoarding your personal information or keeping your files longer
-                    than necessary.</p>
+                <p>At Sendly, we believe your data is solely your property. We engineered this suite of tools to transfer files, mirror screens, and process sensitive developer code as quickly and securely as possible—without hoarding your personal information, requiring user logins, or keeping your data longer than mathematically necessary.</p>
 
-                <h2 data-i18n="terms.privacyTitle">Privacy Policy</h2>
+                <h2 data-i18n="terms.privacyTitle">Privacy Policy & Architecture</h2>
 
                 <h3 data-i18n="terms.p1Title">1. Zero-Account Architecture</h3>
-                <p>We do not require you to create an account, log in, or provide an email address to use Sendly.
-                    Because we do not collect personal profiles, we have nothing to sell to advertisers or third-party
-                    data brokers.</p>
+                <p>We do not require you to create an account, log in, or provide an email address or phone number to use Sendly. Because we do not collect personal profiles, device tracking identifiers, or behavioral databases, we have zero personal user data to share, monetize, or disclose to advertisers or third-party brokers.</p>
 
-                <h3 data-i18n="terms.p2Title">2. Ephemeral File Storage</h3>
-                <p data-i18n="terms.p2Desc">Sendly acts solely as a temporary bridge between two devices. Here is how we
-                    handle your files:</p>
+                <h3 data-i18n="terms.p2Title">2. Ephemeral File Storage (Standard Transfers)</h3>
+                <p data-i18n="terms.p2Desc">For cloud-routed transfers, Sendly acts strictly as an automated temporary bridge between sender and receiver:</p>
                 <ul>
-                    <li><strong>Instant Deletion:</strong> The moment a file is successfully downloaded by the receiver,
-                        it is permanently and irreversibly deleted from our servers.</li>
-                    <li><strong>Time-Out Deletion:</strong> If a file is uploaded but not downloaded within 10 minutes,
-                        our automated systems scrub it entirely from our servers.</li>
+                    <li><strong>Instant Deletion:</strong> The exact moment a file payload is successfully downloaded by the receiver, its encrypted binary blob is permanently and irreversibly purged from our servers.</li>
+                    <li><strong>Time-Out Deletion:</strong> If a file is uploaded but unclaimed within 10 minutes, automated cron schedulers scrub it entirely from all memory and disk storage.</li>
                 </ul>
 
                 <h3 data-i18n="terms.p3Title">3. Zero-Knowledge Encryption</h3>
-                <p>Sendly offers optional Client-Side AES Encryption. When you choose to set a password, your file is
-                    mathematically locked inside your web browser before it is ever uploaded. We have zero knowledge of
-                    your file contents, do not store your passwords, and cannot decrypt your files even if requested.
-                </p>
+                <p>Sendly offers optional Client-Side AES-GCM 256-bit Encryption. When you choose to protect your transfer with a password, your file is mathematically scrambled inside your active web browser memory before a single byte leaves your machine. We have zero knowledge of your plaintext files, never transmit or record decryption passwords, and cannot decrypt your data under any circumstances.</p>
+
+                <h3>4. Local Network P2P Discovery (Local Drop)</h3>
+                <p>Our <strong>⚡ Local Drop</strong> tool enables serverless, peer-to-peer file transfer over localized Wi-Fi and Ethernet networks using raw WebRTC protocols:</p>
+                <ul>
+                    <li><strong>Direct Peer Coupling:</strong> Once matching subnet device signatures are discovered, file transfers beam directly between devices across your local router without ever traversing external cloud servers or public internet storage.</li>
+                    <li><strong>No Size or Bandwidth Limits:</strong> Because transfers occur exclusively over your local local area network (LAN), your files remain entirely within your hardware boundaries at localized Gigabit speeds.</li>
+                </ul>
+
+                <h3>5. Offline Developer Suite (Diff Checker & JSON Tools)</h3>
+                <p>When utilizing Sendly's developer productivity tools—including <strong>🔍 Diff Checker</strong>, <strong>⚡ JSON Formatter</strong>, and <strong>📊 JSON Cracker</strong>—all string transformations, syntax highlighting, diff logic, and node graph renderings execute <strong>100% locally within your client-side JavaScript engine</strong>. Sensitive source code, database schemas, API response payloads, and tokens pasted into these workspaces are never transmitted over network sockets or written to external logs.</p>
+
+                <h3>6. Standalone Desktop & Progressive Web App (PWA)</h3>
+                <p>Installing Sendly as a native Windows or macOS desktop app operates via modern sandboxed Chromium PWA service worker standards. Our application operates completely within secure OS containers without installing background tracking daemons, system registry hooks, or invasive analytics monitors.</p>
 
                 <h2 data-i18n="terms.tosTitle">Terms of Service</h2>
 
-                <h3 data-i18n="terms.t1Title">1. Acceptable Use</h3>
-                <p>Sendly is designed for personal and professional file sharing. By using Sendly, you agree that you
-                    will not use our service to transfer:</p>
+                <h3 data-i18n="terms.t1Title">1. Acceptable Use Policy</h3>
+                <p>Sendly is engineered for seamless collaboration, developer productivity, and reliable file sharing. By utilizing Sendly, you explicitly agree not to employ our network architecture to transfer, mirror, or publish:</p>
                 <ul>
-                    <li data-i18n="terms.t1Li1">Illegal, pirated, or copyrighted material you do not own the rights to.
-                    </li>
-                    <li data-i18n="terms.t1Li2">Malware, viruses, or destructive code.</li>
-                    <li data-i18n="terms.t1Li3">Child exploitation material or illegal pornography.</li>
+                    <li data-i18n="terms.t1Li1">Illegal, pirated, or copyrighted media without explicit legal authorization or ownership.</li>
+                    <li data-i18n="terms.t1Li2">Malicious payloads, ransomware, automated botnets, or destructive system exploits.</li>
+                    <li data-i18n="terms.t1Li3">Child exploitation material, unauthorized surveillance streams, or illicit content.</li>
                 </ul>
-                <p>While we do not actively monitor file contents due to encryption, any reports of abuse will result in
-                    the immediate blocking of the offending IP addresses.</p>
+                <p>While we cannot inspect zero-knowledge encrypted payloads or LAN P2P streams, any substantiated reports of service abuse or malicious hosting will result in instantaneous automated subnet blocking and infrastructure blacklisting.</p>
 
-                <h3 data-i18n="terms.t2Title">2. Service Availability</h3>
-                <p>Sendly is provided on an \'as-is\' and \'as-available\' basis. While we strive for 99.9% uptime, we
-                    do
-                    not guarantee that the service will be uninterrupted or error-free. We are not liable for any lost
-                    data or files that fail to transfer. We recommend always keeping a backup of important files.</p>
+                <h3 data-i18n="terms.t2Title">2. Service Availability & Warranty</h3>
+                <p>Sendly is provided on an 'as-is' and 'as-available' basis. While our distributed infrastructure aims for 99.9% operational reliability and sub-second WebRTC signaling, we do not guarantee uninterrupted execution under network interruptions or strict firewall restrictions. Sendly is not liable for data transmission failures or uncompleted peer handshakes. We strongly recommend maintaining backups of mission-critical archives before transfer.</p>
 
-                <h3 data-i18n="terms.t3Title">3. Rate Limiting and File Size</h3>
-                <p>To ensure fair use and server stability, users are permitted to upload files up to a maximum size of
-                    <strong>500MB</strong> per standard transfer. For Client-Side Encrypted transfers, the limit is
-                    <strong>50MB</strong> to prevent browser memory exhaustion on mobile devices. We reserve the right
-                    to throttle bandwidth or block IP addresses that abuse the service through automated scripting or
-                    excessive uploads.
-                </p>
+                <h3 data-i18n="terms.t3Title">3. Rate Limiting, File Sizes & Unbound Local Transfers</h3>
+                <p>To ensure global network equilibrium and optimal server responsiveness, cloud-routed standard transfers are capped at <strong>500MB</strong> per payload, and Client-Side Encrypted transfers are capped at <strong>50MB</strong> to guard against browser RAM exhaustion on low-power devices.<br><br>
+                <strong>Unbound Transfers:</strong> Users requiring multi-gigabyte or uninterrupted massive archive transmissions should utilize <strong>⚡ Local Drop</strong>, which imposes <strong>zero file size limitations</strong> or throttling by bypassing cloud infrastructure entirely and streaming directly over LAN interfaces.</p>
 
             </div>
         </div>
