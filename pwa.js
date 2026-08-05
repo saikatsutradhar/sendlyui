@@ -28,6 +28,8 @@ headerStyle.textContent = `
   .header {
     width: 100% !important;
     height: 64px !important;
+    min-height: 64px !important;
+    max-height: 64px !important;
     padding: 0 4% !important;
     display: flex !important;
     justify-content: space-between !important;
@@ -37,6 +39,10 @@ headerStyle.textContent = `
     -webkit-backdrop-filter: blur(16px) !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
     box-sizing: border-box !important;
+    margin: 0 !important;
+    top: 0 !important;
+    left: 0 !important;
+    z-index: 100 !important;
   }
   .header-logo {
     display: flex !important;
@@ -44,12 +50,17 @@ headerStyle.textContent = `
     gap: 10px !important;
     text-decoration: none !important;
     height: 100% !important;
+    flex-shrink: 0 !important;
   }
   .header-logo img {
     height: 38px !important;
     width: auto !important;
     max-height: 38px !important;
     object-fit: contain !important;
+  }
+
+  .header-links {
+    flex-shrink: 0 !important;
   }
 
   .header-links a {
@@ -62,12 +73,15 @@ headerStyle.textContent = `
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
   
-  /* Desktop Navigation Enhancements */
+  /* Desktop Navigation Enhancements - Matching exact 22px spacing from Local Drop */
   @media (min-width: 1181px) {
+    .mobile-menu-btn {
+      display: none !important;
+    }
     .header-links {
       display: flex !important;
       align-items: center !important;
-      gap: 16px !important;
+      gap: 22px !important;
     }
     .header-links a {
       display: inline-flex !important;
@@ -195,11 +209,32 @@ headerStyle.textContent = `
 `;
 document.head.appendChild(headerStyle);
 
-// Automatically enrich navigation items with SVG icons and synchronize active states across all pages
+// Automatically enrich navigation, move "How it works" to the very end of the series, and match Local Drop styling
 const enrichNavigation = () => {
   let currentPath = window.location.pathname.toLowerCase().replace(/\/$/, '').replace(/\.html$/, '') || '/';
-  const links = document.querySelectorAll('.header-links a');
+  const menu = document.querySelector('.header-links');
   
+  if (menu) {
+    // 1. Reorder navigation: Move "How it works" to the very end of the series
+    const howItWorksLink = Array.from(menu.querySelectorAll('a')).find(
+      a => (a.getAttribute('href') || '').toLowerCase().includes('how-it-works') || a.textContent.trim().toLowerCase().includes('how it works')
+    );
+    if (howItWorksLink) {
+      menu.appendChild(howItWorksLink);
+    }
+
+    // 2. Ensure mobile hamburger button exists on all pages
+    const header = document.querySelector('.header');
+    if (header && !document.querySelector('.mobile-menu-btn')) {
+      const btn = document.createElement('div');
+      btn.className = 'mobile-menu-btn';
+      btn.innerHTML = '☰';
+      btn.onclick = window.toggleMobileMenu;
+      header.insertBefore(btn, menu);
+    }
+  }
+
+  const links = document.querySelectorAll('.header-links a');
   links.forEach(link => {
     // Attach modern SVG icon if not present
     if (!link.querySelector('.nav-ico')) {
