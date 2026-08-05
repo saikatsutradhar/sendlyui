@@ -9,55 +9,180 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// Universal Responsive Header Optimization: prevent word wrapping and expand menu breakpoint to 1180px
+// Map of modern high-end SVG icons for navigation items
+const navIcons = {
+  "home": `<svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>`,
+  "how it works": `<svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`,
+  "screen share": `<svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>`,
+  "local drop": `<svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>`,
+  "live notepad": `<svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>`,
+  "diff checker": `<svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>`,
+  "json formatter": `<svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>`,
+  "json cracker": `<svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>`
+};
+
+// Inject ultra-modern glassmorphic navigation grid styling and animations
 const headerStyle = document.createElement('style');
 headerStyle.textContent = `
   .header-links a {
     white-space: nowrap !important;
   }
+  .nav-ico {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  
+  /* Desktop Navigation Enhancements */
+  @media (min-width: 1181px) {
+    .header-links {
+      display: flex !important;
+      align-items: center !important;
+      gap: 16px !important;
+    }
+    .header-links a {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 7px !important;
+      padding: 6px 12px !important;
+      border-radius: 8px !important;
+      font-size: 14px !important;
+      font-weight: 500 !important;
+      color: rgba(255, 255, 255, 0.8) !important;
+      transition: all 0.25s ease !important;
+      border: 1px solid transparent !important;
+    }
+    .header-links a:hover {
+      color: #ffffff !important;
+      background: rgba(78, 114, 251, 0.12) !important;
+      border-color: rgba(78, 114, 251, 0.3) !important;
+      transform: translateY(-2px) !important;
+      box-shadow: 0 4px 12px rgba(78, 114, 251, 0.2) !important;
+    }
+    .header-links a.active {
+      color: #ffffff !important;
+      background: rgba(78, 114, 251, 0.2) !important;
+      border-color: rgba(78, 114, 251, 0.5) !important;
+      box-shadow: 0 4px 15px rgba(78, 114, 251, 0.35) !important;
+    }
+    .header-links a::after {
+      display: none !important;
+    }
+  }
+
+  /* Ultra-Modern Responsive Floating Sheet / Glassmorphism Card Grid */
   @media (max-width: 1180px) {
     .mobile-menu-btn {
       display: block !important;
-      font-size: 24px;
-      cursor: pointer;
-      color: #fff;
+      font-size: 24px !important;
+      cursor: pointer !important;
+      color: #fff !important;
+      z-index: 10000 !important;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    }
+    .mobile-menu-btn:hover {
+      transform: scale(1.15);
     }
     .header-links {
-      position: absolute !important;
-      top: 55px !important;
+      position: fixed !important;
+      top: 0 !important;
       left: 0 !important;
-      width: 100% !important;
-      background: rgba(15, 23, 42, 0.98) !important;
-      backdrop-filter: blur(20px) !important;
-      -webkit-backdrop-filter: blur(20px) !important;
-      flex-direction: column !important;
-      text-align: center !important;
-      gap: 20px !important;
-      padding: 25px 0 !important;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5) !important;
-      display: flex !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      background: radial-gradient(circle at 90% 10%, rgba(78, 114, 251, 0.28), transparent 45%), rgba(7, 10, 24, 0.94) !important;
+      backdrop-filter: blur(32px) !important;
+      -webkit-backdrop-filter: blur(32px) !important;
+      display: grid !important;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
+      align-content: center !important;
+      gap: 16px !important;
+      padding: 90px 8% 60px !important;
+      overflow-y: auto !important;
       opacity: 0 !important;
       visibility: hidden !important;
-      transform: translateY(-15px) !important;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      transform: scale(0.95) translateY(-10px) !important;
+      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
       pointer-events: none !important;
       z-index: 9999 !important;
+      border: none !important;
+      box-shadow: none !important;
     }
     .header-links.show {
       visibility: visible !important;
       opacity: 1 !important;
-      transform: translateY(0) !important;
+      transform: scale(1) translateY(0) !important;
       pointer-events: auto !important;
     }
     .header-links a {
-      margin: 0 !important;
-      font-size: 17px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+      gap: 18px !important;
+      padding: 18px 24px !important;
+      background: rgba(255, 255, 255, 0.04) !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      border-radius: 20px !important;
+      color: rgba(255, 255, 255, 0.88) !important;
+      font-size: 16px !important;
       font-weight: 600 !important;
+      text-decoration: none !important;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3) !important;
+      margin: 0 !important;
+      position: relative !important;
+      overflow: hidden !important;
+    }
+    .header-links a .nav-ico {
+      width: 22px;
+      height: 22px;
+      padding: 10px;
+      background: rgba(78, 114, 251, 0.15);
+      border-radius: 14px;
+      border: 1px solid rgba(78, 114, 251, 0.3);
+      color: #6695FF;
+      box-sizing: content-box;
+      transition: all 0.3s ease;
+    }
+    .header-links a:hover, .header-links a.active {
+      background: linear-gradient(135deg, rgba(78, 114, 251, 0.28), rgba(53, 80, 198, 0.18)) !important;
+      border-color: rgba(78, 114, 251, 0.65) !important;
+      color: #ffffff !important;
+      transform: translateY(-4px) scale(1.02) !important;
+      box-shadow: 0 14px 32px rgba(78, 114, 251, 0.4), 0 6px 18px rgba(0, 0, 0, 0.5) !important;
+    }
+    .header-links a:hover .nav-ico, .header-links a.active .nav-ico {
+      background: #4e72fb !important;
+      color: #ffffff !important;
+      border-color: #799aff !important;
+      transform: scale(1.1) rotate(-6deg) !important;
+      box-shadow: 0 0 16px rgba(78, 114, 251, 0.9) !important;
+    }
+    /* Hide old plain underlines */
+    .header-links a::after {
+      display: none !important;
     }
   }
 `;
 document.head.appendChild(headerStyle);
+
+// Automatically enrich navigation items with modern SVG icons
+const enrichNavigation = () => {
+  const links = document.querySelectorAll('.header-links a');
+  links.forEach(link => {
+    if (!link.querySelector('.nav-ico')) {
+      const text = link.textContent.trim().toLowerCase();
+      const iconHTML = navIcons[text] || `<svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg>`;
+      link.insertAdjacentHTML('afterbegin', iconHTML);
+    }
+  });
+};
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', enrichNavigation);
+} else {
+  enrichNavigation();
+}
 
 // Guarantee global fallback toggle for mobile hamburger menu
 window.toggleMobileMenu = window.toggleMobileMenu || function() {
@@ -69,12 +194,9 @@ window.toggleMobileMenu = window.toggleMobileMenu || function() {
 let deferredPrompt;
 
 window.addEventListener('beforeinstallprompt', (e) => {
-  // Prevent Chrome 67+ and Edge from automatically showing the prompt or silently hiding it
   e.preventDefault();
-  // Stash the event so it can be triggered later.
   deferredPrompt = e;
   
-  // Create a floating Install Desktop App button if it doesn't already exist
   if (!document.getElementById('sendly-pwa-install-btn')) {
     const installBtn = document.createElement('button');
     installBtn.id = 'sendly-pwa-install-btn';
@@ -116,12 +238,9 @@ window.addEventListener('beforeinstallprompt', (e) => {
 
     installBtn.addEventListener('click', async () => {
       if (!deferredPrompt) return;
-      // Show the native browser installation prompt dialog
       deferredPrompt.prompt();
-      // Wait for the user to respond to the prompt
       const { outcome } = await deferredPrompt.userChoice;
       console.log(`User response to install prompt: ${outcome}`);
-      // We've used the prompt, and can't use it again
       deferredPrompt = null;
       installBtn.remove();
     });
@@ -130,7 +249,6 @@ window.addEventListener('beforeinstallprompt', (e) => {
   }
 });
 
-// Remove button if app is installed or running in standalone desktop mode
 window.addEventListener('appinstalled', () => {
   const btn = document.getElementById('sendly-pwa-install-btn');
   if (btn) btn.remove();
