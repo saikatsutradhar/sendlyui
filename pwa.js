@@ -21,9 +21,37 @@ const navIcons = {
   "json cracker": `<svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>`
 };
 
-// Inject ultra-modern glassmorphic navigation grid styling and animations
+// Inject universal header layout normalization and modern navigation styling
 const headerStyle = document.createElement('style');
 headerStyle.textContent = `
+  /* Universal Header Standardization to match exact Local Drop proportions across all pages */
+  .header {
+    width: 100% !important;
+    height: 64px !important;
+    padding: 0 4% !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    background: rgba(11, 15, 25, 0.75) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-sizing: border-box !important;
+  }
+  .header-logo {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    text-decoration: none !important;
+    height: 100% !important;
+  }
+  .header-logo img {
+    height: 38px !important;
+    width: auto !important;
+    max-height: 38px !important;
+    object-fit: contain !important;
+  }
+
   .header-links a {
     white-space: nowrap !important;
   }
@@ -52,6 +80,7 @@ headerStyle.textContent = `
       color: rgba(255, 255, 255, 0.8) !important;
       transition: all 0.25s ease !important;
       border: 1px solid transparent !important;
+      text-decoration: none !important;
     }
     .header-links a:hover {
       color: #ffffff !important;
@@ -166,14 +195,25 @@ headerStyle.textContent = `
 `;
 document.head.appendChild(headerStyle);
 
-// Automatically enrich navigation items with modern SVG icons
+// Automatically enrich navigation items with SVG icons and synchronize active states across all pages
 const enrichNavigation = () => {
+  let currentPath = window.location.pathname.toLowerCase().replace(/\/$/, '').replace(/\.html$/, '') || '/';
   const links = document.querySelectorAll('.header-links a');
+  
   links.forEach(link => {
+    // Attach modern SVG icon if not present
     if (!link.querySelector('.nav-ico')) {
       const text = link.textContent.trim().toLowerCase();
       const iconHTML = navIcons[text] || `<svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg>`;
       link.insertAdjacentHTML('afterbegin', iconHTML);
+    }
+    
+    // Automatically highlight the current tool page with sapphire active style
+    let linkPath = (link.getAttribute('href') || '').toLowerCase().replace(/\/$/, '').replace(/\.html$/, '') || '/';
+    if (currentPath === linkPath) {
+      link.classList.add('active');
+    } else {
+      link.classList.remove('active');
     }
   });
 };
