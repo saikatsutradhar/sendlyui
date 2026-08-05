@@ -9,6 +9,62 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+// Universal Responsive Header Optimization: prevent word wrapping and expand menu breakpoint to 1180px
+const headerStyle = document.createElement('style');
+headerStyle.textContent = `
+  .header-links a {
+    white-space: nowrap !important;
+  }
+  @media (max-width: 1180px) {
+    .mobile-menu-btn {
+      display: block !important;
+      font-size: 24px;
+      cursor: pointer;
+      color: #fff;
+    }
+    .header-links {
+      position: absolute !important;
+      top: 55px !important;
+      left: 0 !important;
+      width: 100% !important;
+      background: rgba(15, 23, 42, 0.98) !important;
+      backdrop-filter: blur(20px) !important;
+      -webkit-backdrop-filter: blur(20px) !important;
+      flex-direction: column !important;
+      text-align: center !important;
+      gap: 20px !important;
+      padding: 25px 0 !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5) !important;
+      display: flex !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      transform: translateY(-15px) !important;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      pointer-events: none !important;
+      z-index: 9999 !important;
+    }
+    .header-links.show {
+      visibility: visible !important;
+      opacity: 1 !important;
+      transform: translateY(0) !important;
+      pointer-events: auto !important;
+    }
+    .header-links a {
+      margin: 0 !important;
+      font-size: 17px !important;
+      font-weight: 600 !important;
+    }
+  }
+`;
+document.head.appendChild(headerStyle);
+
+// Guarantee global fallback toggle for mobile hamburger menu
+window.toggleMobileMenu = window.toggleMobileMenu || function() {
+  const menu = document.querySelector('.header-links');
+  if (menu) menu.classList.toggle('show');
+};
+
 // Handle PWA BeforeInstallPrompt event to provide an intuitive in-app install button
 let deferredPrompt;
 
