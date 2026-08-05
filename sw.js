@@ -1,9 +1,11 @@
-const CACHE_NAME = 'sendly-v1';
+const CACHE_NAME = 'sendly-v2';
 const ASSETS = [
   '/',
   '/index.html',
   '/favicon.png',
   '/logo.webp',
+  '/icon-192.png',
+  '/icon-512.png',
   '/socket.io.min.js',
   '/manifest.json'
 ];
@@ -18,7 +20,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Activate event - clean up old caches
+// Activate event - clean up old caches immediately
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
