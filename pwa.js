@@ -61,19 +61,21 @@ headerStyle.textContent = `
 
   .header-links {
     flex-shrink: 0 !important;
+    margin: 0 !important;
   }
 
   .header-links a {
     white-space: nowrap !important;
+    margin: 0 !important;
   }
   .nav-ico {
-    width: 18px;
-    height: 18px;
+    width: 17px;
+    height: 17px;
     flex-shrink: 0;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
   
-  /* Desktop Navigation Enhancements - Matching exact 22px spacing from Local Drop */
+  /* Desktop Navigation Enhancements - Compact, sleek spacing with zero doubled margins */
   @media (min-width: 1181px) {
     .mobile-menu-btn {
       display: none !important;
@@ -81,20 +83,21 @@ headerStyle.textContent = `
     .header-links {
       display: flex !important;
       align-items: center !important;
-      gap: 22px !important;
+      gap: 12px !important;
     }
     .header-links a {
       display: inline-flex !important;
       align-items: center !important;
-      gap: 7px !important;
-      padding: 6px 12px !important;
+      gap: 6px !important;
+      padding: 6px 10px !important;
       border-radius: 8px !important;
-      font-size: 14px !important;
+      font-size: 13.5px !important;
       font-weight: 500 !important;
       color: rgba(255, 255, 255, 0.8) !important;
       transition: all 0.25s ease !important;
       border: 1px solid transparent !important;
       text-decoration: none !important;
+      margin: 0 !important;
     }
     .header-links a:hover {
       color: #ffffff !important;
