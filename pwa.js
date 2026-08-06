@@ -210,19 +210,21 @@ headerStyle.textContent = `
     }
   }
 `;
-document.head.appendChild(headerStyle);
+if (!document.querySelector('link[href*="nav.css"]')) {
+  document.head.appendChild(headerStyle);
+}
 
-// Automatically enrich navigation, move "How it works" to the very end of the series, and match Local Drop styling
+// Automatically enrich navigation with zero layout shift if already pre-rendered
 const enrichNavigation = () => {
   let currentPath = window.location.pathname.toLowerCase().replace(/\/$/, '').replace(/\.html$/, '') || '/';
   const menu = document.querySelector('.header-links');
   
   if (menu) {
-    // 1. Reorder navigation: Move "How it works" to the very end of the series
+    // 1. Reorder navigation only if "How it works" is present and not already at the end
     const howItWorksLink = Array.from(menu.querySelectorAll('a')).find(
       a => (a.getAttribute('href') || '').toLowerCase().includes('how-it-works') || a.textContent.trim().toLowerCase().includes('how it works')
     );
-    if (howItWorksLink) {
+    if (howItWorksLink && menu.lastElementChild !== howItWorksLink) {
       menu.appendChild(howItWorksLink);
     }
 
@@ -238,22 +240,38 @@ const enrichNavigation = () => {
   }
 
   const links = document.querySelectorAll('.header-links a');
+  let hasExactMatch = false;
+
   links.forEach(link => {
-    // Attach modern SVG icon if not present
+    // Attach modern SVG icon if not present (fallback for pages without pre-rendered nav)
     if (!link.querySelector('.nav-ico')) {
       const text = link.textContent.trim().toLowerCase();
       const iconHTML = navIcons[text] || `<svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg>`;
       link.insertAdjacentHTML('afterbegin', iconHTML);
     }
     
-    // Automatically highlight the current tool page with sapphire active style
     let linkPath = (link.getAttribute('href') || '').toLowerCase().replace(/\/$/, '').replace(/\.html$/, '') || '/';
-    if (currentPath === linkPath) {
-      link.classList.add('active');
-    } else {
-      link.classList.remove('active');
+    let isMatch = (currentPath === linkPath);
+    if ((currentPath === '/diff-checker' || currentPath === '/diff') && (linkPath === '/diff' || linkPath === '/diff-checker')) isMatch = true;
+
+    if (isMatch) {
+      hasExactMatch = true;
     }
   });
+
+  // Only update active classes if there's a matching menu item for this URL
+  if (hasExactMatch) {
+    links.forEach(link => {
+      let linkPath = (link.getAttribute('href') || '').toLowerCase().replace(/\/$/, '').replace(/\.html$/, '') || '/';
+      let isMatch = (currentPath === linkPath);
+      if ((currentPath === '/diff-checker' || currentPath === '/diff') && (linkPath === '/diff' || linkPath === '/diff-checker')) isMatch = true;
+      if (isMatch) {
+        if (!link.classList.contains('active')) link.classList.add('active');
+      } else {
+        if (link.classList.contains('active')) link.classList.remove('active');
+      }
+    });
+  }
 };
 
 if (document.readyState === 'loading') {
